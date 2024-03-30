@@ -19,6 +19,8 @@
         <module>node</module>
         <module>dispatcher</module>
         <module>common-rabbitmq</module>
+        <module>utills-any</module>
+
     </modules>
 
     <properties>

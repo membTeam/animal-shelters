@@ -25,6 +25,11 @@ public class UserBot extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long chatId;
+
+    @Column(name = "first_name", columnDefinition = "varchar(100)")
+    private String firstName;
+
     @Column(columnDefinition = "varchar(50)")
     @Enumerated(EnumType.STRING)
     private EnumRoleUser role;
