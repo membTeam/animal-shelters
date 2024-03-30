@@ -1,4 +1,4 @@
-package ru.animals.service.impl;
+package ru.animals.service;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
