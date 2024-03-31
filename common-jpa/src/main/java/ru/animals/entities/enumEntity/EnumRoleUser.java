@@ -1,4 +1,4 @@
-package ru.animals.models.enumEntity;
+package ru.animals.entities.enumEntity;
 
 public enum EnumRoleUser {
     CLIENT,

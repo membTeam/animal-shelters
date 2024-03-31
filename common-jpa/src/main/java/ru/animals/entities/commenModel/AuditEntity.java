@@ -1,4 +1,4 @@
-package ru.animals.models.commenModel;
+package ru.animals.entities.commenModel;
 
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;

@@ -2,9 +2,9 @@ package ru.animals.service.imp;
 
 
 import org.springframework.stereotype.Service;
-import ru.animals.models.UserBot;
-import ru.animals.models.enumEntity.EnumRoleUser;
-import ru.animals.models.enumEntity.EnumState;
+import ru.animals.entities.UserBot;
+import ru.animals.entities.enumEntity.EnumRoleUser;
+import ru.animals.entities.enumEntity.EnumState;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.service.UserBotService;
 
