@@ -1,0 +1,6 @@
+{"inline_keyboard":[
+[{"text":"Аврезе","callback_data":"АВРЕЗЕ"},
+  {"text":"Аликс","callback_data":"АЛИКС"}],
+[{"text":"anyText","callback_data":"anytext"},
+  {"text": "nextText","callback_data":"nextCollback"}]
+]}

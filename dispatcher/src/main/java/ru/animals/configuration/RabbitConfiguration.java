@@ -1,6 +1,7 @@
 package ru.animals.configuration;
 
 
+import lombok.Getter;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -11,13 +12,14 @@ import static ru.animals.model.RabbitQueue.*;
 
 @Configuration
 public class RabbitConfiguration {
+
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
     @Bean
-    public Queue textMessageUpdate   () {
+    public Queue textMessageUpdate() {
         return new Queue(TEXT_MESSAGE_UPDATE);
     }
 

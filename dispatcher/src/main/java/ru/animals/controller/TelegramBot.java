@@ -16,14 +16,16 @@ import javax.annotation.PostConstruct;
 @Log4j
 public class TelegramBot extends TelegramLongPollingBot{
 
-    @Value("${bot.username}")
     private String userName;
 
     private UpdateController updateController;
 
-    public TelegramBot(UpdateController updateController, @Value("${bot.token}") String botToken) {
+    public TelegramBot(UpdateController updateController,
+                       @Value("${bot.token}") String botToken,
+                       @Value("${bot.username}") String username) {
         super(botToken);
         this.updateController = updateController;
+        this.userName = username;
     }
 
     @PostConstruct

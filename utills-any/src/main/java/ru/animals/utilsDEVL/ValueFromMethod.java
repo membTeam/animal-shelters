@@ -1,17 +1,17 @@
-package ru.animals.utilsdevl;
+package ru.animals.utilsDEVL;
 
-public final class VOresult<T> {
+public final class ValueFromMethod<T> {
     public final boolean RESULT;
     public final String MESSAGE;
     public final T VALUE;
 
-    public VOresult(String mes ) {
-        RESULT = false;
+    public ValueFromMethod(boolean result, String mes ) {
+        RESULT = result;
         MESSAGE = mes;
         VALUE = null;
     }
 
-    public VOresult(T value) {
+    public ValueFromMethod(T value) {
         RESULT = true;
         MESSAGE = "ok";
         VALUE = value;

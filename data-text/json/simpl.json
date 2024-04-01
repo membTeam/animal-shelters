@@ -1,0 +1,6 @@
+{"chat_id":"1000",
+  "text":"Чтобы увидеть картины, нажми на фамилию художника или перейди в полную коллекцию на сайте музея",
+  "reply_markup":{"inline_keyboard":[
+    [{"text":"Аврезе","callback_data":"АВРЕЗЕ"},
+      {"text":"Аликс","callback_data":"АЛИКС"}],
+    [{"text":"anyText","callback_data":"anytext"}]]},"method":"sendmessage"}

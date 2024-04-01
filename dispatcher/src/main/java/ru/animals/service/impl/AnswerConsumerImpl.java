@@ -1,4 +1,4 @@
-package ru.animals.service;
+package ru.animals.service.impl;
 
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
