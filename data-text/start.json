@@ -1,0 +1,6 @@
+{"inline_keyboard":[
+  [{"text":"Приветствие","callback_data":"file opt empty hello.md"},
+    {"text":"старт","callback_data":"file otp empty start"}],
+  [{"text":"empty","callback_data":"comnd03"},
+    {"text": "empy","callback_data":"comnd04"}]
+]}

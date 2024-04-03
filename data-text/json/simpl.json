@@ -3,4 +3,4 @@
   "reply_markup":{"inline_keyboard":[
     [{"text":"Аврезе","callback_data":"АВРЕЗЕ"},
       {"text":"Аликс","callback_data":"АЛИКС"}],
-    [{"text":"anyText","callback_data":"anytext"}]]},"method":"sendmessage"}
+    [{"text":"anyText","callback_data":"bot register anytext"}]]},"method":"sendmessage"}
