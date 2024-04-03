@@ -43,7 +43,8 @@ public class UpdateController {
             var message = update.getMessage();
 
             // TODO: встроить процедуру проверки загрузки и исп. *.md file
-            var dataFromFile = FileAPI.readDataFromFile("hello.md");
+            var textMess = update.getMessage().getText();
+            var dataFromFile = FileAPI.readDataFromFile(textMess);
 
             String txtMessage;
 
