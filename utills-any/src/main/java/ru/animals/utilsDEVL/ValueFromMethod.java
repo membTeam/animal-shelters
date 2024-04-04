@@ -17,4 +17,7 @@ public final class ValueFromMethod<T> {
         VALUE = value;
     }
 
+    public T getValue() {
+        return VALUE;
+    }
 }

@@ -21,7 +21,7 @@ public class FileAPI {
         return pathFile.resolve(pathDirTextFile);
     }
 
-    public static ValueFromMethod readDataFromFileExt(String file) {
+    public static ValueFromMethod readConfiguration(String file) {
         ValueFromMethod result;
 
         var pathFile = pathObjForFile(file);

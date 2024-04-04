@@ -9,7 +9,7 @@ public class ParserMessageTest {
     @Test
     public void parsingMessage() {
         var strTempl = "animalcontent -t file -v sendmessage -d animal-content.txt -h что он содержит";
-        var parsing = ParsingMessage.parsingMessage(strTempl);
+        var parsing = ParsingMessage.parsingTemplateString(strTempl);
 
         if (parsing.RESULT) {
             System.out.println(parsing.VALUE);
