@@ -1,0 +1,4 @@
+# Шаблон для разметки animalcontent -t file -v sendmessage -d animal-content.txt -h что он содержит
+#
+animalcontent ## file ## sendmessage ## animal-content.txt ## Содержимое файла
+dataforentry ## file ## sendmessage ## data-for-entry.txt ## правила для въезда на собственно транспорте

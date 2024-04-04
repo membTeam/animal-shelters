@@ -8,6 +8,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.service.UpdateProducer;
 import ru.animals.utils.MessageUtils;
+import ru.animals.utils.ParsingCommand;
+import ru.animals.utils.ParsingMessage;
+import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.FileAPI;
 
 @Component
@@ -16,10 +19,12 @@ public class UpdateController {
     private TelegramBot telegramBot;
     private MessageUtils messageUtils;
     private UpdateProducer updateProducer;
+    private ParsingCommand parsingCommand;
 
-    public UpdateController(MessageUtils messageUtils, UpdateProducer updateProducer) {
+    public UpdateController(MessageUtils messageUtils, UpdateProducer updateProducer, ParsingCommand parsingCommand) {
         this.messageUtils = messageUtils;
         this.updateProducer = updateProducer;
+        this.parsingCommand = parsingCommand;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -44,34 +49,33 @@ public class UpdateController {
 
             // TODO: встроить процедуру проверки загрузки и исп. *.md file
             var textMess = update.getMessage().getText();
-            var dataFromFile = FileAPI.readDataFromFile(textMess);
-
-            String txtMessage;
-
-            if (!dataFromFile.RESULT) {
-                txtMessage = dataFromFile.MESSAGE;
-            } else {
-                txtMessage = (String) dataFromFile.VALUE;
+            if (textMess.charAt(0) == '/') {
+                textMess = textMess.substring(1);
             }
 
+            var strSource = parsingCommand.getSource(textMess);
 
-            var sendMessage = messageUtils.generateSendMessageWithText(update, txtMessage);
-                    /*messageUtils.generateSendMessageWithText(update,
-                    "Сообщение принято");*/
+            if (strSource.equals("empty")) {
+                var sendMessage = messageUtils.generateSendMessageWithText(update, "Нет такой команды");
+                telegramBot.sendAnswerMessage(sendMessage);
+                return;
+            }
+
+            var dataFromFile = FileAPI.readDataFromFile(strSource);
+
+            if (!dataFromFile.RESULT) {
+                // txtMessage = dataFromFile.MESSAGE;
+                // TODO: переработать
+                return;
+            }
+
+            var txtMessage = (String) dataFromFile.VALUE;
+
+            var sendMessage = messageUtils.generateSendMessageWithText(update, txtMessage );
 
             sendMessage.setParseMode(ParseMode.MARKDOWN);
-
             telegramBot.sendAnswerMessage(sendMessage);
 
-            /*if (message.hasText()) {
-                processTextMessage(update);
-            } else if (message.hasDocument()) {
-                processDocMessage(update);
-            } else if (message.hasPhoto()) {
-                processPhotoMessage(update);
-            } else {
-                setUnsuppotedMessageTypeView(update);
-            }*/
         }
 
     public void setView(SendMessage sendMessage) {
