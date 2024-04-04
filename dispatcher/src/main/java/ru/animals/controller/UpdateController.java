@@ -9,7 +9,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.service.UpdateProducer;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
+import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.FileAPI;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeMessage;
 
 @Component
 @Log4j
@@ -42,41 +44,50 @@ public class UpdateController {
         }
     }
 
-        private void distributeMessagesByType(Update update) {
+    private void distributeMessagesByType(Update update) {
 
-            try {
-                if (utilsSendMessage.isERROR()) {
-                    throw new Exception("Нет данных по командам");
-                }
-
-                var textMess = update.getMessage().getText();
-                if (textMess.charAt(0) == '/') {
-                    textMess = textMess.substring(1);
-                }
-
-                var strSource = utilsSendMessage.getSource(textMess);
-
-                var dataFromFile = FileAPI.readDataFromFile(strSource);
-                if (!dataFromFile.RESULT) {
-                    throw new Exception("Контент не найден");
-                }
-
-                var txtMessage = (String) dataFromFile.VALUE;
-                var sendMessage = utilsMessage.generateSendMessageWithText(update, txtMessage);
-
-                sendMessage.setParseMode(ParseMode.MARKDOWN);
-                telegramBot.sendAnswerMessage(sendMessage);
-
-            } catch (Exception e) {
-                var sendMessage = utilsMessage.generateSendMessageWithText(update, e.getMessage());
-                telegramBot.sendAnswerMessage(sendMessage);
+        try {
+            if (utilsSendMessage.isERROR()) {
+                throw new Exception("Нет данных по командам");
             }
 
+            var textMess = update.getMessage().getText();
+            if (textMess.charAt(0) == '/') {
+                textMess = textMess.substring(1);
+            }
+
+            var structureCommand = utilsSendMessage.getDataCommand(textMess);
+
+            if (structureCommand.getEnumTypeMessage().equals(EnumTypeMessage.TEXT_message)) {
+                sendTextMessage(update, structureCommand.getCommand());
+            }
+
+        } catch (Exception e) {
+            var sendMessage = utilsMessage.generateSendMessageWithText(update, e.getMessage());
+            telegramBot.sendAnswerMessage(sendMessage);
         }
+    }
+
+    private void sendTextMessage(Update update, String strCommand) throws Exception {
+
+        var fileSource = utilsSendMessage.getSource(strCommand);
+
+        var dataFromFile = FileAPI.readDataFromFile(fileSource);
+        if (!dataFromFile.RESULT) {
+            throw new Exception("Контент не найден");
+        }
+
+        var txtMessage = (String) dataFromFile.VALUE;
+        var sendMessage = utilsMessage.generateSendMessageWithText(update, txtMessage);
+
+        sendMessage.setParseMode(ParseMode.MARKDOWN);
+        telegramBot.sendAnswerMessage(sendMessage);
+
+    }
 
     public void setView(SendMessage sendMessage) {
         telegramBot.sendAnswerMessage(sendMessage);
     }
 
-    }
+}
 

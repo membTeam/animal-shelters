@@ -13,7 +13,7 @@ import java.util.Map;
 public class UtilsSendMessage {
     private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
 
-    private boolean ERROR;
+    private boolean ERROR=true;
 
     public boolean isERROR() {
         return ERROR;
@@ -24,6 +24,7 @@ public class UtilsSendMessage {
 
         // TODO: добавить вывод в логФайл
         if (!resultLoadData.RESULT) {
+            ERROR = true;
             return;
         }
 
@@ -32,9 +33,22 @@ public class UtilsSendMessage {
         ERROR = !result.RESULT;
     }
 
+    public DataFromParser getDataCommand(String strCommand) throws Exception {
+
+        if (isERROR()) {
+            throw new Exception("Нет данных по командам");
+        }
+
+        if (mapSendMessage.containsKey(strCommand)) {
+            return mapSendMessage.get(strCommand);
+        } else {
+            throw new Exception("Команда не определена");
+        }
+    }
+
     public String getSource(String strCommand) throws Exception {
 
-        if (mapSendMessage.size() == 0) {
+        if (isERROR()) {
             throw new Exception("Нет данных по командам");
         }
 
