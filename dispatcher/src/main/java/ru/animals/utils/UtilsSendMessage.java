@@ -1,5 +1,6 @@
 package ru.animals.utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.FileAPI;
@@ -14,16 +15,21 @@ public class UtilsSendMessage {
     private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
 
     private boolean ERROR=true;
+    private String mesRrror = "ok";
 
     public boolean isERROR() {
         return ERROR;
     }
 
-    public UtilsSendMessage() {
-        ValueFromMethod resultLoadData = FileAPI.readConfiguration("condig-command.txt");
+    public UtilsSendMessage(@Value("${menu.confiuuration}") String file) {
+        // TODO: вынести в конфигурационный файл
+
+        ValueFromMethod resultLoadData =
+                FileAPI.readConfiguration(file);
 
         // TODO: добавить вывод в логФайл
         if (!resultLoadData.RESULT) {
+            mesRrror = resultLoadData.MESSAGE;
             ERROR = true;
             return;
         }
@@ -31,6 +37,9 @@ public class UtilsSendMessage {
         var result = ParsingMessage.parsingTemplateString(mapSendMessage, (List<String>) resultLoadData.VALUE);
 
         ERROR = !result.RESULT;
+        if (ERROR) {
+            mesRrror = result.MESSAGE;
+        }
     }
 
     public DataFromParser getDataCommand(String strCommand) throws Exception {

@@ -1,0 +1,7 @@
+{"chat_id":"{{chrtID}}",
+  "text":"сопроводительный текст",
+  "reply_markup":{"inline_keyboard":[
+    [{"text":"Волнтеры","callback_data":"btnstart"},
+      {"text":"Регистрация","callback_data":"nameFile-btn-menum"}],
+    [{"text":"textmes3","callback_data":"nameFile-btn-menum"}]]},
+  "method":"btn-menu"}

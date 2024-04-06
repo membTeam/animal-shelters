@@ -19,6 +19,9 @@ public class ParsingMessage {
             case "sendmessage" -> EnumTypeMessage.TEXT_message;
             case "sendsimplemessage" -> EnumTypeMessage.SIMPLE_message;
             case "sendmultymessage" -> EnumTypeMessage.MULTY_message;
+            case "start" -> EnumTypeMessage.START;
+            case "menuvolonters" -> EnumTypeMessage.VOLONTER;
+
             default -> EnumTypeMessage.EMPTY;
         };
     }
@@ -35,7 +38,7 @@ public class ParsingMessage {
                 var enumTypeMessage = initEnumTypeMessage(strTypeMessage);
                 if (enumTypeMessage == EnumTypeMessage.EMPTY) {
                     try {
-                        throw new Exception("Тип сообщения не определен");
+                        throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

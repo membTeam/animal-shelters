@@ -10,6 +10,10 @@ import ru.animals.entities.enumEntity.EnumState;
 
 import java.util.Collection;
 
+/**
+ * fsdfs sdf
+ */
+
 @Getter
 @Setter
 @NoArgsConstructor
