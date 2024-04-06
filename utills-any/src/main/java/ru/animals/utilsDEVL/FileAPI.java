@@ -82,14 +82,13 @@ public class FileAPI {
                 throw new Exception("Тип файла не определен");
             }
 
-            List<String> resultList = new ArrayList<>();
-            List<String> allLines = Files.readAllLines(pathFile);
-            allLines.stream().forEach(str-> {
-                if (str.charAt(0) != '#') {
-                    resultList.add(str);                                    }
-            } );
+            List<String> resultList = Files
+                    .readAllLines(pathFile)
+                    .stream()
+                    .filter(str-> str.charAt(0)!='#').toList();
 
             result = new ValueFromMethod<List<String>>(resultList);
+
         } catch (IOException e) {
             result = new ValueFromMethod(false, String.format("Нет файла " + file));
         } catch (Exception e) {

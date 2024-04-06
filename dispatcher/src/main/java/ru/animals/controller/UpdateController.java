@@ -76,7 +76,8 @@ public class UpdateController {
             return;
         }
 
-        var textMess = modifingTextMessage(update.getMessage().getText());
+        var textMess = modifingTextMessage(modifingTextMessage(update.getMessage().getText()));
+
         var structureCommand = utilsSendMessage.getDataCommand(textMess);
 
         if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_message) {
@@ -89,7 +90,7 @@ public class UpdateController {
 
     private void distributeMenu(Update update) {
 
-        var textMess = update.getMessage().getText();
+        var textMess = modifingTextMessage(update.getMessage().getText());
 
         try {
 
