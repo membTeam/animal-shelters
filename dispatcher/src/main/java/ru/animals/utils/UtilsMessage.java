@@ -22,7 +22,7 @@ public class UtilsMessage {
 
         if (text.startsWith("file:")) {
             var index = text.indexOf(":");
-            var file = text.substring(index)
+            var fileMes = text.substring(index);
         }
 
         return sendMessage;
