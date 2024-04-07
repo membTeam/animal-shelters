@@ -88,7 +88,17 @@ public class UpdateController {
 
     }
 
-    private void distributeMenu(Update update) {
+    private void distributeMenu(Update update) throws Exception {
+
+        var textMess = modifingTextMessage(update.getMessage().getText());
+        var structureCommand = utilsSendMessage.getDataCommand(textMess);
+
+        var sendMessage = utilsMessage.generateSendMessageWithBtn(update, structureCommand);
+
+    }
+
+
+    /*private void distributeMenu(Update update) {
 
         var textMess = modifingTextMessage(update.getMessage().getText());
 
@@ -107,7 +117,7 @@ public class UpdateController {
             var sendMessage = utilsMessage.generateSendMessageWithText(update, e.getMessage());
             telegramBot.sendAnswerMessage(sendMessage);
         }
-    }
+    }*/
 
     /**
      * Обработка collback команд
