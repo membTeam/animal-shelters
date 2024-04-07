@@ -1,5 +1,5 @@
-{"chat_id":"{{chrtID}}",
-  "text":"сопроводительный текст",
+{"chat_id":"charid",
+  "text":"text jflsdjf sdfjlsdfj",
   "reply_markup":{"inline_keyboard":[
     [{"text":"Волнтеры","callback_data":"btnstart"},
       {"text":"Регистрация","callback_data":"nameFile-btn-menum"}],

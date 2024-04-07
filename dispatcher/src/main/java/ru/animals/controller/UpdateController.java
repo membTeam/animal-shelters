@@ -100,6 +100,7 @@ public class UpdateController {
 
             var sendMessage = utilsMessage
                     .generateSendMessageWithText(update, textMess + " не определена");
+
             telegramBot.sendAnswerMessage(sendMessage);
 
         } catch (Exception e) {
