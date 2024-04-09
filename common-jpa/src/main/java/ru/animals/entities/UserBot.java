@@ -47,4 +47,8 @@ public class UserBot extends AuditEntity {
     @JoinColumn(name = "user_id")
     Collection<Adoption> listUserBot;
 
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private Collection<ContentReport> listContentReport;
+
 }

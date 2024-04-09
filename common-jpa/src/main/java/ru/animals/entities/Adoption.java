@@ -7,8 +7,11 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 
+
+/**
+ * При возврате животного запись по этой таблице удаляется
+ */
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,9 +29,5 @@ public class Adoption {
 
     private Long user_id;
     private Long animate_id;
-
-    @OneToMany
-    @JoinColumn(name = "content_report_id")
-    private Collection<contentReport> listContentReport;
 
 }

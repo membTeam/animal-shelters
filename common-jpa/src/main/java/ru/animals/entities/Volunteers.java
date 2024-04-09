@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.web.JsonPath;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
  * Сущность волнтеры
@@ -30,4 +32,7 @@ public class Volunteers {
     @Column(name = "chart_name", columnDefinition = "varchar(50)")
     private String chartName;
 
+    @OneToMany
+    @JoinColumn(name = "volunteer_id")
+    private Collection<ContentReport> listContentReport;
 }

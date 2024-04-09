@@ -58,12 +58,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--<dependency>
-            <groupId>ru.animals</groupId>
-            <artifactId>dispatcher</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>-->
-
         <dependency>
             <groupId>ru.animals</groupId>
             <artifactId>common-jpa</artifactId>
