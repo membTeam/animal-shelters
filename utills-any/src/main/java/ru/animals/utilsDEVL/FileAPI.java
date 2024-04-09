@@ -1,24 +1,39 @@
 package ru.animals.utilsDEVL;
 
+import lombok.Value;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeFile;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FileAPI {
+
+    public static String rootArtifactID() throws IOException, XmlPullParserException {
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = reader.read(new FileReader("pom.xml"));
+
+        var artifactid = model.getParent().getArtifactId();
+
+        if (artifactid.equals("spring-boot-starter-parent")) {
+            artifactid = model.getArtifactId();
+        }
+
+        return artifactid;
+    }
+
 
     /**
      * Определение типа файла
      * @param file
      * @return
      */
-    private static EnumTypeFile getTypeFile(String file) {
+    public static EnumTypeFile getTypeFile(String file) {
         var index = file.lastIndexOf(".");
         var strType = file.substring(index+1).toLowerCase();
         return switch (strType) {
@@ -36,10 +51,12 @@ public class FileAPI {
      * Корневая директория
      * @return
      */
-    private static Path getRootPath() {
+    private static Path getRootPath() throws XmlPullParserException, IOException {
         var userDir = System.getProperty("user.dir");
+        var artivactId = rootArtifactID(); // DataFromPomXML.getRootArtifactID();
+
         Path pathFile;
-        if (!userDir.endsWith("animals")) {
+        if (!userDir.endsWith(artivactId)) {
             pathFile = Path.of(userDir).getParent();
         } else {
             pathFile = Path.of(userDir);
@@ -48,7 +65,7 @@ public class FileAPI {
         return pathFile;
     }
 
-    private static Path pathObjForFile (String file) {
+    private static Path pathObjForFile (String file) throws XmlPullParserException, IOException {
 
         var dataText = "data-text/";
 
@@ -98,15 +115,22 @@ public class FileAPI {
         return result;
     }
 
+    /**
+     * Чтение файлов
+     * @param file
+     * @return ValueFromMethod
+     */
     public static ValueFromMethod readDataFromFile(String file) {
 
         ValueFromMethod result;
 
-        var pathFile = pathObjForFile(file);
         try {
+            var pathFile = pathObjForFile(file);
+
             var txt = new String(Files.readAllBytes(pathFile));
             result = new ValueFromMethod<String>(txt);
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             result = new ValueFromMethod(false, String.format("Нет файла " + file));
         }
 

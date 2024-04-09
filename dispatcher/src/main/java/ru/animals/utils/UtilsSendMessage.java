@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Рессивер параметров входящих SendMessage на основе HashMap
+ */
 @Service
 public class UtilsSendMessage {
     private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
@@ -24,8 +27,7 @@ public class UtilsSendMessage {
     public UtilsSendMessage(@Value("${menu.confiuuration}") String file) {
         // TODO: вынести в конфигурационный файл
 
-        ValueFromMethod resultLoadData =
-                FileAPI.readConfiguration(file);
+        ValueFromMethod resultLoadData = FileAPI.readConfiguration(file);
 
         // TODO: добавить вывод в логФайл
         if (!resultLoadData.RESULT) {

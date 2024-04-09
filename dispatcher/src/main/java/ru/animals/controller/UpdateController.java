@@ -78,6 +78,11 @@ public class UpdateController {
 
         var textMess = modifingTextMessage(modifingTextMessage(update.getMessage().getText()));
 
+        if (textMess.equals("start")) {
+            distributeMenu(update);
+            return;
+        }
+
         var structureCommand = utilsSendMessage.getDataCommand(textMess);
 
         if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_message) {
@@ -95,29 +100,9 @@ public class UpdateController {
 
         var sendMessage = utilsMessage.generateSendMessageWithBtn(update, structureCommand);
 
+        telegramBot.sendAnswerMessage(sendMessage);
+
     }
-
-
-    /*private void distributeMenu(Update update) {
-
-        var textMess = modifingTextMessage(update.getMessage().getText());
-
-        try {
-
-            var structureCommand = utilsSendMessage.getDataCommand(textMess);
-
-            var resEnum = structureCommand.getEnumTypeMessage();
-
-            var sendMessage = utilsMessage
-                    .generateSendMessageWithText(update, textMess + " не определена");
-
-            telegramBot.sendAnswerMessage(sendMessage);
-
-        } catch (Exception e) {
-            var sendMessage = utilsMessage.generateSendMessageWithText(update, e.getMessage());
-            telegramBot.sendAnswerMessage(sendMessage);
-        }
-    }*/
 
     /**
      * Обработка collback команд
