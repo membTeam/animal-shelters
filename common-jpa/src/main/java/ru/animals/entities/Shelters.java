@@ -3,7 +3,7 @@ package ru.animals.entities;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 @Getter
@@ -29,13 +29,13 @@ public class Shelters {
     private String contacts;
 
     /**
-     * Часы работы Ссылка на текстовый файл
+     * Часы работы Ссылка на текстовый файл work-schedule.txt
      */
     @Column(name = "work_schedule", columnDefinition = "varchar(100)")
     private String workSchedule;
 
     /**
-     * Правила поведения Ссылка на текстовый файл
+     * Техника безопасности на территории приюта Ссылка на текстовый файл territory-shelter-recommendation.txt
      */
     @Column(name = "rules_conduct", columnDefinition = "varchar(100)")
     private String rulesConduct;
@@ -44,10 +44,10 @@ public class Shelters {
      * Схема проезда Ссылка на текстовый файл
      */
     @Column(name = "driving_directions", columnDefinition = "varchar(100)")
-    private String drivingDirections;  // схемаПроезда
+    private String drivingDirections;
 
     /**
-     * История о приюте ссылка на текстовый файл
+     * История о приюте ссылка на текстовый файл  general-info-shelter.txt
      */
     @Column(name = "history_shelter", columnDefinition = "varchar(100)")
     private String historyShelter;

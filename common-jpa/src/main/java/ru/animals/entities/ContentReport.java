@@ -1,18 +1,20 @@
 package ru.animals.entities;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import org.hibernate.annotations.TypeDef;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 
 import lombok.*;
-import javax.persistence.*;
+import org.hibernate.type.SqlTypes;
+
 import java.util.Date;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+//@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Entity
 @Table(name = "content_report")
 public class ContentReport {
@@ -46,7 +48,8 @@ public class ContentReport {
     /**
      * Сведения по развемещнию фото в файле
      */
-    @Type(type = "jsonb")
+    //@Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private MetaDataPhoto metaDataPhoto;
 

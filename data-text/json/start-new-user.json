@@ -1,7 +1,7 @@
 {"chat_id":"charid",
   "text":"Добро пожаловать",
   "reply_markup":{"inline_keyboard":[
-    [{"text":"Волнтеры","callback_data":"btnstart"},
+    [{"text":"Волнтеры","callback_data":"dbvolunteers"},
       {"text":"Регистрация","callback_data":"nameFile-btn-menum"}],
-    [{"text":"textmes3","callback_data":"nameFile-btn-menum"}]]},
+    [{"text":"Усыновление","callback_data":"documents"}]]},
   "method":"btn-menu"}

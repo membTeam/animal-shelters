@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.web.JsonPath;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.Collection;
 
 /**

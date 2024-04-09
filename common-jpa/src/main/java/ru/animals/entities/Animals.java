@@ -1,13 +1,11 @@
 package ru.animals.entities;
 
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import ru.animals.entities.enumEntity.EnumLimitations;
-
-import javax.persistence.*;
 
 
 @Getter
@@ -15,7 +13,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Entity(name = "animals")
 public class Animals {
     @Id
@@ -30,7 +27,7 @@ public class Animals {
     /**
      * Сведения по развемещнию фото в файле
      */
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private MetaDataPhoto metaDataPhoto;
 

@@ -2,25 +2,23 @@ package ru.animals.utils;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeFile;
 
-import java.io.IOException;
-
 
 @Component
 public class UtilsMessage {
 
-    public SendMessage generateSendMessageWithBtn(Update update,
+    public SendMessage generateSendMessageWithBtn(Long chartId,
                                       DataFromParser dataParser) throws Exception {
 
         var file = dataParser.getSource();
-        var result = TelgramComp.sendMessageFromJSON(file);
-        var sendMessage = (SendMessage) result.VALUE;
-        sendMessage.setChatId(update.getMessage().getChatId().toString());
+        var valueFromMethod = TelgramComp.sendMessageFromJSON(file);
+        var sendMessage = (SendMessage) valueFromMethod.VALUE;
+
+        sendMessage.setChatId(chartId);
 
         var text = sendMessage.getText();
 
@@ -43,11 +41,10 @@ public class UtilsMessage {
         return sendMessage;
     }
 
-    public SendMessage generateSendMessageWithText(Update update, String text) {
-        var message = update.getMessage();
+    public SendMessage generateSendMessageWithText(Long chartId, String text) {
         var sendMessage = new SendMessage();
 
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(chartId);
         sendMessage.setText(text);
 
         return sendMessage;

@@ -1,12 +1,10 @@
 package ru.animals.entities;
 
 
+import jakarta.persistence.*;
 import lombok.*;
-import javax.persistence.*;
-
 import ru.animals.entities.commenModel.AuditEntity;
 import ru.animals.entities.enumEntity.EnumRoleUser;
-import ru.animals.entities.enumEntity.EnumState;
 
 import java.util.Collection;
 

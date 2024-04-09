@@ -6,7 +6,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.animals.repository.VolunteersRepository;
 import ru.animals.service.UpdateProducer;
+import ru.animals.service.VolunteersService;
+import ru.animals.service.impl.VolunteersServiceImpl;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.DataFromParser;
@@ -20,11 +23,17 @@ public class UpdateController {
     private UtilsMessage utilsMessage;
     private UpdateProducer updateProducer;
     private UtilsSendMessage utilsSendMessage;
+    private VolunteersService volunteersService;
 
-    public UpdateController(UtilsMessage utilsMessage, UpdateProducer updateProducer, UtilsSendMessage utilsSendMessage) {
+    public UpdateController(UtilsMessage utilsMessage,
+                            UpdateProducer updateProducer,
+                            UtilsSendMessage utilsSendMessage,
+                            VolunteersService volunteersService
+                            ) {
         this.utilsMessage = utilsMessage;
         this.updateProducer = updateProducer;
         this.utilsSendMessage = utilsSendMessage;
+        this.volunteersService = volunteersService;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -39,6 +48,19 @@ public class UpdateController {
     private String modifingTextMessage(String text) {
         return text.charAt(0) == '/' ? text.substring(1) : text;
     }
+
+    private Long getCharIdFromUpdate(Update update) {
+        return update.hasCallbackQuery()
+                ? update.getCallbackQuery().getMessage().getChatId()
+                : update.getMessage().getChatId();
+    }
+
+    private String getTextMesFromUpdate(Update update) {
+        return update.hasCallbackQuery()
+                ? update.getCallbackQuery().getMessage().getText()
+                : update.getMessage().getText();
+    }
+
 
     /**
      * Менеджер команд в зависимости от типа сообщения
@@ -56,12 +78,18 @@ public class UpdateController {
             }
 
             if (update.hasMessage()) {
+                if (!update.hasMessage() || !update.getMessage().hasText()) {
+                    return;
+                }
+
                 distributeTextMessages(update);
             } else if (update.hasCallbackQuery()) {
                 distributeCallbackQueryMessages(update);
             }
         } catch (Exception e) {
-            var sendMessage = utilsMessage.generateSendMessageWithText(update, e.getMessage());
+            var chartId = getCharIdFromUpdate(update);
+
+            var sendMessage = utilsMessage.generateSendMessageWithText(chartId, e.getMessage());
             telegramBot.sendAnswerMessage(sendMessage);
         }
     }
@@ -72,33 +100,24 @@ public class UpdateController {
      * @throws Exception
      */
     private void distributeTextMessages(Update update) throws Exception {
-        if (!update.hasMessage() || !update.getMessage().hasText()) {
-            return;
-        }
 
-        var textMess = modifingTextMessage(modifingTextMessage(update.getMessage().getText()));
-
-        if (textMess.equals("start")) {
-            distributeMenu(update);
-            return;
-        }
+        String textMess = getTextMesFromUpdate(update);
+        Long charId = getCharIdFromUpdate(update);
 
         var structureCommand = utilsSendMessage.getDataCommand(textMess);
 
         if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_message) {
-            sendTextMessage(update, structureCommand);
+            sendTextMessage(charId, structureCommand);
         } else {
-            distributeMenu(update);
+            distributeMenu(charId, textMess);
         }
 
     }
 
-    private void distributeMenu(Update update) throws Exception {
-
-        var textMess = modifingTextMessage(update.getMessage().getText());
+    private void distributeMenu(Long chartId, String textMess) throws Exception {
         var structureCommand = utilsSendMessage.getDataCommand(textMess);
 
-        var sendMessage = utilsMessage.generateSendMessageWithBtn(update, structureCommand);
+        var sendMessage = utilsMessage.generateSendMessageWithBtn(chartId, structureCommand);
 
         telegramBot.sendAnswerMessage(sendMessage);
 
@@ -108,12 +127,30 @@ public class UpdateController {
      * Обработка collback команд
      * @param update
      */
-    private void distributeCallbackQueryMessages(Update update) {
-        var textMessage = utilsMessage.generateSendMessageWithText(update, "Сервис не определен");
-        telegramBot.sendAnswerMessage(textMessage);
+    private void distributeCallbackQueryMessages(Update update) throws Exception {
+        var textQuery = update.getCallbackQuery().getData();
+        var chartId = getCharIdFromUpdate(update);
+
+        var structureCommand = utilsSendMessage.getDataCommand(textQuery);
+
+        if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_message) {
+            sendTextMessage(chartId, structureCommand);
+        } else if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.FROM_DB) {
+            var textMess = volunteersService.contactsVoluteers();
+
+            var sendMessage = new SendMessage();
+            sendMessage.setChatId(chartId);
+            sendMessage.setText(textMess);
+
+            telegramBot.sendAnswerMessage(sendMessage);
+
+        } else {
+            distributeMenu(chartId, textQuery);
+        }
+
     }
 
-    private void sendTextMessage(Update update, DataFromParser structureCommand) throws Exception {
+    private void sendTextMessage(Long charId, DataFromParser structureCommand) throws Exception {
 
         var dataFromFile = FileAPI.readDataFromFile(structureCommand.getSource());
 
@@ -123,7 +160,7 @@ public class UpdateController {
 
         var txtMessage = (String) dataFromFile.VALUE;
 
-        var sendMessage = utilsMessage.generateSendMessageWithText(update, txtMessage);
+        var sendMessage = utilsMessage.generateSendMessageWithText(charId, txtMessage);
 
         sendMessage.setParseMode(ParseMode.MARKDOWN);
         telegramBot.sendAnswerMessage(sendMessage);

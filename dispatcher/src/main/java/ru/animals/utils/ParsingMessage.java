@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.ValueFromMethod;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeFile;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeMessage;
 
 
@@ -16,12 +17,13 @@ public class ParsingMessage {
 
     private static EnumTypeMessage initEnumTypeMessage(String strTypeMessage) {
         return switch (strTypeMessage) {
-            case "sendmessage" -> EnumTypeMessage.TEXT_message;
+            case "sendmessage", "documents"  -> EnumTypeMessage.TEXT_message;
             case "sendsimplemessage" -> EnumTypeMessage.SIMPLE_message;
             case "sendmultymessage" -> EnumTypeMessage.MULTY_message;
             case "start" -> EnumTypeMessage.START;
             case "startregist" -> EnumTypeMessage.STARTREGIST;
             case "menuvolonters" -> EnumTypeMessage.VOLONTER;
+            case "dbvolunteers" -> EnumTypeMessage.FROM_DB;
 
             default -> EnumTypeMessage.EMPTY;
         };
