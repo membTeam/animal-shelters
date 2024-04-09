@@ -20,6 +20,7 @@ public class ParsingMessage {
             case "sendsimplemessage" -> EnumTypeMessage.SIMPLE_message;
             case "sendmultymessage" -> EnumTypeMessage.MULTY_message;
             case "start" -> EnumTypeMessage.START;
+            case "startregist" -> EnumTypeMessage.STARTREGIST;
             case "menuvolonters" -> EnumTypeMessage.VOLONTER;
 
             default -> EnumTypeMessage.EMPTY;

@@ -5,9 +5,10 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Collection;
 
-
+/**
+ * Сущность породы животных
+ */
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

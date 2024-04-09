@@ -4,8 +4,10 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Collection;
 
+/**
+ * Фото животного размещение в файле
+ */
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,18 +18,25 @@ public class PhotoAnimals {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * path фото
+     */
+    @Column(name = "path_file", columnDefinition = "varchar(200)")
+    private String pathFile;
+
     @Column(name = "file_size")
     private Integer fileSize;
 
     @Column(name = "media_type", columnDefinition = "varchar(20)")
     private String mediaType;
 
-    @Column(name = "file_path", columnDefinition = "varchar(150)")
-    private String filePath;
-
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "photo_animals_id")
-    private Collection<Animals> animals;
+    private Animals animals;
 
-    private byte[] bytes;
+   /* @OneToMany
+    @JoinColumn(name = "photo_animals_id")
+    private Collection<Animals> animals;*/
+
+//    private byte[] bytes;
 }

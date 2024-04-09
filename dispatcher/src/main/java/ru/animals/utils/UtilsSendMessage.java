@@ -24,7 +24,7 @@ public class UtilsSendMessage {
         return ERROR;
     }
 
-    public UtilsSendMessage(@Value("${menu.confiuuration}") String file) {
+    public UtilsSendMessage(@Value("${menu.configuration}") String file) {
         // TODO: вынести в конфигурационный файл
 
         ValueFromMethod resultLoadData = FileAPI.readConfiguration(file);

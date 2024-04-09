@@ -26,9 +26,15 @@ public class Animals {
 
     private String nickname;
 
-    @Column(name = "date_birth", columnDefinition = "date")
-    private Date dateBirth;
+    /**
+     * true животное можно усыновить false
+     */
+    private boolean status;
 
+    /**
+     * Использование строкового идентификатора
+     * Состояние животного
+     */
     @Enumerated(EnumType.STRING)
     private EnumLimitations limitations;
 }

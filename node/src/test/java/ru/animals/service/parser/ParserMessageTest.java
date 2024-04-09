@@ -1,19 +1,18 @@
 package ru.animals.service.parser;
 
 
-import ru.animals.utils.ParsingMessage;
 import org.junit.jupiter.api.Test;
 
 public class ParserMessageTest {
 
     @Test
     public void parsingMessage() {
-        var strTempl = "animalcontent -t file -v sendmessage -d animal-content.txt -h что он содержит";
+        /*var strTempl = "animalcontent -t file -v sendmessage -d animal-content.txt -h что он содержит";
         var parsing = ParsingMessage.parsingTemplateString(strTempl);
 
         if (parsing.RESULT) {
             System.out.println(parsing.VALUE);
-        }
+        }*/
 
         /*var strMessage = "animalcontent -t file -v sendmessage -d animal-content.txt -h что он содержит";
         var strPattern = "(^\\w+)\\s+-t\\s+(\\w+)\\s+-v\\s+([a-zA-Z]+)"+

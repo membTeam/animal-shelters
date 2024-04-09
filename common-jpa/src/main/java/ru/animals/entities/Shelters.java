@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,28 +16,43 @@ public class Shelters {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name_shelterl", columnDefinition = "varchar(100)")
-    private String nameShelterl;
+    @Column(name = "name_shelter", columnDefinition = "varchar(100)")
+    private String nameShelter;
 
     @Column(columnDefinition = "varchar(200)")
     private String adress;
 
-    @Column(columnDefinition = "varchar(20)")
+    /**
+     * Контактные данные ссылка на текстовый файл
+     */
+    @Column(columnDefinition = "varchar(100)")
     private String contacts;
 
-    @Column(name = "work_schedule", columnDefinition = "varchar(200)")
-    private String workSchedule;   // часы работы
+    /**
+     * Часы работы Ссылка на текстовый файл
+     */
+    @Column(name = "work_schedule", columnDefinition = "varchar(100)")
+    private String workSchedule;
 
-    @Column(name = "rules_conduct", columnDefinition = "varchar(500)")
-    private String rulesConduct;    // правилаПоведения
+    /**
+     * Правила поведения Ссылка на текстовый файл
+     */
+    @Column(name = "rules_conduct", columnDefinition = "varchar(100)")
+    private String rulesConduct;
 
-    @Column(name = "driving_directions", columnDefinition = "varchar(200)")
+    /**
+     * Схема проезда Ссылка на текстовый файл
+     */
+    @Column(name = "driving_directions", columnDefinition = "varchar(100)")
     private String drivingDirections;  // схемаПроезда
 
-    @Column(name = "story_Shelter", columnDefinition = "text")
-    private String storyShelter;
+    /**
+     * История о приюте ссылка на текстовый файл
+     */
+    @Column(name = "history_shelter", columnDefinition = "varchar(100)")
+    private String historyShelter;
 
     @OneToOne
-    private Breeds breeds;
+    private TypeAnimations typeAnimations;
 
 }

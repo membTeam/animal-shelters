@@ -27,7 +27,6 @@ public class Adoption {
     private Long user_id;
     private Long animate_id;
 
-
     @OneToMany
     @JoinColumn(name = "content_report_id")
     private Collection<contentReport> listContentReport;

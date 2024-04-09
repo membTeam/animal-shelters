@@ -24,4 +24,5 @@ public class TypeAnimations {
     @OneToMany
     @JoinColumn(name = "type_animations_id")
     private Collection<Breeds> breeds;
+
 }
