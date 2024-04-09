@@ -38,14 +38,14 @@ public class FileAPI {
      */
     private static Path getRootPath() {
         var userDir = System.getProperty("user.dir");
-        Path pathFile;
-        if (!userDir.endsWith("animals")) {
-            pathFile = Path.of(userDir).getParent();
-        } else {
-            pathFile = Path.of(userDir);
-        }
+        return Path.of(userDir);
+//        if (!userDir.endsWith("animals") || !userDir.endsWith("animal-shelters")) {
+//            pathFile = Path.of(userDir).getParent();
+//        } else {
+//            pathFile = Path.of(userDir);
+//        }
 
-        return pathFile;
+//        return pathFile;
     }
 
     private static Path pathObjForFile (String file) {
