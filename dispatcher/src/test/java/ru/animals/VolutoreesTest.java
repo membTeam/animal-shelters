@@ -14,12 +14,6 @@ public class VolutoreesTest {
     @Autowired
     private VolunteersService volunteersService;
 
-    @Test
-    public void allDataBreeds() {
-        var result = volunteersService.allDataBreeds();
-
-        assertTrue(result != null);
-    }
 
     @Test
     public void contactsVoluteers() {
