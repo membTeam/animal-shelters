@@ -1,7 +1,7 @@
 package ru.animals.entities;
 
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 import ru.animals.entities.commenModel.AuditEntity;
 import ru.animals.entities.enumEntity.EnumRoleUser;

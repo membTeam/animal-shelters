@@ -1,19 +1,24 @@
 package ru.animals.entities;
 
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
+import javax.persistence.*;
 import ru.animals.entities.enumEntity.EnumLimitations;
 
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity(name = "animals")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Animals {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +32,8 @@ public class Animals {
     /**
      * Сведения по развемещнию фото в файле
      */
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    @Column(name = "meta_data_photo", columnDefinition = "jsonb")
     private MetaDataPhoto metaDataPhoto;
 
     /**

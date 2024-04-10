@@ -1,6 +1,6 @@
 package ru.animals.entities;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 import java.util.Collection;
 

@@ -17,7 +17,7 @@ public class NodeApplicationTest {
     @Test
     void contextLoads() {
 
-        var result = shelterRepository.findAll();
+        var result = shelterRepository.getDataShelters("rules.txt");
 
         assertTrue(result.size()>0);
     }

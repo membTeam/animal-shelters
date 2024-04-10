@@ -3,8 +3,7 @@ package ru.animals.entities;
 
 import lombok.*;
 
-import jakarta.persistence.*;
-
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor

@@ -1,12 +1,12 @@
 package ru.animals.entities;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
+import javax.persistence.*;
+
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import lombok.*;
-import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
 
@@ -14,9 +14,9 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Entity
 @Table(name = "content_report")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class ContentReport {
 
     @Id
@@ -48,9 +48,8 @@ public class ContentReport {
     /**
      * Сведения по развемещнию фото в файле
      */
-    //@Type(type = "jsonb")
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    @Column(name = "meta_data_photo", columnDefinition = "jsonb")
     private MetaDataPhoto metaDataPhoto;
 
 }
