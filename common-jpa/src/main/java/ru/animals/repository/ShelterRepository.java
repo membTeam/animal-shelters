@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ShelterRepository extends JpaRepository<Shelters, Long> {
-/*    @Query("From Shelters sh where sh.rulesConduct = :rulesConduct")
-    List<Shelters> getDataShelters(String rulesConduct);*/
+    @Query("From shelters sh where sh.rulesConduct = :rulesConduct")
+    List<Shelters> getDataShelters(String rulesConduct);
 
     //Collection<Shelters> findAllByRulesConduct(String str);
 

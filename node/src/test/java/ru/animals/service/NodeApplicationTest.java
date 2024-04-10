@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.animals.NodeApplication;
-import ru.animals.repository.ShelteNextrRepository;
+import ru.animals.repository.ShelterRepository;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NodeApplicationTest {
 
     @Autowired
-    private ShelteNextrRepository shelterRepository;
+    private ShelterRepository shelterRepository;
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
 
         var result = shelterRepository.getDataShelters("rules.txt");
 

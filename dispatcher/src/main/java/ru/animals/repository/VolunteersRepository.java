@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface VolunteersRepository extends JpaRepository<Volunteers, Long> {
 
-    @Query(value = "select vl From Volunteers vl where vl.chartName = :chartName")
+    @Query(value = "From volunteers vl where vl.chartName = :chartName")
     List<Volunteers> volonterForChartName(String chartName);
 
 }

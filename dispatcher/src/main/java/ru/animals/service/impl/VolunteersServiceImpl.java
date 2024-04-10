@@ -19,13 +19,12 @@ public class VolunteersServiceImpl implements VolunteersService {
         this.volunteersRepository = volunteersRepository;
     }
 
-
-    @Override
+    /*@Override
     public Collection<Volunteers> allDataBreeds() {
         var result = volunteersRepository.volonterForChartName("chartSecornd");
         return result;
 
-    }
+    }*/
 
     @Override
     public String contactsVoluteers (){

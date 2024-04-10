@@ -7,6 +7,6 @@ import java.util.Collection;
 
 public interface VolunteersService {
     String contactsVoluteers ();
-    Collection<Volunteers> allDataBreeds();
+    //Collection<Volunteers> allDataBreeds();
 
 }
