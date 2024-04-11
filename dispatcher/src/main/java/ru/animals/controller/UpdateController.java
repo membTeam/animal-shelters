@@ -2,14 +2,14 @@ package ru.animals.controller;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.repository.VolunteersRepository;
+import ru.animals.service.CommonService;
 import ru.animals.service.UpdateProducer;
-import ru.animals.service.VolunteersService;
-import ru.animals.service.impl.VolunteersServiceImpl;
+
+//import ru.animals.service.VolunteersService;
+
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.DataFromParser;
@@ -23,17 +23,16 @@ public class UpdateController {
     private UtilsMessage utilsMessage;
     private UpdateProducer updateProducer;
     private UtilsSendMessage utilsSendMessage;
-    private VolunteersService volunteersService;
+    private CommonService commonService;
 
     public UpdateController(UtilsMessage utilsMessage,
                             UpdateProducer updateProducer,
-                            UtilsSendMessage utilsSendMessage,
-                            VolunteersService volunteersService
-                            ) {
+                            UtilsSendMessage utilsSendMessage, CommonService commonService
+    ) {
         this.utilsMessage = utilsMessage;
         this.updateProducer = updateProducer;
         this.utilsSendMessage = utilsSendMessage;
-        this.volunteersService = volunteersService;
+        this.commonService = commonService;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -136,11 +135,8 @@ public class UpdateController {
         if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_message) {
             sendTextMessage(chartId, structureCommand);
         } else if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.FROM_DB) {
-            var textMess = volunteersService.contactsVoluteers();
 
-            var sendMessage = new SendMessage();
-            sendMessage.setChatId(chartId);
-            sendMessage.setText(textMess);
+            var sendMessage = commonService.distributeStrCommand(chartId, structureCommand);
 
             telegramBot.sendAnswerMessage(sendMessage);
 

@@ -21,6 +21,8 @@ import java.util.Collection;
 @Table(name = "user_bot")
 public class UserBot extends AuditEntity {
 
+    // TODO: изменить идентификатор поля char_id into chat_id
+    //  также сделать это в репозитории boolean isExistsUserBot(Long chartid)
     @Id
     @Column(name = "char_id")
     private Long charId;

@@ -43,15 +43,8 @@
         <dependency>
             <groupId>io.hypersistence</groupId>
             <artifactId>hypersistence-utils-hibernate-55</artifactId>
-            <version>3.7.3</version>
+            <version>${hibernate-55.version}</version>
         </dependency>
-
-
-<!--        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20231013</version>
-        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -31,6 +31,7 @@
         <telegram.version>6.7.0</telegram.version>
         <log4j.version>1.2.17</log4j.version>
         <lombok.servion>1.18.30</lombok.servion>
+        <hibernate-55.version>3.7.3</hibernate-55.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
