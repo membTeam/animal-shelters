@@ -73,7 +73,7 @@ public class UpdateController {
 
         try {
             if (utilsSendMessage.isERROR()) {
-                throw new Exception("Нет буфера команд");
+                throw new Exception("Internal error");
             }
 
             if (update.hasMessage()) {

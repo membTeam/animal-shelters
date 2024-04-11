@@ -18,6 +18,6 @@ public final class ValueFromMethod<T> {
     }
 
     public T getValue() {
-        return VALUE;
+        return (T) VALUE;
     }
 }

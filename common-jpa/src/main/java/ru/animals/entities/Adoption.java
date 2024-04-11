@@ -4,6 +4,7 @@ package ru.animals.entities;
 import javax.persistence.*;
 import lombok.*;
 
+import java.util.Collection;
 import java.util.Date;
 
 
@@ -29,4 +30,7 @@ public class Adoption {
     private Long user_id;
     private Long animate_id;
 
+    @OneToMany
+    @JoinColumn(name = "adoption_id")
+    private Collection<ContentReport> lsContentReport;
 }

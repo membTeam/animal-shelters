@@ -37,7 +37,7 @@ public class FileAPI {
         var index = file.lastIndexOf(".");
         var strType = file.substring(index+1).toLowerCase();
         return switch (strType) {
-            case "txt" -> EnumTypeFile.TEXT;
+            case "txt", "inf" -> EnumTypeFile.TEXT;
             case "json" -> EnumTypeFile.JSON;
             case "conf" -> EnumTypeFile.CONFIGURATION;
 

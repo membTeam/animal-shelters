@@ -1,7 +1,7 @@
 {"chat_id":"charid",
-  "text":"Добро пожаловать",
+  "text":"file:greeting-new-client.txt",
   "reply_markup":{"inline_keyboard":[
-    [{"text":"Волнтеры","callback_data":"dbvolunteers"},
-      {"text":"Регистрация","callback_data":"nameFile-btn-menum"}],
-    [{"text":"Усыновление","callback_data":"documents"}]]},
+    [{"text":"Приюты","callback_data":"txtinfoshelter"},
+      {"text":"Регистрация","callback_data":"btnregister"}],
+    [{"text":"Вызов волонтера","callback_data":"dbdvolunteer"}]]},
   "method":"btn-menu"}

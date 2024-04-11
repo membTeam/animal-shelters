@@ -16,7 +16,7 @@ public class UtilsMessage {
 
         var file = dataParser.getSource();
         var valueFromMethod = TelgramComp.sendMessageFromJSON(file);
-        var sendMessage = (SendMessage) valueFromMethod.VALUE;
+        SendMessage sendMessage = valueFromMethod.getValue();
 
         sendMessage.setChatId(chartId);
 

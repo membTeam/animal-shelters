@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class TelgramComp {
 
-    public static ValueFromMethod sendMessageFromJSON(String fileJson) {
+    public static ValueFromMethod<SendMessage> sendMessageFromJSON(String fileJson) {
 
         try {
             var dataFromFile = FileAPI.readDataFromFile(fileJson);
@@ -24,7 +24,7 @@ public class TelgramComp {
 
             var sendMessage = mapper.readValue(json, SendMessage.class);
 
-            return new ValueFromMethod(sendMessage);
+            return new ValueFromMethod<SendMessage>(sendMessage);
 
         } catch (IOException e) {
             return new ValueFromMethod(false, e.getMessage());
