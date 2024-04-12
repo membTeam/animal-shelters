@@ -2,10 +2,7 @@ package ru.animals.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.animals.utilsDEVL.DataFromParser;
-import ru.animals.utilsDEVL.FileAPI;
-import ru.animals.utilsDEVL.ParsingStringFromConfigFile;
-import ru.animals.utilsDEVL.ValueFromMethod;
+import ru.animals.utilsDEVL.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +14,7 @@ import java.util.Map;
 @Service
 public class UtilsSendMessage {
     private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
+    private Map<String, DataFromParserForCollback> mapCollback = new HashMap<>();
 
     private boolean ERROR=true;
     private String mesRrror = "ok";
@@ -25,28 +23,56 @@ public class UtilsSendMessage {
         return ERROR;
     }
 
-    public UtilsSendMessage(@Value("${menu.configuration}") String file)  {
-        // TODO: вынести в конфигурационный файл
-
-        ValueFromMethod<List<String>> resultLoadData = FileAPI.readConfiguration(file);
+    public UtilsSendMessage(@Value("${menu.configuration}") String fileConfig,
+                            @Value("${collback.configuration}") String fileConfCollback )  {
 
         // TODO: добавить вывод в логФайл
-        if (!resultLoadData.RESULT) {
-            mesRrror = resultLoadData.MESSAGE;
-            ERROR = true;
+        ValueFromMethod<List<String>> resLoadConfig = loadDataFromConfFile(fileConfig);
+        if (registerError(resLoadConfig)) {
+            return;
+        }
+        var listFromConfFile = resLoadConfig.getValue();
+
+        ValueFromMethod<List<String>> resLoadCallBack = loadDataFromConfFile(fileConfCollback);
+        if (registerError(resLoadCallBack)) {
+            return;
+        }
+        var listFromConfCollback = resLoadCallBack.getValue();
+
+
+        var result = ParsingStringFromConfigFile
+                        .parsingStringConfig(mapSendMessage, listFromConfFile);
+        if (registerError(result)) {
             return;
         }
 
-        var result =
-                ParsingStringFromConfigFile.parsingStringConfig(mapSendMessage, resultLoadData.getValue());
-
-        ERROR = !result.RESULT;
-        if (ERROR) {
-            mesRrror = result.MESSAGE;
-        }
+        var resultBollback = ParsingStringFromConfigFile
+                        .parsingStrConfigComdCollback(mapCollback, listFromConfCollback);
+        registerError(resultBollback);
     }
 
-    public DataFromParser getDataCommand(String strCommand) throws Exception {
+    private boolean registerError(ValueFromMethod value) {
+        ERROR = !value.RESULT;
+        if (ERROR) {
+            mesRrror = value.MESSAGE;
+        }
+
+        return ERROR;
+    }
+
+    private ValueFromMethod loadDataFromConfFile(String file) {
+        ValueFromMethod<List<String>> resultLoadData = FileAPI.readConfiguration(file);
+        if (!resultLoadData.RESULT) {
+            mesRrror = resultLoadData.MESSAGE;
+            ERROR = true;
+            return new ValueFromMethod(false, resultLoadData.MESSAGE);
+        }
+
+        return resultLoadData;
+    }
+
+
+    public DataFromParser getStructureCommand(String strCommand) throws Exception {
 
         if (isERROR()) {
             throw new Exception("Нет данных по командам");
@@ -54,25 +80,6 @@ public class UtilsSendMessage {
 
         if (mapSendMessage.containsKey(strCommand)) {
             return mapSendMessage.get(strCommand);
-        } else {
-            throw new Exception("Команда не определена");
-        }
-    }
-
-    public String getSource(String strCommand) throws Exception {
-
-        if (isERROR()) {
-            throw new Exception("Нет данных по командам");
-        }
-
-        if (mapSendMessage.containsKey(strCommand)) {
-            String result;
-            var obj = mapSendMessage.get(strCommand);
-            if (obj.getTypeCommand().equals("file") && obj.getParameter().equals("sendmessage")) {
-                return "text-data/" + obj.getSource();
-            } else {
-                throw new Exception("Обработчик команды не определен");
-            }
         } else {
             throw new Exception("Команда не определена");
         }

@@ -103,7 +103,7 @@ public class UpdateController {
         String textMess = getTextMessFromUpdate(update);
         Long charId = getCharIdFromUpdate(update);
 
-        var structureCommand = utilsSendMessage.getDataCommand(textMess);
+        var structureCommand = utilsSendMessage.getStructureCommand(textMess);
         var enumType = structureCommand.getEnumTypeMessage();
 
         if ( enumType == EnumTypeMessage.TEXT_MESSAGE) {
@@ -117,7 +117,7 @@ public class UpdateController {
     }
 
     private void distributeMenu(Long chartId, String textMess) throws Exception {
-        var structureCommand = utilsSendMessage.getDataCommand(textMess);
+        var structureCommand = utilsSendMessage.getStructureCommand(textMess);
 
         var sendMessage = utilsMessage.generateSendMessageWithBtn(chartId, structureCommand);
 
@@ -133,7 +133,7 @@ public class UpdateController {
         var textQuery = update.getCallbackQuery().getData();
         var chartId = getCharIdFromUpdate(update);
 
-        var structureCommand = utilsSendMessage.getDataCommand(textQuery);
+        var structureCommand = utilsSendMessage.getStructureCommand(textQuery);
 
         if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_MESSAGE) {
             sendTextMessage(chartId, structureCommand);
