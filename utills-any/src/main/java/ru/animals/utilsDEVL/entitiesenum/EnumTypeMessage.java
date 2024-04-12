@@ -1,11 +1,11 @@
 package ru.animals.utilsDEVL.entitiesenum;
 
 public enum EnumTypeMessage {
-    EMPTY, SENDMESSAGE, START, FROM_DB, STARTREGIST, VOLONTER, TEXT_MESSAGE, SIMPLE_MESSAGE, MULTY_MESSAGE;
+    EMPTY, START, FROM_DB, STARTREGIST, VOLONTER, TEXT_MESSAGE, SIMPLE_MESSAGE, MULTY_MESSAGE;
 
     public static EnumTypeMessage of(String strEnum) {
         EnumTypeMessage result = switch (strEnum.trim().toUpperCase()) {
-            case "SENDMESSAGE" -> EnumTypeMessage.SENDMESSAGE;
+            case "SENDMESSAGE" -> EnumTypeMessage.TEXT_MESSAGE;
             case "START" -> EnumTypeMessage.START;
             case "FROM_DB", "FROMDB" -> EnumTypeMessage.FROM_DB;
             case "STARTREGIST" -> EnumTypeMessage.STARTREGIST;

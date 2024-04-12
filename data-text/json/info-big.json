@@ -1,0 +1,17 @@
+{"chat_id":"charid",
+  "text":"",
+  "reply_markup":{"inline_keyboard":[
+    [{"text":"Знакомство\uD83D\uDC31\uD83D\uDC40\uD83D\uDC36","callback_data":"txtrules"},
+      {"text":"Документы\uD83D\uDCC4","callback_data":"txtdocuments"}],
+    [{"text":"Собака в доме\uD83C\uDFE0\uD83D\uDC15","callback_data":"txthomeimprovementrecommendationdog"},
+      {"text":"Щенок в доме\uD83C\uDFE0\uD83D\uDC36","callback_data":"txthomeimprovementrecommendationpuppy"}],
+    [{"text":"Кошка в доме\uD83C\uDFE0\uD83D\uDC08","callback_data":"txthomeimprovementrecommendationcat"},
+      {"text":"Котёнок в доме\uD83C\uDFE0\uD83D\uDC31","callback_data":"txthomeimprovementrecommendationkitten"}],
+    [{"text":"Кинологи\uD83D\uDC15\u200D\uD83E\uDDBA\uD83E\uDDD1","callback_data":"txtcynologistverified"},
+      {"text":"Совет кинолога\uD83D\uDCA1\uD83D\uDC15","callback_data":"txtadvicecynologist"}],
+    [{"text":"Причины отказа❌","callback_data":"txtrefusal"},
+      {"text":"Транспортировка\uD83D\uDE9A","callback_data":"txttransportationrecommendation"}],
+    [{"text":"Содержание ограниченных питомцев⛔\uD83D\uDC3E","callback_data":"txtanimalspoorhealthrecommendation"}],
+    [{"text":"Вызов волонтёра\uD83E\uDD1D","callback_data":"dbdvolunteer"}],
+    [{"text":"Начало меню▶\uFE0F","callback_data":"btnstart"}]]},
+  "method":"btn-menu"}

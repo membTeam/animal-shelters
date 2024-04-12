@@ -90,7 +90,7 @@ public class FileAPI {
      * Считывание конфигурационного файла config-command.txt
      * @return
      */
-    public static ValueFromMethod readConfiguration(String file){
+    public static ValueFromMethod<List<String>> readConfiguration(String file){
         ValueFromMethod result;
 
         try  {

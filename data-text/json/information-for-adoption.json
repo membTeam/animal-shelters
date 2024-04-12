@@ -1,0 +1,5 @@
+{"chat_id":"charid",
+  "text":"",
+  "reply_markup":{"inline_keyboard":[
+    [{"text":"Информация для усыновления\uD83D\uDCDA","callback_data":"btninfopet"}]]},
+  "method":"btn-menu"}

@@ -1,0 +1,5 @@
+{"chat_id":"charid",
+  "text":"daily-report-form.inf",
+  "reply_markup":{"inline_keyboard":[
+    [{"text":"Начать\uD83D\uDCDD","callback_data":"dbdreport"}]]},
+  "method":"btn-menu"}

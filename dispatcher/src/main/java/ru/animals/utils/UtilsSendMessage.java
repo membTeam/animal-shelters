@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.FileAPI;
+import ru.animals.utilsDEVL.ParsingStringFromConfigFile;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class UtilsSendMessage {
     public UtilsSendMessage(@Value("${menu.configuration}") String file)  {
         // TODO: вынести в конфигурационный файл
 
-        ValueFromMethod resultLoadData = FileAPI.readConfiguration(file);
+        ValueFromMethod<List<String>> resultLoadData = FileAPI.readConfiguration(file);
 
         // TODO: добавить вывод в логФайл
         if (!resultLoadData.RESULT) {
@@ -36,7 +37,9 @@ public class UtilsSendMessage {
             return;
         }
 
-        var result = ParsingMessage.parsingTemplateString(mapSendMessage, (List<String>) resultLoadData.VALUE);
+        var result =
+                ParsingStringFromConfigFile.parsingStringConfig(mapSendMessage, resultLoadData.getValue());
+                // ParsingMessage.parsingTemplateString(mapSendMessage, (List<String>) resultLoadData.VALUE);
 
         ERROR = !result.RESULT;
         if (ERROR) {
