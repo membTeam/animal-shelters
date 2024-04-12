@@ -26,7 +26,7 @@ public class UtilsMessage {
             var index = text.indexOf(":");
             var fileMes = text.substring(++index);
 
-            if (FileAPI.getTypeFile(fileMes) != EnumTypeFile.TEXT) {
+            if (FileAPI.getTypeFile(fileMes) != EnumTypeFile.INF) {
                 throw new Exception("Не соответствие типа файла");
             }
 
@@ -35,7 +35,7 @@ public class UtilsMessage {
                 throw new Exception(textFromFile.MESSAGE);
             }
 
-            sendMessage.setText( (String) textFromFile.VALUE);
+            sendMessage.setText((String) textFromFile.VALUE);
         }
 
         return sendMessage;

@@ -54,7 +54,7 @@ public class UpdateController {
                 : update.getMessage().getChatId();
     }
 
-    private String getTextMesFromUpdate(Update update) {
+    private String getTextMessFromUpdate(Update update) {
         return update.hasCallbackQuery()
                 ? update.getCallbackQuery().getMessage().getText()
                 : update.getMessage().getText();
@@ -81,7 +81,7 @@ public class UpdateController {
                     return;
                 }
 
-                distributeTextMessages(update);
+                distrtMessagesBytype(update);
             } else if (update.hasCallbackQuery()) {
                 distributeCallbackQueryMessages(update);
             }
@@ -98,17 +98,20 @@ public class UpdateController {
      * @param update
      * @throws Exception
      */
-    private void distributeTextMessages(Update update) throws Exception {
+    private void distrtMessagesBytype(Update update) throws Exception {
 
-        String textMess = getTextMesFromUpdate(update);
+        String textMess = getTextMessFromUpdate(update);
         Long charId = getCharIdFromUpdate(update);
 
         var structureCommand = utilsSendMessage.getDataCommand(textMess);
+        var enumType = structureCommand.getEnumTypeMessage();
 
-        if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_MESSAGE) {
+        if ( enumType == EnumTypeMessage.TEXT_MESSAGE) {
             sendTextMessage(charId, structureCommand);
-        } else {
+        } else if (enumType == EnumTypeMessage.BTMMENU) {
             distributeMenu(charId, textMess);
+        } else {
+            throw new Exception("Internal error");
         }
 
     }

@@ -1,5 +1,5 @@
 package ru.animals.utilsDEVL.entitiesenum;
 
 public enum EnumTypeFile {
-    TEXT, JSON, IMAGE, CONFIGURATION, NONE
+    TXT, INF, JSON, IMAGE, CONFIGURATION, NONE
 }

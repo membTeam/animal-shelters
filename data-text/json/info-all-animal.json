@@ -1,5 +1,5 @@
 {"chat_id":"charid",
-  "text":"",
+  "text":"Выберите вид животного",
   "reply_markup":{"inline_keyboard":[
     [{"text":"Кошки\uD83D\uDC31","callback_data":"dbdinfoallanimalfreecat"},
       {"text":"Собаки\uD83D\uDC36","callback_data":"dbdinfoallanimalfreedog"}]]},

@@ -1,6 +1,5 @@
 package ru.animals.utilsDEVL;
 
-import lombok.Value;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -37,7 +36,8 @@ public class FileAPI {
         var index = file.lastIndexOf(".");
         var strType = file.substring(index+1).toLowerCase();
         return switch (strType) {
-            case "txt", "inf" -> EnumTypeFile.TEXT;
+            case "txt" -> EnumTypeFile.TXT;
+            case "inf" -> EnumTypeFile.INF;
             case "json" -> EnumTypeFile.JSON;
             case "conf" -> EnumTypeFile.CONFIGURATION;
 
@@ -70,7 +70,7 @@ public class FileAPI {
         var dataText = "data-text/";
 
         var pathDirTextFile = switch (getTypeFile(file)) {
-            case TEXT -> dataText + "text-data/";
+            case TXT, INF -> dataText + "text-data/";
             case JSON -> dataText + "json/";
             case CONFIGURATION -> dataText;
             default -> "empty";
@@ -120,7 +120,7 @@ public class FileAPI {
      * @param file
      * @return ValueFromMethod
      */
-    public static ValueFromMethod readDataFromFile(String file) {
+    public static ValueFromMethod<String> readDataFromFile(String file) {
 
         ValueFromMethod result;
 

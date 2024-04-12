@@ -39,7 +39,6 @@ public class UtilsSendMessage {
 
         var result =
                 ParsingStringFromConfigFile.parsingStringConfig(mapSendMessage, resultLoadData.getValue());
-                // ParsingMessage.parsingTemplateString(mapSendMessage, (List<String>) resultLoadData.VALUE);
 
         ERROR = !result.RESULT;
         if (ERROR) {

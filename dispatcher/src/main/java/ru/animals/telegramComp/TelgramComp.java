@@ -16,7 +16,7 @@ public class TelgramComp {
             var dataFromFile = FileAPI.readDataFromFile(fileJson);
 
             if (!dataFromFile.RESULT) {
-                return dataFromFile;
+                return new ValueFromMethod<>(false, dataFromFile.MESSAGE) ;
             }
 
             var mapper = new ObjectMapper();

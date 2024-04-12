@@ -1,5 +1,5 @@
 {"chat_id":"charid",
-  "text":"",
+  "text":"Разная информация",
   "reply_markup":{"inline_keyboard":[
     [{"text":"Знакомство\uD83D\uDC31\uD83D\uDC40\uD83D\uDC36","callback_data":"txtrules"},
       {"text":"Документы\uD83D\uDCC4","callback_data":"txtdocuments"}],

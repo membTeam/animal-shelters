@@ -1,5 +1,5 @@
 {"chat_id":"charid",
-  "text":"registration-template.inf",
+  "text":"file:registration-template.inf",
   "reply_markup":{"inline_keyboard":[
     [{"text":"Регистрация\uD83D\uDCCB","callback_data":"dbdregister"},
       {"text":"Отменить\uD83D\uDEAB","callback_data":"btnstart"}]]},
