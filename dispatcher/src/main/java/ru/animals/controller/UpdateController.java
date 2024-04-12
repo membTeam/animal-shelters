@@ -105,7 +105,7 @@ public class UpdateController {
 
         var structureCommand = utilsSendMessage.getDataCommand(textMess);
 
-        if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_message) {
+        if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_MESSAGE) {
             sendTextMessage(charId, structureCommand);
         } else {
             distributeMenu(charId, textMess);
@@ -132,7 +132,7 @@ public class UpdateController {
 
         var structureCommand = utilsSendMessage.getDataCommand(textQuery);
 
-        if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_message) {
+        if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_MESSAGE) {
             sendTextMessage(chartId, structureCommand);
         } else if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.FROM_DB) {
 
