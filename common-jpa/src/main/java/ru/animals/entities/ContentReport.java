@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import lombok.*;
+import ru.animals.entities.enumEntity.EnumStatusReport;
 
 import java.util.Date;
 
@@ -44,6 +45,10 @@ public class ContentReport {
      */
     @Column(name = "change_behavior", columnDefinition = "varchar(150)")
     private String changeBehavior;
+
+    @Column(name = "status_report")
+    @Enumerated(EnumType.STRING)
+    private EnumStatusReport statusReport;
 
     /**
      * Сведения по развемещнию фото в файле

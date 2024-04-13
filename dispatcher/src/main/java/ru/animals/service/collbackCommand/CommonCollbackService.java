@@ -2,12 +2,10 @@ package ru.animals.service.collbackCommand;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ru.animals.service.collbackCommand.impl.CollbackComdVolunteer;
 import ru.animals.utilsDEVL.DataFromParserCollback;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 
 @Service

@@ -3,6 +3,7 @@ package ru.animals.entities;
 
 import javax.persistence.*;
 import lombok.*;
+import ru.animals.entities.enumEntity.EnumAdoptionState;
 
 import java.util.Collection;
 import java.util.Date;
@@ -29,6 +30,10 @@ public class Adoption {
 
     private Long user_id;
     private Long animate_id;
+
+    @Column(name = "adoption_state")
+    @Enumerated(EnumType.STRING)
+    private EnumAdoptionState adoptionState;
 
     @OneToMany
     @JoinColumn(name = "adoption_id")
