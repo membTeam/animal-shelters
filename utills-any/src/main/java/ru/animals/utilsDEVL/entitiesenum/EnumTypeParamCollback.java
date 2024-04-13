@@ -1,13 +1,13 @@
 package ru.animals.utilsDEVL.entitiesenum;
 
 public enum EnumTypeParamCollback {
-    TEXT_MESSAGE, BTN_MENU, DBD_DATABASE, NONE;
+    TCL_TXT, TCL_BTN, TCL_DBD, NONE;
 
     public static EnumTypeParamCollback of(String strEnum) {
         return switch (strEnum.trim().toUpperCase()) {
-            case "TXT" -> EnumTypeParamCollback.TEXT_MESSAGE;
-            case "BTN" -> EnumTypeParamCollback.BTN_MENU;
-            case "DBD" -> EnumTypeParamCollback.BTN_MENU;
+            case "TXT" -> EnumTypeParamCollback.TCL_TXT;
+            case "BTN" -> EnumTypeParamCollback.TCL_BTN;
+            case "DBD" -> EnumTypeParamCollback.TCL_DBD;
             default -> EnumTypeParamCollback.NONE;
         };
     }

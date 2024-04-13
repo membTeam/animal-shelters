@@ -43,11 +43,10 @@ public class ParsingStringFromConfigFile {
 
     }
 
-    public static ValueFromMethod parsingStrConfigComdCollback(Map<String, DataFromParserCollback> map,
-                                                      List<String> lsString) {
+    public static ValueFromMethod parsingStrConfComdCollback(ControleService controleService, Map<String, DataFromParserCollback> map,
+                                                             List<String> lsString) {
         try {
             lsString.stream().forEach(str -> {
-                var dataParsing = new DataFromParserCollback();
 
                 var arrFromStr = str.split("##");
 
@@ -55,7 +54,7 @@ public class ParsingStringFromConfigFile {
                 var strTypeMessage = arrFromStr[1].trim();
 
                 var enumTypeMessage = EnumTypeParamCollback.of(strTypeCommand);
-                if (enumTypeMessage == EnumTypeParamCollback.NONE) {
+                if (enumTypeMessage.equals(EnumTypeParamCollback.NONE)) {
                     try {
                         throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
                     } catch (Exception e) {
@@ -63,8 +62,22 @@ public class ParsingStringFromConfigFile {
                     }
                 }
 
-                dataParsing.setCommand(arrFromStr[0].trim());
-                dataParsing.setParameter (arrFromStr[1].trim());
+                var command = arrFromStr[0].trim();
+                var paramenter = arrFromStr[1].trim();
+
+                if (!enumTypeMessage.equals(EnumTypeParamCollback.TCL_DBD)){
+                    try {
+                        if (!controleService.isExistsInMapConfig(paramenter)) {
+                            throw new Exception(command + " не определен в конфигурационном файле");
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                var dataParsing = new DataFromParserCollback();
+                dataParsing.setCommand(command);
+                dataParsing.setParameter (paramenter);
                 dataParsing.setEnumTypeParameter(enumTypeMessage);
 
                 map.put(dataParsing.getCommand(), dataParsing);

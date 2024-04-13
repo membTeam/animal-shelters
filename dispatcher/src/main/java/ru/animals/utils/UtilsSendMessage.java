@@ -12,7 +12,7 @@ import java.util.Map;
  * Рессивер параметров входящих SendMessage на основе HashMap
  */
 @Service
-public class UtilsSendMessage {
+public class UtilsSendMessage implements ControleService {
     private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
     private Map<String, DataFromParserCollback> mapCollback = new HashMap<>();
 
@@ -27,29 +27,37 @@ public class UtilsSendMessage {
                             @Value("${collback.configuration}") String fileConfCollback )  {
 
         // TODO: добавить вывод в логФайл
-        ValueFromMethod<List<String>> resLoadConfig = loadDataFromConfFile(fileConfig);
-        if (registerError(resLoadConfig)) {
-            return;
-        }
-        var listFromConfFile = resLoadConfig.getValue();
 
+        fillingMapSendMessage(fileConfig);
+
+        if (!isERROR()) {
+            fillingMapCollback(fileConfCollback);
+        }
+
+    }
+
+    private void fillingMapCollback(String fileConfCollback) {
         ValueFromMethod<List<String>> resLoadCallBack = loadDataFromConfFile(fileConfCollback);
         if (registerError(resLoadCallBack)) {
             return;
         }
-        var listFromConfCollback = resLoadCallBack.getValue();
 
+        var resultFilling = ParsingStringFromConfigFile
+                .parsingStrConfComdCollback(this, mapCollback, resLoadCallBack.getValue());
 
-        var result = ParsingStringFromConfigFile
-                        .parsingStringConfig(mapSendMessage, listFromConfFile);
-        if (registerError(result)) {
+        registerError(resultFilling);
+    }
+
+    private void fillingMapSendMessage(String fileConfig) {
+        ValueFromMethod<List<String>> resLoadConfig = loadDataFromConfFile(fileConfig);
+        if (registerError(resLoadConfig)) {
             return;
         }
 
-        // TODO: встроить проверка вхождения в основной конфигурационный файл
-        ValueFromMethod resultBollback = ParsingStringFromConfigFile
-                        .parsingStrConfigComdCollback(mapCollback, listFromConfCollback);
-        registerError(resultBollback);
+        var resultFilling = ParsingStringFromConfigFile
+                .parsingStringConfig(mapSendMessage, resLoadConfig.getValue());
+
+        registerError(resultFilling);
     }
 
     private boolean registerError(ValueFromMethod value) {
@@ -61,15 +69,35 @@ public class UtilsSendMessage {
         return ERROR;
     }
 
+    /**
+     * Загрузка строк конфигурационных файлов
+     * @param file
+     * @return
+     */
     private ValueFromMethod loadDataFromConfFile(String file) {
         ValueFromMethod<List<String>> resultLoadData = FileAPI.readConfiguration(file);
-        if (!resultLoadData.RESULT) {
-            mesRrror = resultLoadData.MESSAGE;
-            ERROR = true;
-            return new ValueFromMethod(false, resultLoadData.MESSAGE);
-        }
+
+        registerError(resultLoadData);
 
         return resultLoadData;
+    }
+
+    /**
+     * Проверка наличия строки в map структуре основного конфигурационного файла
+     * @param strCommand
+     * @return true входит в структуру иначе не входит
+     */
+    @Override
+    public boolean isExistsInMapConfig(String strCommand) throws Exception {
+        if (isERROR()) {
+            throw new Exception("Структура команд не создана");
+        }
+        return mapSendMessage.containsKey(strCommand);
+    }
+
+    @Override
+    public String getMessageErr() {
+        return mesRrror;
     }
 
 

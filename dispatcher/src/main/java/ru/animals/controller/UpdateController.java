@@ -137,15 +137,15 @@ public class UpdateController {
         var structCollbackCommand = utilsSendMessage.getStructCommandCollback(textQuery);
 
         var enumType = structCollbackCommand.getEnumTypeParameter();
-        if (enumType == EnumTypeParamCollback.TEXT_MESSAGE ) {
+        if (enumType == EnumTypeParamCollback.TCL_TXT) {
             sendTextMessage(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
-        } else if (enumType == EnumTypeParamCollback.BTN_MENU) {
+        } else if (enumType == EnumTypeParamCollback.TCL_BTN) {
             distributeMenu(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
-        } else if (enumType == EnumTypeParamCollback.DBD_DATABASE ) {
+        } else if (enumType == EnumTypeParamCollback.TCL_DBD) {
 
             // TODO: исправить идентификатор метода
             var sendMessage = commonService.distributeStrCommand(chartId, structCollbackCommand);
