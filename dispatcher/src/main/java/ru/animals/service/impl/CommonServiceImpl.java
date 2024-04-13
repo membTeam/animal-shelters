@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.repository.CommonReposities;
 import ru.animals.service.CommonService;
-import ru.animals.utilsDEVL.DataFromParser;
+import ru.animals.utilsDEVL.DataFromParserCollback;
 
 
 @Service
@@ -17,11 +17,11 @@ public class CommonServiceImpl implements CommonService {
     }
 
     private interface processingMethod{
-        SendMessage apply(Long chartId, DataFromParser dataFromParser);
+        SendMessage apply(Long chartId, DataFromParserCollback dataFromParser);
     }
 
     @Override
-    public SendMessage distributeStrCommand(Long chartId, DataFromParser dataFromParser) {
+    public SendMessage distributeStrCommand(Long chartId, DataFromParserCollback dataFromParser) {
 
             var param = dataFromParser.getParameter();
             processingMethod method = switch (param) {
@@ -33,7 +33,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public SendMessage defaultSendMessage(Long charId, DataFromParser dataFromParser) {
+    public SendMessage defaultSendMessage(Long charId, DataFromParserCollback dataFromParser) {
         var textMessage = "Команда не определена";
         return SendMessage.builder()
                 .chatId(charId)
@@ -42,7 +42,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public SendMessage contactsVoluteers(Long chartId, DataFromParser dataFromParser) {
+    public SendMessage contactsVoluteers(Long chartId, DataFromParserCollback dataFromParser) {
         var collShelters = commonRepo.findAllVolunteer();
 
         var sb = new StringBuffer();

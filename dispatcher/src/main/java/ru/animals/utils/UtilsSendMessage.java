@@ -14,7 +14,7 @@ import java.util.Map;
 @Service
 public class UtilsSendMessage {
     private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
-    private Map<String, DataFromParserForCollback> mapCollback = new HashMap<>();
+    private Map<String, DataFromParserCollback> mapCollback = new HashMap<>();
 
     private boolean ERROR=true;
     private String mesRrror = "ok";
@@ -46,7 +46,8 @@ public class UtilsSendMessage {
             return;
         }
 
-        var resultBollback = ParsingStringFromConfigFile
+        // TODO: встроить проверка вхождения в основной конфигурационный файл
+        ValueFromMethod resultBollback = ParsingStringFromConfigFile
                         .parsingStrConfigComdCollback(mapCollback, listFromConfCollback);
         registerError(resultBollback);
     }
@@ -80,6 +81,22 @@ public class UtilsSendMessage {
 
         if (mapSendMessage.containsKey(strCommand)) {
             return mapSendMessage.get(strCommand);
+        } else {
+            throw new Exception("Команда не определена");
+        }
+    }
+
+    public DataFromParser getStructureCommand (DataFromParserCollback comnCallback) throws Exception {
+        return getStructureCommand(comnCallback.getParameter());
+    }
+
+    public DataFromParserCollback getStructCommandCollback(String strCommand) throws Exception {
+        if (isERROR()) {
+            throw new Exception("Нет данных по командам");
+        }
+
+        if (mapCollback.containsKey(strCommand)) {
+            return mapCollback.get(strCommand);
         } else {
             throw new Exception("Команда не определена");
         }

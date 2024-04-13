@@ -12,9 +12,10 @@ import ru.animals.service.UpdateProducer;
 
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
-import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.FileAPI;
+import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeMessage;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
 @Component
 @Log4j
@@ -107,7 +108,7 @@ public class UpdateController {
         var enumType = structureCommand.getEnumTypeMessage();
 
         if ( enumType == EnumTypeMessage.TEXT_MESSAGE) {
-            sendTextMessage(charId, structureCommand);
+            sendTextMessage(charId, structureCommand.getSource());
         } else if (enumType == EnumTypeMessage.BTMMENU) {
             distributeMenu(charId, textMess);
         } else {
@@ -133,13 +134,21 @@ public class UpdateController {
         var textQuery = update.getCallbackQuery().getData();
         var chartId = getCharIdFromUpdate(update);
 
-        var structureCommand = utilsSendMessage.getStructureCommand(textQuery);
+        var structCollbackCommand = utilsSendMessage.getStructCommandCollback(textQuery);
 
-        if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.TEXT_MESSAGE) {
-            sendTextMessage(chartId, structureCommand);
-        } else if (structureCommand.getEnumTypeMessage() == EnumTypeMessage.FROM_DB) {
+        var enumType = structCollbackCommand.getEnumTypeParameter();
+        if (enumType == EnumTypeParamCollback.TEXT_MESSAGE ) {
+            sendTextMessage(chartId,
+                    utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
-            var sendMessage = commonService.distributeStrCommand(chartId, structureCommand);
+        } else if (enumType == EnumTypeParamCollback.BTN_MENU) {
+            distributeMenu(chartId,
+                    utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
+
+        } else if (enumType == EnumTypeParamCollback.DBD_DATABASE ) {
+
+            // TODO: исправить идентификатор метода
+            var sendMessage = commonService.distributeStrCommand(chartId, structCollbackCommand);
 
             telegramBot.sendAnswerMessage(sendMessage);
 
@@ -149,15 +158,33 @@ public class UpdateController {
 
     }
 
-    private void sendTextMessage(Long charId, DataFromParser structureCommand) throws Exception {
+    /*private void sendTextMessage(Long charId,
+                     DataFromParserForCollback structureCommand) throws Exception {
 
-        var dataFromFile = FileAPI.readDataFromFile(structureCommand.getSource());
+        ValueFromMethod<String> dataFromFile = FileAPI.readDataFromFile(structureCommand.getParameter());
 
         if (!dataFromFile.RESULT) {
             throw new Exception("Контент не найден");
         }
 
-        var txtMessage = (String) dataFromFile.VALUE;
+        var txtMessage = dataFromFile.VALUE;
+
+        var sendMessage = utilsMessage.generateSendMessageWithText(charId, txtMessage);
+
+        sendMessage.setParseMode(ParseMode.MARKDOWN);
+        telegramBot.sendAnswerMessage(sendMessage);
+    }*/
+
+    private void sendTextMessage(Long charId,
+                                 String fileSource) throws Exception {
+
+        ValueFromMethod<String> dataFromFile = FileAPI.readDataFromFile(fileSource);
+
+        if (!dataFromFile.RESULT) {
+            throw new Exception("Контент не найден");
+        }
+
+        var txtMessage = dataFromFile.getValue();
 
         var sendMessage = utilsMessage.generateSendMessageWithText(charId, txtMessage);
 

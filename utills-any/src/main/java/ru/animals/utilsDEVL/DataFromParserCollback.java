@@ -8,7 +8,7 @@ import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 @Setter
 @Getter
 @Builder
-public class DataFromParserForCollback {
+public class DataFromParserCollback {
     private String command;
     private String parameter;
     private EnumTypeParamCollback enumTypeParameter;
