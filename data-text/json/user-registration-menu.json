@@ -1,6 +1,6 @@
 {"chat_id":"charid",
   "text":"file:registration-template.inf",
   "reply_markup":{"inline_keyboard":[
-    [{"text":"Регистрация\uD83D\uDCCB","callback_data":"dbdregister"},
-      {"text":"Отменить\uD83D\uDEAB","callback_data":"btnstart"}]]},
+    [{"text":"Регистрация\uD83D\uDCCB","callback_data":"dbd-register"},
+      {"text":"Отменить\uD83D\uDEAB","callback_data":"btn-start"}]]},
   "method":"btn-menu"}
