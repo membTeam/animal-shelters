@@ -1,4 +1,4 @@
-package ru.animals.service.collbackCommand;
+package ru.animals.collbackCommand;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

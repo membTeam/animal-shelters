@@ -1,16 +1,13 @@
 package ru.animals.verifyConfFiles;
 
 
-import org.hibernate.mapping.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.animals.service.collbackCommand.CommonCollbackService;
+import ru.animals.collbackCommand.CommonCollbackService;
 import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.FileAPI;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
