@@ -5,12 +5,12 @@ import ru.animals.collbackCommand.BaseObject;
 import ru.animals.collbackCommand.CommonCollbackService;
 import ru.animals.utilsDEVL.DataFromParserCollback;
 
-public class CollbackComdInfoAllAnimalFreeDog extends BaseObject {
+public class CollbackComdinfofreedog extends BaseObject {
     @Override
     public SendMessage apply(CommonCollbackService backServ, Long chartId, DataFromParserCollback dataFromParser) {
         var sendMessage = new SendMessage();
         sendMessage.setChatId(chartId);
-        sendMessage.setText("Method CollbackComdInfoAllAnimalFreeDog.apply не определен");
+        sendMessage.setText("Method CollbackComdinfofreedog.apply не определен");
 
         return sendMessage;
     }

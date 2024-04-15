@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.animals.collbackCommand.CommonCollbackService;
 import ru.animals.service.CommonService;
 import ru.animals.service.UpdateProducer;
 
@@ -25,15 +26,17 @@ public class UpdateController {
     private UpdateProducer updateProducer;
     private UtilsSendMessage utilsSendMessage;
     private CommonService commonService;
+    private CommonCollbackService commonCollbackService;
 
     public UpdateController(UtilsMessage utilsMessage,
                             UpdateProducer updateProducer,
-                            UtilsSendMessage utilsSendMessage, CommonService commonService
+                            UtilsSendMessage utilsSendMessage, CommonService commonService, CommonCollbackService commonCollbackService
     ) {
         this.utilsMessage = utilsMessage;
         this.updateProducer = updateProducer;
         this.utilsSendMessage = utilsSendMessage;
         this.commonService = commonService;
+        this.commonCollbackService = commonCollbackService;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -109,10 +112,11 @@ public class UpdateController {
 
         if ( enumType == EnumTypeParamMessage.TEXT_MESSAGE) {
             sendTextMessage(charId, structureCommand.getSource());
-        } else if (enumType == EnumTypeParamMessage.BTMMENU) {
+        } else if (enumType == EnumTypeParamMessage.BTMMENU
+                        || enumType == EnumTypeParamMessage.START) {
             distributeMenu(charId, textMess);
         } else {
-            throw new Exception("Internal error");
+            throw new Exception("The command was not found");
         }
 
     }
@@ -148,7 +152,7 @@ public class UpdateController {
         } else if (enumType == EnumTypeParamCollback.TCL_DBD) {
 
             // TODO: исправить идентификатор метода
-            var sendMessage = commonService.distributeStrCommand(chartId, structCollbackCommand);
+            var sendMessage = commonCollbackService.distributeStrCommand(chartId, structCollbackCommand);
 
             telegramBot.sendAnswerMessage(sendMessage);
 
@@ -158,22 +162,6 @@ public class UpdateController {
 
     }
 
-    /*private void sendTextMessage(Long charId,
-                     DataFromParserForCollback structureCommand) throws Exception {
-
-        ValueFromMethod<String> dataFromFile = FileAPI.readDataFromFile(structureCommand.getParameter());
-
-        if (!dataFromFile.RESULT) {
-            throw new Exception("Контент не найден");
-        }
-
-        var txtMessage = dataFromFile.VALUE;
-
-        var sendMessage = utilsMessage.generateSendMessageWithText(charId, txtMessage);
-
-        sendMessage.setParseMode(ParseMode.MARKDOWN);
-        telegramBot.sendAnswerMessage(sendMessage);
-    }*/
 
     private void sendTextMessage(Long charId,
                                  String fileSource) throws Exception {

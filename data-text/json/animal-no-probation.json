@@ -1,7 +1,7 @@
 {"chat_id":"charid",
   "text":"file:greeting-registration-client.inf",
   "reply_markup":{"inline_keyboard":[
-    [{"text":"\uD83D\uDC36Питомцы\uD83D\uDC31","callback_data":"btn-infoallanimalfree"},
+    [{"text":"\uD83D\uDC36Питомцы\uD83D\uDC31","callback_data":"dbd-infoallanimalfree"},
       {"text":"Приюты\uD83D\uDC3E\uD83C\uDFE1","callback_data":"txt-infoshelter"}],
     [{"text":"Вызов волонтёра\uD83E\uDD1D","callback_data":"dbd-volunteer"}]]},
   "method":"btn-menu"}
