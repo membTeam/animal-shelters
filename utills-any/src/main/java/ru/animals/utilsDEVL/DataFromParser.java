@@ -1,7 +1,7 @@
 package ru.animals.utilsDEVL;
 
 import lombok.*;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeMessage;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 
 
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class DataFromParser {
     private String parameter;
     private String source;
     private String helpData;
-    private EnumTypeMessage enumTypeMessage;
+    private EnumTypeParamMessage enumTypeMessage;
 
     @Override
     public String toString() {

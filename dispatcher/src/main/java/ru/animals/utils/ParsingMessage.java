@@ -5,7 +5,7 @@ import java.util.Map;
 
 import ru.animals.utilsDEVL.DataFromParser;
 import ru.animals.utilsDEVL.ValueFromMethod;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeMessage;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 
 
 public class ParsingMessage {
@@ -34,8 +34,8 @@ public class ParsingMessage {
                 var arrFromStr = str.split("##");
                 String strTypeMessage = arrFromStr[2].trim();
 
-                var enumTypeMessage = EnumTypeMessage.of(strTypeMessage); // initEnumTypeMessage(strTypeMessage);
-                if (enumTypeMessage == EnumTypeMessage.EMPTY) {
+                var enumTypeMessage = EnumTypeParamMessage.of(strTypeMessage); // initEnumTypeMessage(strTypeMessage);
+                if (enumTypeMessage == EnumTypeParamMessage.EMPTY) {
                     try {
                         throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
                     } catch (Exception e) {

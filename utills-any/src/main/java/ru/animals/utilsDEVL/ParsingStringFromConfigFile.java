@@ -1,6 +1,6 @@
 package ru.animals.utilsDEVL;
 
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeMessage;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
 import java.util.List;
@@ -17,8 +17,8 @@ public class ParsingStringFromConfigFile {
                 var arrFromStr = str.split("##");
                 String strTypeMessage = arrFromStr[2].trim();
 
-                var enumTypeMessage = EnumTypeMessage.of(strTypeMessage); // initEnumTypeMessage(strTypeMessage);
-                if (enumTypeMessage == EnumTypeMessage.EMPTY) {
+                var enumTypeMessage = EnumTypeParamMessage.of(strTypeMessage); // initEnumTypeMessage(strTypeMessage);
+                if (enumTypeMessage == EnumTypeParamMessage.EMPTY) {
                     try {
                         throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
                     } catch (Exception e) {
@@ -45,6 +45,8 @@ public class ParsingStringFromConfigFile {
 
     public static ValueFromMethod parsingStrConfComdCollback(ControleService controleService, Map<String, DataFromParserCollback> map,
                                                              List<String> lsString) {
+        StringBuilder stringBuilder = new StringBuilder();
+
         try {
             lsString.stream().forEach(str -> {
 
@@ -56,9 +58,13 @@ public class ParsingStringFromConfigFile {
                 var enumTypeMessage = EnumTypeParamCollback.of(strTypeCommand);
                 if (enumTypeMessage.equals(EnumTypeParamCollback.NONE)) {
                     try {
-                        throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
+                        stringBuilder.append("Тип сообщения: " + strTypeMessage + " не определен \n");
+                        return;
+                        //throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        stringBuilder.append(e.getMessage() + "\n");
+                        return;
+                        //throw new RuntimeException(e);
                     }
                 }
 
@@ -68,11 +74,14 @@ public class ParsingStringFromConfigFile {
                 if (!enumTypeMessage.equals(EnumTypeParamCollback.TCL_DBD)){
                     try {
                         if (!controleService.isExistsInMapConfig(paramenter)) {
-                            var err = String.format("(command: %s)  параметр: %s не определен в конфигурационном файле", command, paramenter);
-                            throw new Exception(err);
+                            var err = String.format("%s: %s не определен \n", command, paramenter);
+                            stringBuilder.append(err);
+                            return;
+                            //throw new Exception(err);
                         }
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        return;
+                        //throw new RuntimeException(e);
                     }
                 }
 
@@ -83,6 +92,10 @@ public class ParsingStringFromConfigFile {
 
                 map.put(dataParsing.getCommand(), dataParsing);
             });
+
+            if (stringBuilder.length() > 0) {
+                return new ValueFromMethod(false, stringBuilder.toString());
+            }
 
             return new ValueFromMethod(true,"ok");
 

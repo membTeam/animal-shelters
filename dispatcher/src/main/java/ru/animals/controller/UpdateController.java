@@ -14,7 +14,7 @@ import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeMessage;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
 @Component
@@ -107,9 +107,9 @@ public class UpdateController {
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
         var enumType = structureCommand.getEnumTypeMessage();
 
-        if ( enumType == EnumTypeMessage.TEXT_MESSAGE) {
+        if ( enumType == EnumTypeParamMessage.TEXT_MESSAGE) {
             sendTextMessage(charId, structureCommand.getSource());
-        } else if (enumType == EnumTypeMessage.BTMMENU) {
+        } else if (enumType == EnumTypeParamMessage.BTMMENU) {
             distributeMenu(charId, textMess);
         } else {
             throw new Exception("Internal error");
