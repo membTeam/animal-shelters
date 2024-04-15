@@ -19,6 +19,11 @@ public class UtilsSendMessageTest {
 
         var res = utilsSendMessage.isERROR();
 
+        if (res) {
+            System.out.println(utilsSendMessage.getMessageErr());
+        }
+
         assertFalse(res);
     }
+
 }

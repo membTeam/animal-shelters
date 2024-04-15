@@ -13,11 +13,12 @@ public abstract class BaseMessage {
     private boolean result = false;
     private SendMessage sendMessage;
     private String textDefault;
+    private long chatId;
 
     public BaseMessage(String strMess) {
         textDefault = strMess;
     }
 
-    public abstract SendMessage run(Update update, EnumTypeAppeal typeAppeal);
+    public abstract SendMessage getMessage(Update update, EnumTypeAppeal typeAppeal);
 
 }

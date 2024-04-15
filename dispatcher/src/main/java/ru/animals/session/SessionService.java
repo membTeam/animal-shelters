@@ -14,18 +14,42 @@ import java.util.Map;
 @Getter
 public class SessionService {
 
-    private Map<Long, SessionReport> mapItems = new HashMap<>();
+    private Map<Long, BaseStateSession> mapItems = new HashMap<>();
+
+    private ValueFromMethod addSessionRegister(long chatId) {
+        if (mapItems.containsKey(chatId)) {
+            return new ValueFromMethod("Повторное обращение");
+        }
+
+        SessionRegister sessionRegister = new SessionRegister(chatId);
+        mapItems.put(chatId, sessionRegister);
+
+        return new ValueFromMethod(true, "ok");
+    }
+
+    private ValueFromMethod addSessionReport(long chatId) {
+
+        if (mapItems.containsKey(chatId)) {
+            return new ValueFromMethod("Повторное обращение");
+        }
+
+        SessionReport sessionReport = new SessionReport(chatId);
+        mapItems.put(chatId, sessionReport);
+
+        return new ValueFromMethod(true, "ok");
+    }
 
     public ValueFromMethod addSessionObject(Update update , EnumTypeAppeal typeAppeal) {
         long chatid = update.hasMessage()
                 ? update.getMessage().getChatId()
                 : update.getCallbackQuery().getMessage().getChatId();
 
-        if (mapItems.containsKey(chatid)) {
-            return new ValueFromMethod("Повторное обращение");
+        if (typeAppeal == EnumTypeAppeal.REGUSTER_USER) {
+            return addSessionRegister(chatid);
+        } else {
+            return addSessionReport(chatid);
         }
 
-        return null;
     }
 
     public SendMessage distributionUpdate(Update update) {

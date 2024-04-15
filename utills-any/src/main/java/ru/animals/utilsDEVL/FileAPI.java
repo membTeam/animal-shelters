@@ -17,13 +17,13 @@ public class FileAPI {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = reader.read(new FileReader("pom.xml"));
 
-        var artifactid = model.getParent().getArtifactId();
+        return model.getParent().getGroupId();
 
-        if (artifactid.equals("spring-boot-starter-parent")) {
+        /*if (artifactid.equals("ru.animals")) {
             artifactid = model.getArtifactId();
-        }
+        }*/
 
-        return artifactid;
+//        return artifactid;
     }
 
 
@@ -55,12 +55,15 @@ public class FileAPI {
         var userDir = System.getProperty("user.dir");
         var artivactId = rootArtifactID(); // DataFromPomXML.getRootArtifactID();
 
-        Path pathFile;
-        if (!userDir.endsWith(artivactId)) {
+        Path pathFile = artivactId.equals("ru.animals")
+                ? Path.of(userDir).getParent()
+                : Path.of(userDir);
+
+        /*if (!userDir.endsWith(artivactId)) {
             pathFile = Path.of(userDir).getParent();
         } else {
             pathFile = Path.of(userDir);
-        }
+        }*/
 
         return pathFile;
     }

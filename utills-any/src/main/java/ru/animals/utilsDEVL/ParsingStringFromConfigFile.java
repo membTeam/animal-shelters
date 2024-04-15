@@ -68,7 +68,8 @@ public class ParsingStringFromConfigFile {
                 if (!enumTypeMessage.equals(EnumTypeParamCollback.TCL_DBD)){
                     try {
                         if (!controleService.isExistsInMapConfig(paramenter)) {
-                            throw new Exception(command + " не определен в конфигурационном файле");
+                            var err = String.format("(command: %s)  параметр: %s не определен в конфигурационном файле", command, paramenter);
+                            throw new Exception(err);
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);

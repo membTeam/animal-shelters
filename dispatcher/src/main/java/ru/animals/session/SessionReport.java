@@ -1,29 +1,33 @@
 package ru.animals.session;
 
-import lombok.Getter;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeAppeal;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-public class SessionReport {
-    private Long charId;
-    private LocalDateTime lastAppeal;
-    private boolean status = false;
+public class SessionReport extends BaseStateSession {
 
-    private List<BaseMessage> itemAppeal;
+    private EnumTypeAppeal typeAppeal;
 
-    public SessionReport(long chatId, EnumTypeAppeal typeAppeal) {
-        this.charId = chatId;
-        lastAppeal = LocalDateTime.now();
+    public SessionReport(long chatId) {
+        super();
+        setCharId(chatId);
+        setLastAppeal(LocalDateTime.now());
 
-        if (typeAppeal == EnumTypeAppeal.REGUSTER_USER) {
-            itemAppeal = List.of(
-                // TODO: заменить строку приглашение
-                new ReportMessage("введите данные согласно шаблона ")
-            );
-        }
+        setItemAppeal(
+                List.of(
+                        new SessionState("Укажите самочувствие"),
+                        new SessionState("Отвыкание от прежних привычек"),
+                        new SessionState("вставьте фотографию")
+                )
+        );
+
     }
 
+    @Override
+    public BaseStateSession sendMessage(Update update) {
+        return this;
+    }
 }
