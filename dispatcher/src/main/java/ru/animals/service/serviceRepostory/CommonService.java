@@ -1,7 +1,7 @@
-package ru.animals.service;
+package ru.animals.service.serviceRepostory;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ru.animals.service.serviceAPI.DataFromParserCollback;
+import ru.animals.service.serviceParser.DataFromParserCollback;
 
 public interface CommonService {
 

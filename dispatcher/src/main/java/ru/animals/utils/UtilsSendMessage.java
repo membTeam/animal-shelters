@@ -3,10 +3,10 @@ package ru.animals.utils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.animals.service.serviceAPI.ControleService;
-import ru.animals.service.serviceAPI.DataFromParser;
-import ru.animals.service.serviceAPI.DataFromParserCollback;
-import ru.animals.service.serviceAPI.ParsingStringFromConfigFile;
+import ru.animals.service.serviceParser.ControleService;
+import ru.animals.service.serviceParser.DataFromParser;
+import ru.animals.service.serviceParser.DataFromParserCollback;
+import ru.animals.service.serviceParser.ParsingStringFromConfigFile;
 import ru.animals.utilsDEVL.*;
 
 import java.util.HashMap;

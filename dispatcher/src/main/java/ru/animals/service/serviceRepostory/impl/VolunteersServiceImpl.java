@@ -1,13 +1,8 @@
-package ru.animals.service.impl;
+package ru.animals.service.serviceRepostory.impl;
 
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.animals.entities.Breeds;
-import ru.animals.entities.Volunteers;
 import ru.animals.repository.VolunteersRepository;
-import ru.animals.service.VolunteersService;
-
-import java.util.Collection;
+import ru.animals.service.serviceRepostory.VolunteersService;
 
 
 @Service
@@ -18,13 +13,6 @@ public class VolunteersServiceImpl implements VolunteersService {
     public VolunteersServiceImpl(VolunteersRepository volunteersRepository) {
         this.volunteersRepository = volunteersRepository;
     }
-
-    /*@Override
-    public Collection<Volunteers> allDataBreeds() {
-        var result = volunteersRepository.volonterForChartName("chartSecornd");
-        return result;
-
-    }*/
 
     @Override
     public String contactsVoluteers (){

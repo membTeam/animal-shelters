@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import ru.animals.service.serviceAPI.DataFromParser;
-import ru.animals.service.serviceAPI.ParsingStringFromConfigFile;
+import ru.animals.service.serviceParser.DataFromParser;
+import ru.animals.service.serviceParser.ParsingStringFromConfigFile;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -1,11 +1,11 @@
-package ru.animals.service.impl;
+package ru.animals.service.serviceRepostory.impl;
 
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.controller.UpdateController;
-import ru.animals.service.AnswerConsumer;
+import ru.animals.service.serviceRepostory.AnswerConsumer;
 
 import static ru.animals.model.RabbitQueue.ANSWER_MESSAGE;
 

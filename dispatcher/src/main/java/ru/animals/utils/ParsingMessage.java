@@ -3,7 +3,7 @@ package ru.animals.utils;
 import java.util.List;
 import java.util.Map;
 
-import ru.animals.service.serviceAPI.DataFromParser;
+import ru.animals.service.serviceParser.DataFromParser;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 

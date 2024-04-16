@@ -1,10 +1,10 @@
-package ru.animals.service.impl;
+package ru.animals.service.serviceRepostory.impl;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.service.UpdateProducer;
+import ru.animals.service.serviceRepostory.UpdateProducer;
 import ru.animals.utils.UtilsSendMessage;
 
 @Service

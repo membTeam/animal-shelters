@@ -1,4 +1,4 @@
-package ru.animals.service;
+package ru.animals.service.serviceRepostory;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 

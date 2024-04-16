@@ -1,4 +1,4 @@
-package ru.animals.service.serviceAPI;
+package ru.animals.service.serviceParser;
 
 public interface ControleService {
     boolean isExistsInMapConfig(String strCommand) throws Exception;

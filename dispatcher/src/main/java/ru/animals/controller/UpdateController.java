@@ -6,10 +6,10 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.collbackCommand.CommonCollbackService;
-import ru.animals.service.CommonService;
-import ru.animals.service.UpdateProducer;
+import ru.animals.service.serviceRepostory.CommonService;
+import ru.animals.service.serviceRepostory.UpdateProducer;
 
-//import ru.animals.service.VolunteersService;
+//import ru.animals.service.serviceRepostory.VolunteersService;
 
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;

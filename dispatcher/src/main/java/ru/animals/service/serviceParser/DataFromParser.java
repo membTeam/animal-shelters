@@ -1,4 +1,4 @@
-package ru.animals.service.serviceAPI;
+package ru.animals.service.serviceParser;
 
 import lombok.*;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
