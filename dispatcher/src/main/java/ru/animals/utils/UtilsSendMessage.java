@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Рессивер параметров входящих SendMessage на основе HashMap
+ * Рессивер параметров конфигурационных файлов
  */
 @Service
 @Log4j
@@ -110,6 +110,20 @@ public class UtilsSendMessage implements ControleService {
             throw new Exception("Структура команд не создана");
         }
         return mapSendMessage.containsKey(strCommand);
+    }
+
+    /**
+     * Верификация вхождения команды в структуру mapCollback
+     * @param strCommand
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public boolean isExitsInMapCollback(String strCommand) throws Exception {
+        if (isERROR()) {
+            throw new Exception("Структура команд не создана");
+        }
+        return mapCollback.containsKey(strCommand);
     }
 
     @Override
