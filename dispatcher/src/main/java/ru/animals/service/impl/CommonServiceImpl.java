@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.repository.CommonReposities;
 import ru.animals.service.CommonService;
-import ru.animals.utilsDEVL.DataFromParserCollback;
+import ru.animals.service.serviceAPI.DataFromParserCollback;
 
 
 @Service

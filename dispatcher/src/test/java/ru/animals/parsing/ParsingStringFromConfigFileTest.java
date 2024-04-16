@@ -1,12 +1,13 @@
-package ru.animals.testUtils;
+package ru.animals.parsing;
 
 import org.junit.jupiter.api.Test;
-import ru.animals.utilsDEVL.DataFromParser;
-import ru.animals.utilsDEVL.ParsingStringFromConfigFile;
+
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import ru.animals.service.serviceAPI.DataFromParser;
+import ru.animals.service.serviceAPI.ParsingStringFromConfigFile;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,9 +25,9 @@ public class ParsingStringFromConfigFileTest {
     }
 
     @Test
-    public void parsingStringConfig_for_dbvolunteers() {
+    public void parsingStringConfig_for_btmmenu() {
         Map<String, DataFromParser> map = new HashMap<>();
-        var str = "dbvolunteers ## fromdbase ## dbvolunteers ## VolunteersServiceImpl.contactsVoluteers ## список";
+        var str = "infopet ## json ## btmmenu ## info-big.json ## информация для усыновления";
         List<String> lsString = List.of(str);
 
         var result = ParsingStringFromConfigFile.parsingStringConfig(map, lsString);

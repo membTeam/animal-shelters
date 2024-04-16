@@ -1,4 +1,4 @@
-package ru.animals.utilsDEVL;
+package ru.animals.service.serviceAPI;
 
 import lombok.*;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;

@@ -3,7 +3,7 @@ package ru.animals.utils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.telegramComp.TelgramComp;
-import ru.animals.utilsDEVL.DataFromParser;
+import ru.animals.service.serviceAPI.DataFromParser;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeFile;
 

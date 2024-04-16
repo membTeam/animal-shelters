@@ -3,7 +3,7 @@ package ru.animals.collbackCommand.impl;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.collbackCommand.BaseObject;
 import ru.animals.collbackCommand.CommonCollbackService;
-import ru.animals.utilsDEVL.DataFromParserCollback;
+import ru.animals.service.serviceAPI.DataFromParserCollback;
 
 public class CollbackComdReport extends BaseObject {
 

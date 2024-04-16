@@ -1,5 +1,6 @@
-package ru.animals.utilsDEVL;
+package ru.animals.service.serviceAPI;
 
+import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
@@ -8,8 +9,8 @@ import java.util.Map;
 
 public class ParsingStringFromConfigFile {
 
-    public static ValueFromMethod parsingStringConfig(Map<String,DataFromParser> map,
-                                                        List<String> lsString) {
+    public static ValueFromMethod parsingStringConfig(Map<String, DataFromParser> map,
+                                                      List<String> lsString) {
         try {
             lsString.stream().forEach(str -> {
                 var dataParsing = new DataFromParser();
