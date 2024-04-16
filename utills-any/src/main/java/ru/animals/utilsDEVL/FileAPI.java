@@ -17,13 +17,12 @@ public class FileAPI {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = reader.read(new FileReader("pom.xml"));
 
-        var artifactid = model.getParent().getArtifactId();
+        return model.getParent().getGroupId();
+    }
 
-        if (artifactid.equals("spring-boot-starter-parent")) {
-            artifactid = model.getArtifactId();
-        }
-
-        return artifactid;
+    public static boolean isExistsFile(String file) throws XmlPullParserException, IOException {
+        Path path = pathObjForFile(file);
+        return Files.exists(path);
     }
 
 
@@ -51,16 +50,13 @@ public class FileAPI {
      * Корневая директория
      * @return
      */
-    private static Path getRootPath() throws XmlPullParserException, IOException {
+    public static Path getRootPath() throws XmlPullParserException, IOException {
         var userDir = System.getProperty("user.dir");
         var artivactId = rootArtifactID(); // DataFromPomXML.getRootArtifactID();
 
-        Path pathFile;
-        if (!userDir.endsWith(artivactId)) {
-            pathFile = Path.of(userDir).getParent();
-        } else {
-            pathFile = Path.of(userDir);
-        }
+        Path pathFile = artivactId.equals("ru.animals")
+                ? Path.of(userDir).getParent()
+                : Path.of(userDir);
 
         return pathFile;
     }

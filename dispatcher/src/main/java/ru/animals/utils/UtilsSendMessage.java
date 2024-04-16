@@ -1,7 +1,12 @@
 package ru.animals.utils;
 
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.animals.service.serviceParser.ControleService;
+import ru.animals.service.serviceParser.DataFromParser;
+import ru.animals.service.serviceParser.DataFromParserCollback;
+import ru.animals.service.serviceParser.ParsingStringFromConfigFile;
 import ru.animals.utilsDEVL.*;
 
 import java.util.HashMap;
@@ -9,9 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Рессивер параметров входящих SendMessage на основе HashMap
+ * Рессивер параметров конфигурационных файлов
  */
 @Service
+@Log4j
 public class UtilsSendMessage implements ControleService {
     private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
     private Map<String, DataFromParserCollback> mapCollback = new HashMap<>();
@@ -20,6 +26,15 @@ public class UtilsSendMessage implements ControleService {
     private String mesRrror = "ok";
 
     public boolean isERROR() {
+        return ERROR;
+    }
+
+    private boolean registerError(ValueFromMethod value) {
+        ERROR = !value.RESULT;
+        if (ERROR) {
+            mesRrror = value.MESSAGE;
+        }
+
         return ERROR;
     }
 
@@ -45,6 +60,9 @@ public class UtilsSendMessage implements ControleService {
         var resultFilling = ParsingStringFromConfigFile
                 .parsingStrConfComdCollback(this, mapCollback, resLoadCallBack.getValue());
 
+        if (!resultFilling.RESULT) {
+            log.error(resultFilling.MESSAGE);
+        }
         registerError(resultFilling);
     }
 
@@ -57,17 +75,13 @@ public class UtilsSendMessage implements ControleService {
         var resultFilling = ParsingStringFromConfigFile
                 .parsingStringConfig(mapSendMessage, resLoadConfig.getValue());
 
+        if (!resultFilling.RESULT) {
+            log.error(resultFilling.MESSAGE);
+        }
+
         registerError(resultFilling);
     }
 
-    private boolean registerError(ValueFromMethod value) {
-        ERROR = !value.RESULT;
-        if (ERROR) {
-            mesRrror = value.MESSAGE;
-        }
-
-        return ERROR;
-    }
 
     /**
      * Загрузка строк конфигурационных файлов
@@ -78,6 +92,9 @@ public class UtilsSendMessage implements ControleService {
         ValueFromMethod<List<String>> resultLoadData = FileAPI.readConfiguration(file);
 
         registerError(resultLoadData);
+        if (!resultLoadData.RESULT) {
+            log.error(resultLoadData.MESSAGE);
+        }
 
         return resultLoadData;
     }
@@ -95,11 +112,24 @@ public class UtilsSendMessage implements ControleService {
         return mapSendMessage.containsKey(strCommand);
     }
 
+    /**
+     * Верификация вхождения команды в структуру mapCollback
+     * @param strCommand
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public boolean isExitsInMapCollback(String strCommand) throws Exception {
+        if (isERROR()) {
+            throw new Exception("Структура команд не создана");
+        }
+        return mapCollback.containsKey(strCommand);
+    }
+
     @Override
     public String getMessageErr() {
         return mesRrror;
     }
-
 
     public DataFromParser getStructureCommand(String strCommand) throws Exception {
 
