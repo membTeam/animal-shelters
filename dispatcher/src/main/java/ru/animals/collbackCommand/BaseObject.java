@@ -5,5 +5,5 @@ import ru.animals.service.serviceParser.DataFromParserCollback;
 
 
 public abstract class BaseObject {
-    public abstract SendMessage apply(CommonCollbackService backServ, Long chartId, DataFromParserCollback dataFromParser);
+    public abstract SendMessage apply(CommandServiceRepository repositoryServ, Long chartId, DataFromParserCollback dataFromParser);
 }

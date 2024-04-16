@@ -2,6 +2,7 @@ package ru.animals.collbackCommand;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ru.animals.repository.VolunteerRepository;
 import ru.animals.service.serviceParser.DataFromParserCollback;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
@@ -10,7 +11,13 @@ import java.lang.reflect.InvocationTargetException;
 
 
 @Service
-public class CommonCollbackService {
+public class CommonCollbackService implements CommandServiceRepository {
+
+    private VolunteerRepository volunteerRepository;
+
+    public CommonCollbackService(VolunteerRepository volunteerRepository) {
+        this.volunteerRepository = volunteerRepository;
+    }
 
     private static String refactWord(String name) {
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
@@ -46,4 +53,8 @@ public class CommonCollbackService {
 
     }
 
+    @Override
+    public VolunteerRepository getVolunteerRepository() {
+        return volunteerRepository;
+    }
 }

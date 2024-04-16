@@ -1,16 +1,16 @@
 package ru.animals.service.serviceRepostory.impl;
 
 import org.springframework.stereotype.Service;
-import ru.animals.repository.VolunteersRepository;
 import ru.animals.service.serviceRepostory.VolunteersService;
+import ru.animals.repository.VolunteerRepository;
 
 
 @Service
 public class VolunteersServiceImpl implements VolunteersService {
 
-    private VolunteersRepository volunteersRepository;
+    private VolunteerRepository volunteersRepository;
 
-    public VolunteersServiceImpl(VolunteersRepository volunteersRepository) {
+    public VolunteersServiceImpl(VolunteerRepository volunteersRepository) {
         this.volunteersRepository = volunteersRepository;
     }
 
