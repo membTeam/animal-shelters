@@ -6,10 +6,9 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.collbackCommand.CommonCollbackService;
-import ru.animals.service.serviceRepostory.ServUserBot;
 import ru.animals.service.serviceRepostory.CommonService;
+import ru.animals.service.serviceRepostory.ServUserBot;
 import ru.animals.service.serviceRepostory.UpdateProducer;
-import ru.animals.service.serviceRepostory.enumStatusUser.EnumStatusUserBot;
 import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
@@ -137,31 +136,39 @@ public class UpdateController {
         if (typeScturcConf == EnumTypeStructConf.TYPE_JSON) {
             distributeMenu(charId, textMess);
         } else if (typeScturcConf != EnumTypeStructConf.TYPE_PARSE) {
-            sendTextMessage(charId, structureCommand.getSource());
+            sendTextMessage(charId, structureCommand.getSource()); // txt or btm
         } else if (typeScturcConf == EnumTypeStructConf.TYPE_PARSE) {
-            var statusUser = servUserBot.statudUserBot(charId);
-            var btnMenuStart = switch (statusUser) {
-                case USER_NOT_REGISTER -> "register";
-                case NO_PROBATION_PERIOD -> "noprobation";
-                case ON_PROBATION_PERIOD -> "onprobation";
-                default -> "empty";
-            };
-
-            if (statusUser.equals("empty")) {
-                throw new Exception("the command was not found");
-            }
-
-            distributeMenu(charId, btnMenuStart);
-
+            distributeParse(charId);
         } else {
             throw new Exception("The command was not found");
         }
     }
 
-    private void distributeMenu(Long chartId, String textMess) throws Exception {
+    /**
+     * команда /start парсинг в зависимости от статуса пользователя
+     * @param charId
+     * @throws Exception
+     */
+    private void distributeParse(Long charId) throws Exception {
+        var statusUser = servUserBot.statudUserBot(charId);
+        var btnMenuStart = switch (statusUser) {
+            case USER_NOT_REGISTER -> "register";
+            case NO_PROBATION_PERIOD -> "noprobation";
+            case ON_PROBATION_PERIOD -> "onprobation";
+            default -> "empty";
+        };
+
+        if (statusUser.equals("empty")) {
+            throw new Exception("the command was not found");
+        }
+
+        distributeMenu(charId, btnMenuStart);
+    }
+
+    private void distributeMenu(Long charId, String textMess) throws Exception {
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
 
-        var sendMessage = utilsMessage.generateSendMessageWithBtn(chartId, structureCommand);
+        var sendMessage = utilsMessage.generateSendMessageWithBtn(charId, structureCommand);
 
         telegramBot.sendAnswerMessage(sendMessage);
 
