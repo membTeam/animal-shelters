@@ -55,7 +55,7 @@ public class SessionService {
 
     private ValueFromMethod addSessionObject(Update update, EnumTypeAppeal typeAppeal) {
 
-        ValueFromMethod<Long> valueChatId = DevlAPI.getChatId(update);
+        ValueFromMethod<Long> valueChatId = DevlAPI.getChatIdFromUpdate(update);
 
         if (!valueChatId.RESULT) {
             return new ValueFromMethod(false, "chatId не определен");
@@ -73,7 +73,7 @@ public class SessionService {
 
     public SendMessage distributionUpdate(Update update) {
 
-        ValueFromMethod<Long> valueChatId = DevlAPI.getChatId(update);
+        ValueFromMethod<Long> valueChatId = DevlAPI.getChatIdFromUpdate(update);
 
         if (!valueChatId.RESULT) {
             return null;

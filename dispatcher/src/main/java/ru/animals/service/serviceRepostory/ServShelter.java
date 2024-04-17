@@ -1,4 +1,4 @@
 package ru.animals.service.serviceRepostory;
 
-public interface servAnimals {
+public interface ServShelter {
 }

@@ -6,16 +6,15 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.collbackCommand.CommonCollbackService;
+import ru.animals.service.serviceRepostory.ServUserBot;
 import ru.animals.service.serviceRepostory.CommonService;
 import ru.animals.service.serviceRepostory.UpdateProducer;
-
-//import ru.animals.service.serviceRepostory.VolunteersService;
-
+import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
+import ru.animals.utils.parser.enumType.EnumTypeStructConf;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
 @Component
@@ -27,16 +26,22 @@ public class UpdateController {
     private UtilsSendMessage utilsSendMessage;
     private CommonService commonService;
     private CommonCollbackService commonCollbackService;
+    private ServUserBot servUserBot;
+
 
     public UpdateController(UtilsMessage utilsMessage,
                             UpdateProducer updateProducer,
-                            UtilsSendMessage utilsSendMessage, CommonService commonService, CommonCollbackService commonCollbackService
+                            UtilsSendMessage utilsSendMessage,
+                            CommonService commonService,
+                            CommonCollbackService commonCollbackService, ServUserBot servUserBot
+
     ) {
         this.utilsMessage = utilsMessage;
         this.updateProducer = updateProducer;
         this.utilsSendMessage = utilsSendMessage;
         this.commonService = commonService;
         this.commonCollbackService = commonCollbackService;
+        this.servUserBot = servUserBot;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -52,10 +57,15 @@ public class UpdateController {
         return text.charAt(0) == '/' ? text.substring(1) : text;
     }
 
-    private Long getCharIdFromUpdate(Update update) {
-        return update.hasCallbackQuery()
-                ? update.getCallbackQuery().getMessage().getChatId()
-                : update.getMessage().getChatId();
+    private Long getCharIdFromUpdate(Update update) throws Exception {
+
+        ValueFromMethod<Long> res = DevlAPI.getChatIdFromUpdate(update);
+
+        if (!res.RESULT) {
+            throw new Exception(res.MESSAGE);
+        }
+
+        return res.getValue();
     }
 
     private String getTextMessFromUpdate(Update update) {
@@ -77,11 +87,13 @@ public class UpdateController {
 
         try {
             if (utilsSendMessage.isERROR()) {
+                log.error(utilsSendMessage.getMessageErr());
                 throw new Exception("Internal error");
             }
 
             if (update.hasMessage()) {
                 if (!update.hasMessage() || !update.getMessage().hasText()) {
+                    log.info("distributeMessages update is not defined");
                     return;
                 }
 
@@ -90,10 +102,17 @@ public class UpdateController {
                 distributeCallbackQueryMessages(update);
             }
         } catch (Exception e) {
-            var chartId = getCharIdFromUpdate(update);
+            try {
+                var chartId = getCharIdFromUpdate(update);
 
-            var sendMessage = utilsMessage.generateSendMessageWithText(chartId, e.getMessage());
-            telegramBot.sendAnswerMessage(sendMessage);
+                var sendMessage = utilsMessage.generateSendMessageWithText(chartId, e.getMessage());
+                telegramBot.sendAnswerMessage(sendMessage);
+
+                log.error(sendMessage);
+
+            } catch (Exception ex) {
+                log.error(ex.getMessage());
+            }
         }
     }
 
@@ -108,19 +127,19 @@ public class UpdateController {
         Long charId = getCharIdFromUpdate(update);
 
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
-        var enumType = structureCommand.getEnumTypeMessage();
 
-        var typeCommand = structureCommand.getTypeCommand();
+        var typeScturcConf = structureCommand.getTypeCommand();
 
-        if ( enumType == EnumTypeParamMessage.TEXT_MESSAGE
-                || enumType == EnumTypeParamMessage.START ) {
-            sendTextMessage(charId, structureCommand.getSource());
-        } else if (enumType == EnumTypeParamMessage.BTMMENU ) {
+        if (typeScturcConf == EnumTypeStructConf.TYPE_JSON) {
             distributeMenu(charId, textMess);
+        } else if (typeScturcConf != EnumTypeStructConf.TYPE_PARSE) {
+            sendTextMessage(charId, structureCommand.getSource());
+        } else if (typeScturcConf != EnumTypeStructConf.TYPE_PARSE) {
+            var statusUser = servUserBot.statudUserBot(charId);
+
         } else {
             throw new Exception("The command was not found");
         }
-
     }
 
     private void distributeMenu(Long chartId, String textMess) throws Exception {
@@ -161,7 +180,6 @@ public class UpdateController {
         } else {
             distributeMenu(chartId, textQuery);
         }
-
     }
 
 

@@ -36,7 +36,7 @@ public class DevlAPI {
         return result;
     }
 
-    public static ValueFromMethod getChatId(Update update) {
+    public static ValueFromMethod getChatIdFromUpdate(Update update) {
         var verifyUpdate = verifyUpdate(update);
         if (!verifyUpdate.RESULT) {
             return verifyUpdate;

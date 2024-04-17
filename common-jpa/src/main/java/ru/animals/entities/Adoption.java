@@ -28,8 +28,11 @@ public class Adoption {
     @Column(name = "date_finish", columnDefinition = "date")
     private Date dateFinish;
 
-    private Long user_id;
-    private Long animate_id;
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(name = "animate_id")
+    private Long animateId;
 
     @Column(name = "adoption_state")
     @Enumerated(EnumType.STRING)

@@ -4,6 +4,8 @@ import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
+import ru.animals.utils.parser.enumType.EnumTypeStructConf;
+
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +33,7 @@ public class ParsingFromBaseConfigFile {
                 }
 
                 dataParsing.setCommand(arrFromStr[0].trim());
-                dataParsing.setTypeCommand(arrFromStr[1].trim());
+                dataParsing.setTypeCommand(ParsingMessage.getTypeStructConf(arrFromStr[1]));
                 dataParsing.setParameter(strTypeMessage);
                 dataParsing.setSource(arrFromStr[3].trim());
                 dataParsing.setEnumTypeMessage(enumTypeMessage);
