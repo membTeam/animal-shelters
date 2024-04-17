@@ -110,10 +110,12 @@ public class UpdateController {
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
         var enumType = structureCommand.getEnumTypeMessage();
 
-        if ( enumType == EnumTypeParamMessage.TEXT_MESSAGE) {
+        var typeCommand = structureCommand.getTypeCommand();
+
+        if ( enumType == EnumTypeParamMessage.TEXT_MESSAGE
+                || enumType == EnumTypeParamMessage.START ) {
             sendTextMessage(charId, structureCommand.getSource());
-        } else if (enumType == EnumTypeParamMessage.BTMMENU
-                        || enumType == EnumTypeParamMessage.START) {
+        } else if (enumType == EnumTypeParamMessage.BTMMENU ) {
             distributeMenu(charId, textMess);
         } else {
             throw new Exception("The command was not found");

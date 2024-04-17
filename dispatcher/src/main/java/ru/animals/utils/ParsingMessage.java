@@ -3,7 +3,7 @@ package ru.animals.utils;
 import java.util.List;
 import java.util.Map;
 
-import ru.animals.service.serviceParser.DataFromParser;
+import ru.animals.utils.parser.StructForBaseConfig;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 
@@ -24,12 +24,12 @@ public class ParsingMessage {
         };
     }*/
 
-    public static ValueFromMethod parsingTemplateString(Map<String,DataFromParser> map,
+    public static ValueFromMethod parsingTemplateString(Map<String, StructForBaseConfig> map,
                                                         List<String> lsString) {
 
         try {
             lsString.stream().forEach(str -> {
-                var dataParsing = new DataFromParser();
+                var dataParsing = new StructForBaseConfig();
 
                 var arrFromStr = str.split("##");
                 String strTypeMessage = arrFromStr[2].trim();
@@ -63,7 +63,7 @@ public class ParsingMessage {
     public static ValueFromMethod parsingTemplateString(String strMessage) {
 
         ValueFromMethod result;
-        DataFromParser dataFromParser = new DataFromParser();
+        StructForBaseConfig dataFromParser = new StructForBaseConfig();
 
         var arrFromStr = strMessage.split("##");
 

@@ -3,7 +3,7 @@ package ru.animals.collbackCommand;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.repository.VolunteerRepository;
-import ru.animals.service.serviceParser.DataFromParserCollback;
+import ru.animals.utils.parser.StructForCollbackConfig;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
 import java.lang.reflect.Constructor;
@@ -41,7 +41,7 @@ public class CommonCollbackService implements CommandServiceRepository {
         }
     }
 
-    public SendMessage distributeStrCommand(Long chartId, DataFromParserCollback dataFromParser) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public SendMessage distributeStrCommand(Long chartId, StructForCollbackConfig dataFromParser) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
 
         var objPrep = preparationClass(dataFromParser.getParameter());
 

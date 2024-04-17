@@ -1,4 +1,4 @@
-package ru.animals.service.serviceParser;
+package ru.animals.utils.parser;
 
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
@@ -7,13 +7,16 @@ import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import java.util.List;
 import java.util.Map;
 
-public class ParsingStringFromConfigFile {
+/**
+ * Парсинг строк конфигурационных файлов data-text/*.conf
+ */
+public class ParsingFromBaseConfigFile {
 
-    public static ValueFromMethod parsingStringConfig(Map<String, DataFromParser> map,
+    public static ValueFromMethod parsingStringConfig(Map<String, StructForBaseConfig> map,
                                                       List<String> lsString) {
         try {
             lsString.stream().forEach(str -> {
-                var dataParsing = new DataFromParser();
+                var dataParsing = new StructForBaseConfig();
 
                 var arrFromStr = str.split("##");
                 String strTypeMessage = arrFromStr[2].trim();
@@ -44,7 +47,7 @@ public class ParsingStringFromConfigFile {
 
     }
 
-    public static ValueFromMethod parsingStrConfComdCollback(ControleService controleService, Map<String, DataFromParserCollback> map,
+    public static ValueFromMethod parsingStrConfComdCollback(ControleService controleService, Map<String, StructForCollbackConfig> map,
                                                              List<String> lsString) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -86,7 +89,7 @@ public class ParsingStringFromConfigFile {
                     }
                 }
 
-                var dataParsing = new DataFromParserCollback();
+                var dataParsing = new StructForCollbackConfig();
                 dataParsing.setCommand(command);
                 dataParsing.setParameter (paramenter);
                 dataParsing.setEnumTypeParameter(enumTypeMessage);
