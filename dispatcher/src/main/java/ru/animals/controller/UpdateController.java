@@ -9,6 +9,7 @@ import ru.animals.collbackCommand.CommonCollbackService;
 import ru.animals.service.serviceRepostory.ServUserBot;
 import ru.animals.service.serviceRepostory.CommonService;
 import ru.animals.service.serviceRepostory.UpdateProducer;
+import ru.animals.service.serviceRepostory.enumStatusUser.EnumStatusUserBot;
 import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
@@ -69,9 +70,12 @@ public class UpdateController {
     }
 
     private String getTextMessFromUpdate(Update update) {
-        return update.hasCallbackQuery()
+        var text = update.hasCallbackQuery()
                 ? update.getCallbackQuery().getMessage().getText()
                 : update.getMessage().getText();
+
+        return text.charAt(0) == '/' ? text.substring(1): text;
+
     }
 
 
@@ -134,8 +138,20 @@ public class UpdateController {
             distributeMenu(charId, textMess);
         } else if (typeScturcConf != EnumTypeStructConf.TYPE_PARSE) {
             sendTextMessage(charId, structureCommand.getSource());
-        } else if (typeScturcConf != EnumTypeStructConf.TYPE_PARSE) {
+        } else if (typeScturcConf == EnumTypeStructConf.TYPE_PARSE) {
             var statusUser = servUserBot.statudUserBot(charId);
+            var btnMenuStart = switch (statusUser) {
+                case USER_NOT_REGISTER -> "register";
+                case NO_PROBATION_PERIOD -> "noprobation";
+                case ON_PROBATION_PERIOD -> "onprobation";
+                default -> "empty";
+            };
+
+            if (statusUser.equals("empty")) {
+                throw new Exception("the command was not found");
+            }
+
+            distributeMenu(charId, btnMenuStart);
 
         } else {
             throw new Exception("The command was not found");

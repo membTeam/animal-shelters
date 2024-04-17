@@ -7,7 +7,7 @@ import ru.animals.utilsDEVL.entitiesenum.EnumTypeMess;
 public class DevlAPI {
 
     private static ValueFromMethod verifyUpdate(Update update) {
-        if (update == null || (!update.hasMessage() || !update.hasCallbackQuery())) {
+        if (update == null || !(!update.hasMessage() || !update.hasCallbackQuery())) {
             return new ValueFromMethod(false, "argument update illegal");
         }
 
