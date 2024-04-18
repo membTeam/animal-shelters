@@ -16,7 +16,6 @@ public class StructForBaseConfig {
     private String helpData;
     private EnumTypeParamMessage enumTypeMessage;
 
-
     public StructForBaseConfig(){}
 
     @Override

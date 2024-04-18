@@ -16,6 +16,7 @@ public class DevlAPI {
 
     public static EnumTypeUpdate typeUpdate(Update update, boolean idVerify) {
 
+
         EnumTypeUpdate result = EnumTypeUpdate.NONE;
 
         if (!idVerify) {
@@ -37,6 +38,7 @@ public class DevlAPI {
     }
 
     public static ValueFromMethod getChatIdFromUpdate(Update update) {
+
         var verifyUpdate = verifyUpdate(update);
         if (!verifyUpdate.RESULT) {
             return verifyUpdate;

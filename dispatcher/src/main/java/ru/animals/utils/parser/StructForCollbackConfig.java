@@ -12,4 +12,5 @@ public class StructForCollbackConfig {
     private String command;
     private String parameter;
     private EnumTypeParamCollback enumTypeParameter;
+
 }

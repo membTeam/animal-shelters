@@ -7,7 +7,6 @@ import ru.animals.utils.parser.StructForBaseConfig;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeFile;
 
-
 @Component
 public class UtilsMessage {
 

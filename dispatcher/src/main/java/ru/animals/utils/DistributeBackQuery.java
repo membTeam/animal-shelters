@@ -18,5 +18,4 @@ public class DistributeBackQuery {
 
         return new ValueFromMethod(result);
     }
-
 }

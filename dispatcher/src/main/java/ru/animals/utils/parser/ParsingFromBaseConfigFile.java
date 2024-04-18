@@ -48,7 +48,6 @@ public class ParsingFromBaseConfigFile {
         } catch (Exception e) {
             return new ValueFromMethod(false, e.getMessage());
         }
-
     }
 
     public static ValueFromMethod parsingStrConfComdCollback(UtilsSendMessageServ controleService, Map<String, StructForCollbackConfig> map,

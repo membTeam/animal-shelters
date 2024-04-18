@@ -28,6 +28,7 @@ public class ParsingMessage {
                     }
                 }
 
+
                 dataParsing.setCommand(arrFromStr[0].trim());
                 dataParsing.setTypeCommand(arrFromStr[1].trim());
                 dataParsing.setParameter(strTypeMessage);
