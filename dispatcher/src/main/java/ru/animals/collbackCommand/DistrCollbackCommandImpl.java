@@ -1,8 +1,10 @@
 package ru.animals.collbackCommand;
 
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.collbackCommand.impl.BaseObject;
+import ru.animals.collbackCommand.impl.CollbackComdDefaultSendMess;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.repository.VolunteerRepository;
 import ru.animals.utils.parser.StructForCollbackConfig;
@@ -13,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 
 
 @Service
+@Log4j
 public class DistrCollbackCommandImpl implements DistrCollbackCommand{
 
     private final VolunteerRepository volunteerRepository;
@@ -48,16 +51,16 @@ public class DistrCollbackCommandImpl implements DistrCollbackCommand{
         }
     }
 
-    public SendMessage distributeStrCommand(Long chartId, StructForCollbackConfig dataFromParser) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public SendMessage distributeStrCommand(Long chartId, StructForCollbackConfig dataConfigStruct) throws Exception {
 
-        var objPrep = preparationClass(dataFromParser.getParameter());
+        var objPrep = preparationClass(dataConfigStruct.getParameter());
 
         if (!objPrep.RESULT) {
-            return null;
+            log.error("DistrCollbackCommandImpl: " + objPrep.MESSAGE);
+            return CollbackComdDefaultSendMess.defaultSendMessage(chartId, "Метод не определен");
         }
 
-        return objPrep.getValue().apply(this, chartId, dataFromParser);
-
+        return objPrep.getValue().apply(this, chartId, dataConfigStruct);
     }
 
     @Override
