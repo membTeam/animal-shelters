@@ -1,6 +1,10 @@
-package ru.animals.utils.parser;
+package ru.animals.utils;
 
-public interface ControleService {
+
+/**
+ * используется в UtilSendMessage
+ */
+public interface UtilsSendMessageServ {
     boolean isExistsInMapConfig(String strCommand) throws Exception;
     boolean isExitsInMapCollback(String strCommand) throws Exception;
     String getMessageErr();

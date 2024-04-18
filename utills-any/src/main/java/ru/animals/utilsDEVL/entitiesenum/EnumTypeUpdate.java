@@ -1,5 +1,5 @@
 package ru.animals.utilsDEVL.entitiesenum;
 
-public enum EnumTypeMess {
+public enum EnumTypeUpdate {
     TEXT_MESSAGE, COLLBACK, NONE;
 }

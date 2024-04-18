@@ -1,7 +1,6 @@
 package ru.animals.utils.parser;
 
 import lombok.*;
-import ru.animals.utils.parser.enumType.EnumTypeStructConf;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 
 
@@ -11,7 +10,7 @@ import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 @Builder
 public class StructForBaseConfig {
     private String command;
-    private EnumTypeStructConf typeCommand;
+    private String typeCommand;
     private String parameter;
     private String source;
     private String helpData;

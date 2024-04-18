@@ -12,7 +12,6 @@ import ru.animals.service.serviceRepostory.UpdateProducer;
 import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
-import ru.animals.utils.parser.enumType.EnumTypeStructConf;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
@@ -94,24 +93,22 @@ public class UpdateController {
                 throw new Exception("Internal error");
             }
 
-            if (update.hasMessage()) {
-                if (!update.hasMessage() || !update.getMessage().hasText()) {
-                    log.info("distributeMessages update is not defined");
-                    return;
+            switch (DevlAPI.typeUpdate(update, false)) {
+                case TEXT_MESSAGE -> distributeMessagesBytype(update);
+                case COLLBACK -> distributeCallbackQueryMessages(update);
+                default -> {
+                    throw new IllegalArgumentException("Тип не определен");
                 }
-
-                distrtMessagesBytype(update);
-            } else if (update.hasCallbackQuery()) {
-                distributeCallbackQueryMessages(update);
             }
+
         } catch (Exception e) {
             try {
                 var chartId = getCharIdFromUpdate(update);
 
                 var sendMessage = utilsMessage.generateSendMessageWithText(chartId, e.getMessage());
-                telegramBot.sendAnswerMessage(sendMessage);
-
                 log.error(sendMessage);
+
+                telegramBot.sendAnswerMessage(sendMessage);
 
             } catch (Exception ex) {
                 log.error(ex.getMessage());
@@ -124,28 +121,24 @@ public class UpdateController {
      * @param update
      * @throws Exception
      */
-    private void distrtMessagesBytype(Update update) throws Exception {
+    private void distributeMessagesBytype(Update update) throws Exception {
 
         String textMess = getTextMessFromUpdate(update);
         Long charId = getCharIdFromUpdate(update);
 
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
-
-        var typeScturcConf = structureCommand.getTypeCommand();
-
-        if (typeScturcConf == EnumTypeStructConf.TYPE_JSON) {
-            distributeMenu(charId, textMess);
-        } else if (typeScturcConf != EnumTypeStructConf.TYPE_PARSE) {
-            sendTextMessage(charId, structureCommand.getSource()); // txt or btm
-        } else if (typeScturcConf == EnumTypeStructConf.TYPE_PARSE) {
-            distributeParse(charId);
-        } else {
-            throw new Exception("The command was not found");
-        }
+        switch (structureCommand.getEnumTypeMessage()) {
+            case BTMMENU -> distributeMenu(charId, textMess);
+            case TEXT_MESSAGE -> sendTextMessage(charId, textMess);
+            case SELMENU -> distributeParse(charId);
+            default -> {
+                throw new IllegalArgumentException("");
+            }
+        };
     }
 
     /**
-     * команда /start парсинг в зависимости от статуса пользователя
+     * обработка команды /start в зависимости от статуса пользователя
      * @param charId
      * @throws Exception
      */

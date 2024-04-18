@@ -1,7 +1,10 @@
 package ru.animals.utilsDEVL.entitiesenum;
 
+/**
+ * Перечисление по типам сообщений
+ */
 public enum EnumTypeParamMessage {
-    EMPTY, START, BTMMENU, TEXT_MESSAGE;
+    EMPTY, SELMENU, BTMMENU, TEXT_MESSAGE;
 
     public static EnumTypeParamMessage of(String argStrEnum) {
 
@@ -14,7 +17,7 @@ public enum EnumTypeParamMessage {
         return switch (enumStr) {
             case "SENDMESSAGE" -> EnumTypeParamMessage.TEXT_MESSAGE;
             case "BTMMENU" -> EnumTypeParamMessage.BTMMENU;
-            case "START" -> EnumTypeParamMessage.START;
+            case "SELMENU" -> EnumTypeParamMessage.SELMENU;
 
             default -> EnumTypeParamMessage.EMPTY;
         };

@@ -1,10 +1,9 @@
 package ru.animals.utils.parser;
 
+import ru.animals.utils.UtilsSendMessageServ;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
-
-import ru.animals.utils.parser.enumType.EnumTypeStructConf;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,8 @@ public class ParsingFromBaseConfigFile {
 
     public static ValueFromMethod parsingStringConfig(Map<String, StructForBaseConfig> map,
                                                       List<String> lsString) {
+        StringBuilder stringBuilder = new StringBuilder();
+
         try {
             lsString.stream().forEach(str -> {
                 var dataParsing = new StructForBaseConfig();
@@ -23,23 +24,24 @@ public class ParsingFromBaseConfigFile {
                 var arrFromStr = str.split("##");
                 String strTypeMessage = arrFromStr[2].trim();
 
-                var enumTypeMessage = EnumTypeParamMessage.of(strTypeMessage); // initEnumTypeMessage(strTypeMessage);
+                var enumTypeMessage = EnumTypeParamMessage.of(strTypeMessage);
                 if (enumTypeMessage == EnumTypeParamMessage.EMPTY) {
-                    try {
-                        throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+                    stringBuilder.append("Тип сообщения " + strTypeMessage + " не определен \n");
+                    return;
                 }
 
                 dataParsing.setCommand(arrFromStr[0].trim());
-                dataParsing.setTypeCommand(ParsingMessage.getTypeStructConf(arrFromStr[1]));
+                dataParsing.setTypeCommand(arrFromStr[1].trim());
                 dataParsing.setParameter(strTypeMessage);
                 dataParsing.setSource(arrFromStr[3].trim());
                 dataParsing.setEnumTypeMessage(enumTypeMessage);
 
                 map.put(dataParsing.getCommand(), dataParsing);
             });
+
+            if (stringBuilder.length() > 0) {
+                return new ValueFromMethod(stringBuilder.toString());
+            }
 
             return new ValueFromMethod(true,"ok");
 
@@ -49,7 +51,7 @@ public class ParsingFromBaseConfigFile {
 
     }
 
-    public static ValueFromMethod parsingStrConfComdCollback(ControleService controleService, Map<String, StructForCollbackConfig> map,
+    public static ValueFromMethod parsingStrConfComdCollback(UtilsSendMessageServ controleService, Map<String, StructForCollbackConfig> map,
                                                              List<String> lsString) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -63,15 +65,8 @@ public class ParsingFromBaseConfigFile {
 
                 var enumTypeMessage = EnumTypeParamCollback.of(strTypeCommand);
                 if (enumTypeMessage.equals(EnumTypeParamCollback.NONE)) {
-                    try {
-                        stringBuilder.append("Тип сообщения: " + strTypeMessage + " не определен \n");
-                        return;
-                        //throw new Exception("Тип сообщения " + strTypeMessage + " не определен");
-                    } catch (Exception e) {
-                        stringBuilder.append(e.getMessage() + "\n");
-                        return;
-                        //throw new RuntimeException(e);
-                    }
+                    stringBuilder.append("Тип сообщения: " + strTypeMessage + " не определен \n");
+                    return;
                 }
 
                 var command = arrFromStr[0].trim();
@@ -83,11 +78,9 @@ public class ParsingFromBaseConfigFile {
                             var err = String.format("%s: %s не определен \n", command, paramenter);
                             stringBuilder.append(err);
                             return;
-                            //throw new Exception(err);
                         }
                     } catch (Exception e) {
                         return;
-                        //throw new RuntimeException(e);
                     }
                 }
 

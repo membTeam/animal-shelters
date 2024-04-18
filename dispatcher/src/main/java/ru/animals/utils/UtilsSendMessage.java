@@ -3,7 +3,6 @@ package ru.animals.utils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.animals.utils.parser.ControleService;
 import ru.animals.utils.parser.StructForCollbackConfig;
 import ru.animals.utils.parser.ParsingFromBaseConfigFile;
 import ru.animals.utils.parser.StructForBaseConfig;
@@ -18,7 +17,7 @@ import java.util.Map;
  */
 @Service
 @Log4j
-public class UtilsSendMessage implements ControleService {
+public class UtilsSendMessage implements UtilsSendMessageServ {
     private Map<String, StructForBaseConfig> mapSendMessage = new HashMap<>();
     private Map<String, StructForCollbackConfig> mapCollback = new HashMap<>();
 
