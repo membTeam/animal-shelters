@@ -9,5 +9,5 @@ public interface DistrCollbackCommand {
     VolunteerRepository getVolunteerRepository();
     UserBotRepository getUserBotRepository();
 
-    ValueFromMethod<BaseObject> preparationClass(String strClass)
+    ValueFromMethod<BaseObject> preparationClass(String strClass);
 }
