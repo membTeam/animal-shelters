@@ -16,7 +16,6 @@ public class DevlAPI {
 
     public static EnumTypeUpdate typeUpdate(Update update, boolean idVerify) {
 
-
         EnumTypeUpdate result = EnumTypeUpdate.NONE;
 
         if (!idVerify) {
@@ -49,6 +48,15 @@ public class DevlAPI {
                 : update.getCallbackQuery().getMessage().getChatId();
 
         return new ValueFromMethod<Long>(chatId);
+
+    }
+
+    public static String getTextMessFromUpdate(Update update) {
+        var text = update.hasCallbackQuery()
+                ? update.getCallbackQuery().getMessage().getText()
+                : update.getMessage().getText();
+
+        return text.charAt(0) == '/' ? text.substring(1): text;
 
     }
 

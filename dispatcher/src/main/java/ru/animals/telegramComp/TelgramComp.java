@@ -10,6 +10,14 @@ import java.io.IOException;
 
 public class TelgramComp {
 
+    public static SendMessage defaultSendMessage(long chatId, String text) {
+        var sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(text);
+
+        return sendMessage;
+    }
+
     public static ValueFromMethod<SendMessage> sendMessageFromJSON(String fileJson) {
 
         try {

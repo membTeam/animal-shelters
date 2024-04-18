@@ -69,12 +69,7 @@ public class UpdateController {
     }
 
     private String getTextMessFromUpdate(Update update) {
-        var text = update.hasCallbackQuery()
-                ? update.getCallbackQuery().getMessage().getText()
-                : update.getMessage().getText();
-
-        return text.charAt(0) == '/' ? text.substring(1): text;
-
+        return DevlAPI.getTextMessFromUpdate(update);
     }
 
 

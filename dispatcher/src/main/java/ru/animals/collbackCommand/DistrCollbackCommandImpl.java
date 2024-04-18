@@ -4,14 +4,13 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.collbackCommand.impl.BaseObject;
-import ru.animals.collbackCommand.impl.CollbackComdDefaultSendMess;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.repository.VolunteerRepository;
+import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utils.parser.StructForCollbackConfig;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 
 @Service
@@ -57,7 +56,7 @@ public class DistrCollbackCommandImpl implements DistrCollbackCommand{
 
         if (!objPrep.RESULT) {
             log.error("DistrCollbackCommandImpl: " + objPrep.MESSAGE);
-            return CollbackComdDefaultSendMess.defaultSendMessage(chartId, "Метод не определен");
+            return TelgramComp.defaultSendMessage(chartId, "Метод не определен");
         }
 
         return objPrep.getValue().apply(this, chartId, dataConfigStruct);
