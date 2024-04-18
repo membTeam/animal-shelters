@@ -2,6 +2,8 @@ package ru.animals.collbackCommand;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ru.animals.collbackCommand.impl.BaseObject;
+import ru.animals.repository.UserBotRepository;
 import ru.animals.repository.VolunteerRepository;
 import ru.animals.utils.parser.StructForCollbackConfig;
 import ru.animals.utilsDEVL.ValueFromMethod;
@@ -11,18 +13,23 @@ import java.lang.reflect.InvocationTargetException;
 
 
 @Service
-public class CommonCollbackService implements CommandServiceRepository {
+public class DistrCollbackCommandImpl implements DistrCollbackCommand{
 
-    private VolunteerRepository volunteerRepository;
+    private final VolunteerRepository volunteerRepository;
+    private final UserBotRepository userBotRepository;
 
-    public CommonCollbackService(VolunteerRepository volunteerRepository) {
+    public DistrCollbackCommandImpl(VolunteerRepository volunteerRepository, UserBotRepository userBotRepository) {
         this.volunteerRepository = volunteerRepository;
+        this.userBotRepository = userBotRepository;
     }
+
 
     private static String refactWord(String name) {
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
+
+    @Override
     public ValueFromMethod<BaseObject> preparationClass(String strClass) {
 
         var strCommand = String.format("CollbackComd%s", refactWord(strClass));
@@ -56,5 +63,10 @@ public class CommonCollbackService implements CommandServiceRepository {
     @Override
     public VolunteerRepository getVolunteerRepository() {
         return volunteerRepository;
+    }
+
+    @Override
+    public UserBotRepository getUserBotRepository() {
+        return userBotRepository;
     }
 }

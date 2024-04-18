@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.collbackCommand.CommonCollbackService;
+import ru.animals.collbackCommand.DistrCollbackCommandImpl;
 import ru.animals.service.serviceRepostory.CommonService;
 import ru.animals.service.serviceRepostory.ServUserBot;
 import ru.animals.service.serviceRepostory.UpdateProducer;
@@ -25,7 +25,7 @@ public class UpdateController {
     private UpdateProducer updateProducer;
     private UtilsSendMessage utilsSendMessage;
     private CommonService commonService;
-    private CommonCollbackService commonCollbackService;
+    private DistrCollbackCommandImpl commonCollbackService;
     private ServUserBot servUserBot;
 
 
@@ -33,7 +33,7 @@ public class UpdateController {
                             UpdateProducer updateProducer,
                             UtilsSendMessage utilsSendMessage,
                             CommonService commonService,
-                            CommonCollbackService commonCollbackService, ServUserBot servUserBot
+                            DistrCollbackCommandImpl commonCollbackService, ServUserBot servUserBot
 
     ) {
         this.utilsMessage = utilsMessage;
