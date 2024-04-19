@@ -76,7 +76,7 @@ public class StateRegister extends BaseState {
         Matcher matcher = pattern.matcher(strPhone);
         if (matcher.find()) {
             var userRepository = sessionService.getUserBotRepository();
-            var strPhone = String.format("%s %s %s %s",
+            var strPhoneFormat = String.format("%s %s %s %s",
                     matcher.group(1), matcher.group(2),
                     matcher.group(3), matcher.group(4) );
 
@@ -84,7 +84,7 @@ public class StateRegister extends BaseState {
 
             UserBot userBot = UserBot.builder()
                     .chatId(charId)
-                    .phone(strPhone)
+                    .phone(strPhoneFormat)
                     .firstName(userName)
                     .build();
 
@@ -94,5 +94,6 @@ public class StateRegister extends BaseState {
             TelgramComp.defaultSendMessage( charId, "Регистрация прошла успешно.\nПерейдите в стартовое меню /start");
         }
 
+        return null;
     }
 }

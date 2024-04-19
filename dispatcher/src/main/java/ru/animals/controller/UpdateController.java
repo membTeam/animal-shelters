@@ -1,7 +1,12 @@
 package ru.animals.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,34 +20,35 @@ import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
+import ru.animals.exceptions.UploadFileException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-@Component
+import ru.animals.exceptions.UploadFileException;
+
 @Log4j
+@Component
+@RequiredArgsConstructor
 public class UpdateController {
     private TelegramBot telegramBot;
-    private UtilsMessage utilsMessage;
-    private UpdateProducer updateProducer;
-    private UtilsSendMessage utilsSendMessage;
-    private CommonService commonService;
-    private DistrCollbackCommandImpl commonCollbackService;
-    private ServUserBot servUserBot;
+    private final UtilsMessage utilsMessage;
+    private final UpdateProducer updateProducer;
+    private final UtilsSendMessage utilsSendMessage;
+    private final CommonService commonService;
+    private final DistrCollbackCommandImpl commonCollbackService;
+    private final ServUserBot servUserBot;
 
+    @Value("${service.file_info.url}")
+    private String fileInfoUri;
 
-    public UpdateController(UtilsMessage utilsMessage,
-                            UpdateProducer updateProducer,
-                            UtilsSendMessage utilsSendMessage,
-                            CommonService commonService,
-                            DistrCollbackCommandImpl commonCollbackService, ServUserBot servUserBot
+    @Value("${service.file_storage.url}")
+    String fileStorageUri;
 
-    ) {
-        this.utilsMessage = utilsMessage;
-        this.updateProducer = updateProducer;
-        this.utilsSendMessage = utilsSendMessage;
-        this.commonService = commonService;
-        this.commonCollbackService = commonCollbackService;
-        this.servUserBot = servUserBot;
-    }
+    @Value("${bot.token}")
+    private String token;
 
     public void registerBot(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
@@ -89,6 +95,11 @@ public class UpdateController {
                 throw new Exception("Internal error");
             }
 
+            if (update.getMessage().hasPhoto()) {
+                distributePhoto(update);
+                return;
+            }
+
             switch (DevlAPI.typeUpdate(update, false)) {
                 case TEXT_MESSAGE -> distributeMessagesBytype(update);
                 case COLLBACK -> distributeCallbackQueryMessages(update);
@@ -111,6 +122,72 @@ public class UpdateController {
             }
         }
     }
+
+// ------------------------ load photo
+    private ResponseEntity<String> getFilePath(String fileId) {
+        var restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        var request = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(
+                fileInfoUri,
+                HttpMethod.GET,
+                request,
+                String.class,
+                token,
+                fileId
+        );
+
+    }
+
+    private String getFilePath(ResponseEntity<String> response) {
+        var jsonObject = new JSONObject(response.getBody());
+        return String.valueOf(jsonObject
+                .getJSONObject("result")
+                .getString("file_path"));
+    }
+
+    private byte[] downloadFile(String filePath) throws Exception {
+        var fullUri = fileStorageUri.replace("{token}", token)
+                .replace("{filePath}", filePath);
+        URL urlObj = null;
+        try {
+            urlObj = new URL(fullUri);
+        } catch (MalformedURLException e) {
+            log.error(e.getMessage());
+            throw new UploadFileException(e.getMessage());
+        }
+
+        try (InputStream is = urlObj.openStream()) {
+            return is.readAllBytes();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new UploadFileException(e.getMessage());
+        }
+    }
+
+    private void distributePhoto(Update update) throws Exception {
+        var telegramMessage = update.getMessage();
+
+        var photoSizeCount = telegramMessage.getPhoto().size();
+        var photoIndex = photoSizeCount > 1 ? telegramMessage.getPhoto().size() - 1 : 0;
+        var telegramPhoto = telegramMessage.getPhoto().get(photoIndex);
+        var fileId = telegramPhoto.getFileId();
+        var response = getFilePath(fileId);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+
+            var filePath = getFilePath(response);
+            var fileInByte = downloadFile(filePath);
+
+            log.info("File download");
+        } else {
+            throw new UploadFileException("Error configue response");
+        }
+
+    }
+
+    // -------------------- end load photo
 
     /**
      * Менеджер текстовых сообщений
