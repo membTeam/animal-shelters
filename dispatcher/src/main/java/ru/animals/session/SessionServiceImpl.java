@@ -1,57 +1,46 @@
 package ru.animals.session;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.session.stateImpl.BaseState;
 import ru.animals.session.stateImpl.StateRegister;
 import ru.animals.session.stateImpl.StateReport;
+import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utils.DevlAPI;
+import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeAppeal;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 @Getter
 @Log4j
-public class SessionServiceImpl implements SessionService{
+public class SessionServiceImpl implements SessionService, SessionUpdate{
 
     private final UserBotRepository userBotRepository;
+    private final ReportsRepository reportsRepository;
+    private final UtilsSendMessage utilsSendMessage;
 
     private Map<Long, BaseState> mapItems = new HashMap<>();
 
-    public SessionServiceImpl(UserBotRepository userBotRepository) {
-        this.userBotRepository = userBotRepository;
-    }
-
-/*    private ValueFromMethod getChatIdFromUpdate(Update update) {
-
-        if (update == null || (!update.hasMessage() || !update.hasCallbackQuery())) {
-            return new ValueFromMethod(false, "update не определен");
-        }
-
-        long chatId = update.hasMessage()
-                ? update.getMessage().getChatId()
-                : update.getCallbackQuery().getMessage().getChatId();
-
-        return new ValueFromMethod<Long>(chatId);
-    }*/
-
-    private ValueFromMethod addSessionRegister(long chatId) {
-        if (mapItems.containsKey(chatId)) {
-            return new ValueFromMethod("Повторное обращение");
-        }
-
+    /*private SendMessage addSessionRegister(long chatId, Update update) {
         StateRegister sessionRegister = new StateRegister(chatId);
         mapItems.put(chatId, sessionRegister);
 
-        return new ValueFromMethod(true, "ok");
-    }
+        return sessionRegister.getSendMessage(this, update);
+    }*/
 
     private ValueFromMethod addSessionReport(long chatId) {
 
@@ -65,24 +54,51 @@ public class SessionServiceImpl implements SessionService{
         return new ValueFromMethod(true, "ok");
     }
 
-    private ValueFromMethod addSessionObject(Update update, EnumTypeAppeal typeAppeal) {
+    /**
+     * Регистрация СОСТОЯНИЯ для регистрации пользователя и отчет о состоянии животного
+     * @param chatId
+     * @param update
+     * @return
+     * @throws Exception
+     */
+    private SendMessage addSessionObject(long chatId, Update update) throws Exception {
 
-        ValueFromMethod<Long> valueChatId = DevlAPI.getChatIdFromUpdate(update);
+        EnumTypeUpdate typeAppeal = DevlAPI.typeUpdate(update, false);
 
-        if (!valueChatId.RESULT) {
-            return new ValueFromMethod(false, "chatId не определен");
+        if (typeAppeal != EnumTypeUpdate.COLLBACK) {
+            log.error("addSessionObject тип объекта должен быть COLLBACK");
+            return TelgramComp.defaultSendMessage( chatId,"Illegal argument for update");
         }
 
-        Long chatid = valueChatId.getValue();
+        var text = DevlAPI.getTextMessFromUpdate(update);
 
-        if (typeAppeal == EnumTypeAppeal.REGUSTER_USER) {
-            return addSessionRegister(chatid);
-        } else {
-            return addSessionReport(chatid);
+        if (utilsSendMessage.getEnumTypeParameter(text) != EnumTypeParamCollback.TCL_DST) {
+            log.error("addSessionObject: EnumTypeParamCollback.TCL_DST");
+            return TelgramComp.defaultSendMessage( chatId,"Illegal argument for type update");
+        }
+
+        var nameClass = String.format("State%s", DevlAPI.lowercaseFirstLetter(text));
+        var pathClass = String.format("%s.stateImpl.%s",
+                this.getClass().getPackageName(), nameClass);
+
+        try {
+            Class<?> clazz = Class.forName(pathClass);
+            Class[] parameter = {long.class};
+            Constructor constructor = clazz.getConstructor(parameter);
+
+            BaseState baseState = (BaseState) constructor.newInstance(chatId);
+            mapItems.put(chatId, baseState);
+
+            return baseState.getSendMessage(this, update);
+
+        } catch (ClassNotFoundException ex) {
+            log.error(ex.getMessage());
+            return TelgramComp.defaultSendMessage( chatId,"command not found");
         }
 
     }
 
+    @Override
     public SendMessage distributionUpdate(Update update) throws Exception {
 
         ValueFromMethod<Long> valueChatId = DevlAPI.getChatIdFromUpdate(update);
@@ -95,10 +111,10 @@ public class SessionServiceImpl implements SessionService{
         Long chatId =  valueChatId.getValue();
 
         if (!mapItems.containsKey(chatId)) {
-
+            return addSessionObject(chatId, update);
         }
 
-        return null;
+        return TelgramComp.defaultSendMessage( chatId,"distributionUpdate не завершен");
     }
 
 

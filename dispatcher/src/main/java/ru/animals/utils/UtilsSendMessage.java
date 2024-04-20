@@ -7,6 +7,7 @@ import ru.animals.utils.parser.StructForCollbackConfig;
 import ru.animals.utils.parser.ParsingFromBaseConfigFile;
 import ru.animals.utils.parser.StructForBaseConfig;
 import ru.animals.utilsDEVL.*;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
 import java.util.HashMap;
 import java.util.List;
@@ -146,6 +147,12 @@ public class UtilsSendMessage implements UtilsSendMessageServ {
 
     public StructForBaseConfig getStructureCommand (StructForCollbackConfig comnCallback) throws Exception {
         return getStructureCommand(comnCallback.getParameter());
+    }
+
+    public EnumTypeParamCollback getEnumTypeParameter(String strParamenter) throws Exception {
+        var structCollbackCommand = getStructCommandCollback(strParamenter.trim());
+
+        return structCollbackCommand.getEnumTypeParameter();
     }
 
     public StructForCollbackConfig getStructCommandCollback(String strCommand) throws Exception {

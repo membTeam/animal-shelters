@@ -7,6 +7,7 @@ import ru.animals.collbackCommand.impl.BaseObject;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.repository.VolunteerRepository;
 import ru.animals.telegramComp.TelgramComp;
+import ru.animals.utils.DevlAPI;
 import ru.animals.utils.parser.StructForCollbackConfig;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
@@ -26,15 +27,10 @@ public class DistrCollbackCommandImpl implements DistrCollbackCommand{
     }
 
 
-    private static String refactWord(String name) {
-        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-    }
-
-
     @Override
     public ValueFromMethod<BaseObject> preparationClass(String strClass) {
 
-        var strCommand = String.format("CollbackComd%s", refactWord(strClass));
+        var strCommand = String.format("CollbackComd%s", DevlAPI.lowercaseFirstLetter(strClass));
         var pathClass = String.format("%s.impl.%s",
                 this.getClass().getPackageName(), strCommand);
 

@@ -260,11 +260,12 @@ public class UpdateController {
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
         } else if (enumType == EnumTypeParamCollback.TCL_DBD) {
-
             // TODO: исправить идентификатор метода
             var sendMessage = commonCollbackService.distributeStrCommand(chartId, structCollbackCommand);
 
             telegramBot.sendAnswerMessage(sendMessage);
+
+        } else if (enumType == EnumTypeParamCollback.TCL_DST){
 
         } else {
             distributeMenu(chartId, textQuery);
