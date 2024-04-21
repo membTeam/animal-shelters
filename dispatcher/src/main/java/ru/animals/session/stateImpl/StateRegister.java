@@ -5,10 +5,9 @@ import lombok.extern.log4j.Log4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.entities.UserBot;
-import ru.animals.session.SessionService;
+import ru.animals.session.stateImpl.temp.SessionService;
 import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utils.DevlAPI;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
 import java.time.LocalDateTime;
@@ -20,27 +19,35 @@ import java.util.regex.Pattern;
 public class StateRegister extends BaseState {
 
     private final Long charId;
-    private LocalDateTime lastAppeal;
+    private LocalDateTime dateTimeLastAppeal;
     private boolean resultEnd = false;
     private boolean startState = false;
     private final String STR_PATTERN ="^(\\(\\+7\\)) (\\(9\\d{2}\\)) (\\(\\d{3}\\)) (\\(\\d{2}-\\d{2}\\))$";
+
+    private final String strFromConfig = "register";
 
     public final String TEXT_START = "Введите свои данные согласно шаблона:\n" +
                             "ВашеИмя (+7) (9NN) (NNN) (NN-NN)\n" +
                             "где N числовые значения вашего телефона\n" +
                             "отказ от регистрации /cancel";
 
-    public StateRegister(long chatId) {
+    public StateRegister( long chatId) {
         this.charId = chatId;
-        this.lastAppeal = LocalDateTime.now();
+        this.dateTimeLastAppeal = LocalDateTime.now();
+
     }
 
-    private SendMessage registerState(EnumTypeUpdate enumTypeUpdate, String text) {
-        if ( enumTypeUpdate == EnumTypeUpdate.COLLBACK
-                && EnumTypeParamCollback.enumByString(text) == EnumTypeParamCollback.TCL_DST ) {
+    private SendMessage registerState(SessionService sessionService) throws Exception {
 
-            startState = true;
-            return TelgramComp.defaultSendMessage(charId, TEXT_START);
+        if (!startState) {
+                startState = true;
+
+                var structureCommand = sessionService
+                        .getUtilsSendMessage()
+                        .getStructureCommand(strFromConfig);
+
+                return sessionService.getUtilsMessage()
+                        .generateSendMessageWithBtn(charId, structureCommand);
 
         } else {
             log.error("StateRegister тип не определен");
@@ -60,7 +67,12 @@ public class StateRegister extends BaseState {
         var text = DevlAPI.getTextMessFromUpdate(update);
 
         if (!startState) {
-            return registerState(enumTypeUpdate, text);
+            try {
+                return registerState(sessionService);
+            } catch (Exception ex) {
+                log.error(ex.getMessage());
+                return TelgramComp.defaultSendMessage( charId,"The structure of the object's state is not defined");
+            }
         }
 
         if (enumTypeUpdate != EnumTypeUpdate.TEXT_MESSAGE) {

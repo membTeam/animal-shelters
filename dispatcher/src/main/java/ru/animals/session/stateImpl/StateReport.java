@@ -2,12 +2,9 @@ package ru.animals.session.stateImpl;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.session.SessionService;
-import ru.animals.session.SessionState;
+import ru.animals.session.stateImpl.temp.SessionService;
+import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeAppeal;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class StateReport extends BaseState {
 

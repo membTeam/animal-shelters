@@ -6,16 +6,16 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.animals.controller.UpdateControllerService;
 import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.session.stateImpl.BaseState;
-import ru.animals.session.stateImpl.StateRegister;
-import ru.animals.session.stateImpl.StateReport;
+import ru.animals.session.stateImpl.temp.SessionService;
 import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utils.DevlAPI;
+import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.ValueFromMethod;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeAppeal;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
@@ -31,31 +31,17 @@ public class SessionServiceImpl implements SessionService, SessionUpdate{
 
     private final UserBotRepository userBotRepository;
     private final ReportsRepository reportsRepository;
+    private final UpdateControllerService updateControllerService;
+    private final UtilsMessage utilsMessage;
     private final UtilsSendMessage utilsSendMessage;
+
 
     private Map<Long, BaseState> mapItems = new HashMap<>();
 
-    /*private SendMessage addSessionRegister(long chatId, Update update) {
-        StateRegister sessionRegister = new StateRegister(chatId);
-        mapItems.put(chatId, sessionRegister);
-
-        return sessionRegister.getSendMessage(this, update);
-    }*/
-
-    private ValueFromMethod addSessionReport(long chatId) {
-
-        if (mapItems.containsKey(chatId)) {
-            return new ValueFromMethod("Повторное обращение");
-        }
-
-        StateReport sessionReport = new StateReport(chatId);
-        mapItems.put(chatId, sessionReport);
-
-        return new ValueFromMethod(true, "ok");
-    }
-
     /**
      * Регистрация СОСТОЯНИЯ для регистрации пользователя и отчет о состоянии животного
+     * Class обработки задается в конфигурационном файле: dst-register
+     * dst - тип сообщения   register nameClass
      * @param chatId
      * @param update
      * @return
@@ -121,6 +107,26 @@ public class SessionServiceImpl implements SessionService, SessionUpdate{
     @Override
     public UserBotRepository getUserBotRepository() {
         return userBotRepository;
+    }
+
+    @Override
+    public ReportsRepository getReportsRepository() {
+        return reportsRepository;
+    }
+
+    @Override
+    public UpdateControllerService getUpdateControllerService() {
+        return updateControllerService;
+    }
+
+    @Override
+    public UtilsMessage getUtilsMessage() {
+        return utilsMessage;
+    }
+
+    @Override
+    public UtilsSendMessage getUtilsSendMessage() {
+        return utilsSendMessage;
     }
 
 }

@@ -27,12 +27,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import ru.animals.exceptions.UploadFileException;
-
 @Log4j
 @Component
 @RequiredArgsConstructor
-public class UpdateController {
+public class UpdateController  implements UpdateControllerService {
     private TelegramBot telegramBot;
     private final UtilsMessage utilsMessage;
     private final UpdateProducer updateProducer;
@@ -201,9 +199,9 @@ public class UpdateController {
 
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
         switch (structureCommand.getEnumTypeMessage()) {
-            case BTMMENU -> distributeMenu(charId, textMess);
-            case TEXT_MESSAGE -> sendTextMessage(charId, textMess);
-            case SELMENU -> distributeParse(charId);
+            case BTMMENU -> sendButtonMenu(charId, textMess);
+            case TEXT_MESSAGE -> sendTextMessageFromFile(charId, textMess);
+            case SELMENU -> sendButtonMenuByParse(charId);
             default -> {
                 throw new IllegalArgumentException("");
             }
@@ -215,7 +213,7 @@ public class UpdateController {
      * @param charId
      * @throws Exception
      */
-    private void distributeParse(Long charId) throws Exception {
+    private void sendButtonMenuByParse(Long charId) throws Exception {
         var statusUser = servUserBot.statudUserBot(charId);
         var btnMenuStart = switch (statusUser) {
             case USER_NOT_REGISTER -> "register";
@@ -228,17 +226,9 @@ public class UpdateController {
             throw new Exception("the command was not found");
         }
 
-        distributeMenu(charId, btnMenuStart);
+        sendButtonMenu(charId, btnMenuStart);
     }
 
-    private void distributeMenu(Long charId, String textMess) throws Exception {
-        var structureCommand = utilsSendMessage.getStructureCommand(textMess);
-
-        var sendMessage = utilsMessage.generateSendMessageWithBtn(charId, structureCommand);
-
-        telegramBot.sendAnswerMessage(sendMessage);
-
-    }
 
     /**
      * Обработка collback команд
@@ -252,11 +242,11 @@ public class UpdateController {
 
         var enumType = structCollbackCommand.getEnumTypeParameter();
         if (enumType == EnumTypeParamCollback.TCL_TXT) {
-            sendTextMessage(chartId,
+            sendTextMessageFromFile(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
         } else if (enumType == EnumTypeParamCollback.TCL_BTN) {
-            distributeMenu(chartId,
+            sendButtonMenu(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
         } else if (enumType == EnumTypeParamCollback.TCL_DBD) {
@@ -268,13 +258,25 @@ public class UpdateController {
         } else if (enumType == EnumTypeParamCollback.TCL_DST){
 
         } else {
-            distributeMenu(chartId, textQuery);
+            sendButtonMenu(chartId, textQuery);
         }
     }
 
 
-    private void sendTextMessage(Long charId,
-                                 String fileSource) throws Exception {
+
+    @Override
+    public void sendButtonMenu(Long charId, String textMess) throws Exception {
+        var structureCommand = utilsSendMessage.getStructureCommand(textMess);
+
+        var sendMessage = utilsMessage.generateSendMessageWithBtn(charId, structureCommand);
+
+        telegramBot.sendAnswerMessage(sendMessage);
+
+    }
+
+    @Override
+    public void sendTextMessageFromFile(Long charId,
+                                         String fileSource) throws Exception {
 
         ValueFromMethod<String> dataFromFile = FileAPI.readDataFromFile(fileSource);
 

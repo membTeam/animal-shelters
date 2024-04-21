@@ -1,4 +1,4 @@
-package ru.animals.session;
+package ru.animals.session.stateImpl.temp;
 
 import lombok.Getter;
 import lombok.Setter;
