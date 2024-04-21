@@ -14,6 +14,7 @@ import ru.animals.collbackCommand.DistrCollbackCommandImpl;
 import ru.animals.service.serviceRepostory.CommonService;
 import ru.animals.service.serviceRepostory.ServUserBot;
 import ru.animals.service.serviceRepostory.UpdateProducer;
+import ru.animals.session.SessionServiceImpl;
 import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
@@ -38,6 +39,7 @@ public class UpdateController  implements UpdateControllerService {
     private final CommonService commonService;
     private final DistrCollbackCommandImpl commonCollbackService;
     private final ServUserBot servUserBot;
+    private final SessionServiceImpl sessionServiceUpdate;
 
     @Value("${service.file_info.url}")
     private String fileInfoUri;
@@ -93,16 +95,15 @@ public class UpdateController  implements UpdateControllerService {
                 throw new Exception("Internal error");
             }
 
-            if (update.getMessage().hasPhoto()) {
-                distributePhoto(update);
-                return;
-            }
-
-            switch (DevlAPI.typeUpdate(update, false)) {
-                case TEXT_MESSAGE -> distributeMessagesBytype(update);
-                case COLLBACK -> distributeCallbackQueryMessages(update);
-                default -> {
-                    throw new IllegalArgumentException("Тип не определен");
+            if (sessionServiceUpdate.isExistsStateSession(update)) {
+                telegramBot.sendAnswerMessage(sessionServiceUpdate.distributionUpdate(update));
+            } else {
+                switch (DevlAPI.typeUpdate(update, false)) {
+                    case TEXT_MESSAGE -> distributeMessagesBytype(update);
+                    case COLLBACK -> distributeCallbackQueryMessages(update);
+                    default -> {
+                        throw new IllegalArgumentException("Тип не определен");
+                    }
                 }
             }
 
@@ -256,7 +257,8 @@ public class UpdateController  implements UpdateControllerService {
             telegramBot.sendAnswerMessage(sendMessage);
 
         } else if (enumType == EnumTypeParamCollback.TCL_DST){
-
+            var sendMessge = sessionServiceUpdate.distributionUpdate(update);
+            telegramBot.sendAnswerMessage(sendMessge);
         } else {
             sendButtonMenu(chartId, textQuery);
         }

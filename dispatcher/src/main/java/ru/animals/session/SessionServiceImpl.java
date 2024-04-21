@@ -3,14 +3,16 @@ package ru.animals.session;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.controller.UpdateControllerService;
+import ru.animals.entities.UserBot;
 import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.session.stateImpl.BaseState;
-import ru.animals.session.stateImpl.temp.SessionService;
+import ru.animals.session.stateImpl.StateRegister;
 import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
@@ -20,23 +22,31 @@ import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
 import java.lang.reflect.Constructor;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Service
-@RequiredArgsConstructor
 @Getter
 @Log4j
-public class SessionServiceImpl implements SessionService, SessionUpdate{
+public class SessionServiceImpl implements SessionService{
 
     private final UserBotRepository userBotRepository;
     private final ReportsRepository reportsRepository;
-    private final UpdateControllerService updateControllerService;
+
     private final UtilsMessage utilsMessage;
     private final UtilsSendMessage utilsSendMessage;
 
 
     private Map<Long, BaseState> mapItems = new HashMap<>();
+
+    public SessionServiceImpl(UserBotRepository userBotRepository, ReportsRepository reportsRepository, UtilsMessage utilsMessage, UtilsSendMessage utilsSendMessage) {
+        this.userBotRepository = userBotRepository;
+        this.reportsRepository = reportsRepository;
+        this.utilsMessage = utilsMessage;
+        this.utilsSendMessage = utilsSendMessage;
+    }
 
     /**
      * Регистрация СОСТОЯНИЯ для регистрации пользователя и отчет о состоянии животного
@@ -56,20 +66,22 @@ public class SessionServiceImpl implements SessionService, SessionUpdate{
             return TelgramComp.defaultSendMessage( chatId,"Illegal argument for update");
         }
 
-        var text = DevlAPI.getTextMessFromUpdate(update);
+        var text = update.getCallbackQuery().getData();
 
         if (utilsSendMessage.getEnumTypeParameter(text) != EnumTypeParamCollback.TCL_DST) {
             log.error("addSessionObject: EnumTypeParamCollback.TCL_DST");
             return TelgramComp.defaultSendMessage( chatId,"Illegal argument for type update");
         }
 
+        text = text.substring(text.indexOf("-") + 1);
         var nameClass = String.format("State%s", DevlAPI.lowercaseFirstLetter(text));
+
         var pathClass = String.format("%s.stateImpl.%s",
                 this.getClass().getPackageName(), nameClass);
 
         try {
             Class<?> clazz = Class.forName(pathClass);
-            Class[] parameter = {long.class};
+            Class[] parameter = {Long.class};
             Constructor constructor = clazz.getConstructor(parameter);
 
             BaseState baseState = (BaseState) constructor.newInstance(chatId);
@@ -84,8 +96,7 @@ public class SessionServiceImpl implements SessionService, SessionUpdate{
 
     }
 
-    @Override
-    public SendMessage distributionUpdate(Update update) throws Exception {
+    public SendMessage distributionUpdate(Update update)  throws Exception {
 
         ValueFromMethod<Long> valueChatId = DevlAPI.getChatIdFromUpdate(update);
 
@@ -100,7 +111,17 @@ public class SessionServiceImpl implements SessionService, SessionUpdate{
             return addSessionObject(chatId, update);
         }
 
-        return TelgramComp.defaultSendMessage( chatId,"distributionUpdate не завершен");
+        var baseState = mapItems.get(chatId);
+
+        var resultSendMessage = baseState.getSendMessage(this, update);
+
+        var resState = baseState.getResultState();
+        if (resState.RESULT_END) {
+            mapItems.remove(resState.CHAT_ID);
+        }
+
+        return resultSendMessage;
+
     }
 
 
@@ -115,11 +136,6 @@ public class SessionServiceImpl implements SessionService, SessionUpdate{
     }
 
     @Override
-    public UpdateControllerService getUpdateControllerService() {
-        return updateControllerService;
-    }
-
-    @Override
     public UtilsMessage getUtilsMessage() {
         return utilsMessage;
     }
@@ -127,6 +143,16 @@ public class SessionServiceImpl implements SessionService, SessionUpdate{
     @Override
     public UtilsSendMessage getUtilsSendMessage() {
         return utilsSendMessage;
+    }
+
+    public boolean isExistsStateSession(Update update) throws Exception {
+        ValueFromMethod<Long> valueChatId = DevlAPI.getChatIdFromUpdate(update);
+        if (!valueChatId.RESULT) {
+            log.error(valueChatId.MESSAGE);
+            throw new Exception("The Update object is not defined");
+        }
+
+        return mapItems.containsKey(valueChatId.getValue());
     }
 
 }

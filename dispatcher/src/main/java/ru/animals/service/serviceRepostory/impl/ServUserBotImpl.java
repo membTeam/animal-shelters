@@ -25,9 +25,10 @@ public class ServUserBotImpl implements ServUserBot {
 
 
     @Override
-    public EnumStatusUserBot statudUserBot(long id) {
+    public EnumStatusUserBot statudUserBot(long chatId) {
 
-        var optionalRes = userRepository.findById(id);
+        var optionalRes = userRepository.findByChatId(chatId);
+                //findById(id);
 
         if (optionalRes.isEmpty()) {
             return EnumStatusUserBot.USER_NOT_REGISTER;
@@ -35,7 +36,7 @@ public class ServUserBotImpl implements ServUserBot {
 
         UserBot userBot = optionalRes.orElseThrow();
         Collection<Adoption> optionalAdoption =
-                adoptionalRepository.findByUserIdAndOnProbational(id, EnumAdoptionState.ON_PROBATION);
+                adoptionalRepository.findByUserIdAndOnProbational(chatId, EnumAdoptionState.ON_PROBATION);
 
         return optionalAdoption.isEmpty()
                 ? EnumStatusUserBot.NO_PROBATION_PERIOD

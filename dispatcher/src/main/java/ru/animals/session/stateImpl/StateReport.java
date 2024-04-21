@@ -2,8 +2,7 @@ package ru.animals.session.stateImpl;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.session.stateImpl.temp.SessionService;
-import ru.animals.telegramComp.TelgramComp;
+import ru.animals.session.SessionServiceImpl;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeAppeal;
 
 public class StateReport extends BaseState {
@@ -26,7 +25,13 @@ public class StateReport extends BaseState {
     }
 
     @Override
-    public SendMessage getSendMessage(SessionService sessionService, Update update) {
+    public SendMessage getSendMessage(SessionServiceImpl sessionService, Update update) {
      return null;
     }
+
+    @Override
+    public ResultState getResultState() {
+        return null;
+    }
+
 }
