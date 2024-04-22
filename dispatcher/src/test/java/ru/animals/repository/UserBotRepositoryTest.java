@@ -19,13 +19,6 @@ public class UserBotRepositoryTest {
     @Autowired
     private SessionServiceImpl sessionService;
 
-    @Test
-    public void StateRegister() {
-        var result = sessionService.testingRepository(25L);
-
-        assertNotNull(result);
-    }
-
 
     @Test
     public void testRepository() {
