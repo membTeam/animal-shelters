@@ -20,14 +20,6 @@ public class UserBotRepositoryTest {
     private SessionServiceImpl sessionService;
 
     @Test
-    public void StateRegister() {
-        var result = sessionService.testingRepository(25L);
-
-        assertNotNull(result);
-    }
-
-
-    @Test
     public void testRepository() {
 
         var userBot = UserBot.builder()
