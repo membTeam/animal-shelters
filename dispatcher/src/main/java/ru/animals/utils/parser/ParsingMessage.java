@@ -1,35 +1,20 @@
-package ru.animals.utils;
+package ru.animals.utils.parser;
 
 import java.util.List;
 import java.util.Map;
 
-import ru.animals.service.serviceParser.DataFromParser;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 
 
 public class ParsingMessage {
 
-    /*private static EnumTypeMessage initEnumTypeMessage(String strTypeMessage) {
-        return switch (strTypeMessage) {
-            case "sendmessage", "documents"  -> EnumTypeMessage.TEXT_MESSAGE;
-            case "sendsimplemessage" -> EnumTypeMessage.SIMPLE_MESSAGE;
-            case "sendmultymessage" -> EnumTypeMessage.MULTY_MESSAGE;
-            case "start" -> EnumTypeMessage.START;
-            case "startregist" -> EnumTypeMessage.STARTREGIST;
-            case "menuvolonters" -> EnumTypeMessage.VOLONTER;
-            case "dbvolunteers" -> EnumTypeMessage.FROM_DB;
-
-            default -> EnumTypeMessage.EMPTY;
-        };
-    }*/
-
-    public static ValueFromMethod parsingTemplateString(Map<String,DataFromParser> map,
+    public static ValueFromMethod parsingTemplateString(Map<String, StructForBaseConfig> map,
                                                         List<String> lsString) {
 
         try {
             lsString.stream().forEach(str -> {
-                var dataParsing = new DataFromParser();
+                var dataParsing = new StructForBaseConfig();
 
                 var arrFromStr = str.split("##");
                 String strTypeMessage = arrFromStr[2].trim();
@@ -42,6 +27,7 @@ public class ParsingMessage {
                         throw new RuntimeException(e);
                     }
                 }
+
 
                 dataParsing.setCommand(arrFromStr[0].trim());
                 dataParsing.setTypeCommand(arrFromStr[1].trim());
@@ -60,10 +46,11 @@ public class ParsingMessage {
 
     }
 
-    public static ValueFromMethod parsingTemplateString(String strMessage) {
+    /*public static ValueFromMethod parsingTemplateString(String strMessage) {
 
         ValueFromMethod result;
-        DataFromParser dataFromParser = new DataFromParser();
+
+        StructForBaseConfig dataFromParser = new StructForBaseConfig();
 
         var arrFromStr = strMessage.split("##");
 
@@ -74,5 +61,5 @@ public class ParsingMessage {
 
         return new ValueFromMethod(dataFromParser);
 
-    }
+    }*/
 }

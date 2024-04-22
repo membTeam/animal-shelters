@@ -1,6 +1,5 @@
 package ru.animals.controller;
 
-import lombok.*;
 import lombok.extern.log4j.Log4j;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +22,7 @@ public class TelegramBot extends TelegramLongPollingBot{
 
     public TelegramBot(UpdateController updateController,
                        @Value("${bot.token}") String botToken,
-                       @Value("${bot.username}") String username) {
+                       @Value("${bot.username}") String username ) {
         super(botToken);
         this.updateController = updateController;
         this.userName = username;

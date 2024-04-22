@@ -1,19 +1,17 @@
-package ru.animals.session;
+package ru.animals.session.stateImpl;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.animals.session.SessionServiceImpl;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeAppeal;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-public class SessionReport extends BaseStateSession {
+public class StateReport extends BaseState {
 
     private EnumTypeAppeal typeAppeal;
 
-    public SessionReport(long chatId) {
+    public StateReport(long chatId) {
         super();
-        setCharId(chatId);
+        /*setCharId(chatId);
         setLastAppeal(LocalDateTime.now());
 
         setItemAppeal(
@@ -22,12 +20,18 @@ public class SessionReport extends BaseStateSession {
                         new SessionState("Отвыкание от прежних привычек"),
                         new SessionState("вставьте фотографию")
                 )
-        );
+        );*/
 
     }
 
     @Override
-    public BaseStateSession sendMessage(Update update) {
-        return this;
+    public SendMessage getSendMessage(SessionServiceImpl sessionService, Update update) {
+     return null;
     }
+
+    @Override
+    public ResultState getResultState() {
+        return null;
+    }
+
 }

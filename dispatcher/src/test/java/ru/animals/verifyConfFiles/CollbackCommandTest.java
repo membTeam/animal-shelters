@@ -4,7 +4,7 @@ package ru.animals.verifyConfFiles;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.animals.collbackCommand.CommonCollbackService;
+import ru.animals.collbackCommand.DistrCollbackCommandImpl;
 import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.FileAPI;
 
@@ -21,7 +21,7 @@ public class CollbackCommandTest {
     private UtilsSendMessage utilsSendMessage;
 
     @Autowired
-    private CommonCollbackService commonCollbackService;
+    private DistrCollbackCommandImpl commonCollbackService;
 
     @Test
     public void verifyConfigCollback() throws Exception {

@@ -1,14 +1,14 @@
 package ru.animals.service.serviceRepostory;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ru.animals.service.serviceParser.DataFromParserCollback;
+import ru.animals.utils.parser.StructForCollbackConfig;
 
 public interface CommonService {
 
-    SendMessage distributeStrCommand(Long chartId, DataFromParserCollback dataFromParser);
+    SendMessage distributeStrCommand(Long chartId, StructForCollbackConfig dataFromParser);
 
-    SendMessage defaultSendMessage(Long charId, DataFromParserCollback dataFromParser);
+    SendMessage defaultSendMessage(Long charId, StructForCollbackConfig dataFromParser);
 
-    SendMessage contactsVoluteers(Long chartId, DataFromParserCollback dataFromParser);
+    SendMessage contactsVoluteers(Long chartId, StructForCollbackConfig dataFromParser);
 
 }

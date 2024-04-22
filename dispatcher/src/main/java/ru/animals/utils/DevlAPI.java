@@ -2,21 +2,21 @@ package ru.animals.utils;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.utilsDEVL.ValueFromMethod;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeMess;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
 public class DevlAPI {
 
     private static ValueFromMethod verifyUpdate(Update update) {
-        if (update == null || (!update.hasMessage() || !update.hasCallbackQuery())) {
+        if (update == null || !(!update.hasMessage() || !update.hasCallbackQuery())) {
             return new ValueFromMethod(false, "argument update illegal");
         }
 
         return new ValueFromMethod(true, "ok");
     }
 
-    public static EnumTypeMess getTypeMessage(Update update, boolean idVerify) {
+    public static EnumTypeUpdate typeUpdate(Update update, boolean idVerify) {
 
-        EnumTypeMess result = EnumTypeMess.NONE;
+        EnumTypeUpdate result = EnumTypeUpdate.NONE;
 
         if (!idVerify) {
             var verifyUpdate = verifyUpdate(update);
@@ -26,17 +26,18 @@ public class DevlAPI {
         }
 
         if (update.hasMessage()) {
-            result = EnumTypeMess.TEXT_MESSAGE;
+            result = EnumTypeUpdate.TEXT_MESSAGE;
         }
 
         if (update.hasCallbackQuery()) {
-            result = EnumTypeMess.COLLBACK;
+            result = EnumTypeUpdate.COLLBACK;
         }
 
         return result;
     }
 
-    public static ValueFromMethod getChatId(Update update) {
+    public static ValueFromMethod getChatIdFromUpdate(Update update) {
+
         var verifyUpdate = verifyUpdate(update);
         if (!verifyUpdate.RESULT) {
             return verifyUpdate;
@@ -48,6 +49,19 @@ public class DevlAPI {
 
         return new ValueFromMethod<Long>(chatId);
 
+    }
+
+    public static String getTextMessFromUpdate(Update update) {
+        var text = update.hasCallbackQuery()
+                ? update.getCallbackQuery().getMessage().getText()
+                : update.getMessage().getText();
+
+        return text.charAt(0) == '/' ? text.substring(1): text;
+
+    }
+
+    public static String lowercaseFirstLetter(String word) {
+        return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
     }
 
 }

@@ -3,16 +3,15 @@ package ru.animals.utils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.telegramComp.TelgramComp;
-import ru.animals.service.serviceParser.DataFromParser;
+import ru.animals.utils.parser.StructForBaseConfig;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeFile;
-
 
 @Component
 public class UtilsMessage {
 
     public SendMessage generateSendMessageWithBtn(Long chartId,
-                                      DataFromParser dataParser) throws Exception {
+                                      StructForBaseConfig dataParser) throws Exception {
 
         var file = dataParser.getSource();
         var valueFromMethod = TelgramComp.sendMessageFromJSON(file);

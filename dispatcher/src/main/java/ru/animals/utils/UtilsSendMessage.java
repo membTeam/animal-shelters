@@ -3,24 +3,25 @@ package ru.animals.utils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.animals.service.serviceParser.ControleService;
-import ru.animals.service.serviceParser.DataFromParser;
-import ru.animals.service.serviceParser.DataFromParserCollback;
-import ru.animals.service.serviceParser.ParsingStringFromConfigFile;
+import ru.animals.utils.parser.StructForCollbackConfig;
+import ru.animals.utils.parser.ParsingFromBaseConfigFile;
+import ru.animals.utils.parser.StructForBaseConfig;
 import ru.animals.utilsDEVL.*;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Рессивер параметров конфигурационных файлов
  */
 @Service
 @Log4j
-public class UtilsSendMessage implements ControleService {
-    private Map<String, DataFromParser> mapSendMessage = new HashMap<>();
-    private Map<String, DataFromParserCollback> mapCollback = new HashMap<>();
+public class UtilsSendMessage implements UtilsSendMessageServ {
+    private Map<String, StructForBaseConfig> mapSendMessage = new HashMap<>();
+    private Map<String, StructForCollbackConfig> mapCollback = new HashMap<>();
 
     private boolean ERROR=true;
     private String mesRrror = "ok";
@@ -57,7 +58,7 @@ public class UtilsSendMessage implements ControleService {
             return;
         }
 
-        var resultFilling = ParsingStringFromConfigFile
+        var resultFilling = ParsingFromBaseConfigFile
                 .parsingStrConfComdCollback(this, mapCollback, resLoadCallBack.getValue());
 
         if (!resultFilling.RESULT) {
@@ -72,7 +73,7 @@ public class UtilsSendMessage implements ControleService {
             return;
         }
 
-        var resultFilling = ParsingStringFromConfigFile
+        var resultFilling = ParsingFromBaseConfigFile
                 .parsingStringConfig(mapSendMessage, resLoadConfig.getValue());
 
         if (!resultFilling.RESULT) {
@@ -131,7 +132,7 @@ public class UtilsSendMessage implements ControleService {
         return mesRrror;
     }
 
-    public DataFromParser getStructureCommand(String strCommand) throws Exception {
+    public StructForBaseConfig getStructureCommand(String strCommand) throws Exception {
 
         if (isERROR()) {
             throw new Exception("Нет данных по командам");
@@ -144,11 +145,17 @@ public class UtilsSendMessage implements ControleService {
         }
     }
 
-    public DataFromParser getStructureCommand (DataFromParserCollback comnCallback) throws Exception {
+    public StructForBaseConfig getStructureCommand (StructForCollbackConfig comnCallback) throws Exception {
         return getStructureCommand(comnCallback.getParameter());
     }
 
-    public DataFromParserCollback getStructCommandCollback(String strCommand) throws Exception {
+    public EnumTypeParamCollback getEnumTypeParameter(String strParamenter) throws Exception {
+        var structCollbackCommand = getStructCommandCollback(strParamenter.trim());
+
+        return structCollbackCommand.getEnumTypeParameter();
+    }
+
+    public StructForCollbackConfig getStructCommandCollback(String strCommand) throws Exception {
         if (isERROR()) {
             throw new Exception("Нет данных по командам");
         }

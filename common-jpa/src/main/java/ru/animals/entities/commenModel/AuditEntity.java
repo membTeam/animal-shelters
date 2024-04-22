@@ -17,7 +17,7 @@ public class AuditEntity {
     @Column(name = "date_update")
     protected LocalDateTime dateUpdate;
 
-    @Column(name = "dateCreate", updatable = false)
+    @Column(name = "date_create", updatable = false)
     @CreatedDate
     protected LocalDateTime dateCreate;
 

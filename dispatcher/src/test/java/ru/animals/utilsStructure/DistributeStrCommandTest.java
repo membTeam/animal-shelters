@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ru.animals.collbackCommand.CommonCollbackService;
+import ru.animals.collbackCommand.DistrCollbackCommandImpl;
 import ru.animals.utils.UtilsSendMessage;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DistributeStrCommandTest {
 
     @Autowired
-    private CommonCollbackService commCollbackServ;
+    private DistrCollbackCommandImpl commCollbackServ;
 
     @Autowired
     private UtilsSendMessage utilsSendMessage;

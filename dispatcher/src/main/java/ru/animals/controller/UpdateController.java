@@ -1,43 +1,54 @@
 package ru.animals.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.collbackCommand.CommonCollbackService;
+import ru.animals.collbackCommand.DistrCollbackCommandImpl;
 import ru.animals.service.serviceRepostory.CommonService;
+import ru.animals.service.serviceRepostory.ServUserBot;
 import ru.animals.service.serviceRepostory.UpdateProducer;
-
-//import ru.animals.service.serviceRepostory.VolunteersService;
-
+import ru.animals.session.SessionServiceImpl;
+import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
 import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamMessage;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
+import ru.animals.exceptions.UploadFileException;
 
-@Component
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 @Log4j
-public class UpdateController {
+@Component
+@RequiredArgsConstructor
+public class UpdateController  implements UpdateControllerService {
     private TelegramBot telegramBot;
-    private UtilsMessage utilsMessage;
-    private UpdateProducer updateProducer;
-    private UtilsSendMessage utilsSendMessage;
-    private CommonService commonService;
-    private CommonCollbackService commonCollbackService;
+    private final UtilsMessage utilsMessage;
+    private final UpdateProducer updateProducer;
+    private final UtilsSendMessage utilsSendMessage;
+    private final CommonService commonService;
+    private final DistrCollbackCommandImpl commonCollbackService;
+    private final ServUserBot servUserBot;
+    private final SessionServiceImpl sessionServiceUpdate;
 
-    public UpdateController(UtilsMessage utilsMessage,
-                            UpdateProducer updateProducer,
-                            UtilsSendMessage utilsSendMessage, CommonService commonService, CommonCollbackService commonCollbackService
-    ) {
-        this.utilsMessage = utilsMessage;
-        this.updateProducer = updateProducer;
-        this.utilsSendMessage = utilsSendMessage;
-        this.commonService = commonService;
-        this.commonCollbackService = commonCollbackService;
-    }
+    @Value("${service.file_info.url}")
+    private String fileInfoUri;
+
+    @Value("${service.file_storage.url}")
+    String fileStorageUri;
+
+    @Value("${bot.token}")
+    private String token;
 
     public void registerBot(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
@@ -52,16 +63,19 @@ public class UpdateController {
         return text.charAt(0) == '/' ? text.substring(1) : text;
     }
 
-    private Long getCharIdFromUpdate(Update update) {
-        return update.hasCallbackQuery()
-                ? update.getCallbackQuery().getMessage().getChatId()
-                : update.getMessage().getChatId();
+    private Long getCharIdFromUpdate(Update update) throws Exception {
+
+        ValueFromMethod<Long> res = DevlAPI.getChatIdFromUpdate(update);
+
+        if (!res.RESULT) {
+            throw new Exception(res.MESSAGE);
+        }
+
+        return res.getValue();
     }
 
     private String getTextMessFromUpdate(Update update) {
-        return update.hasCallbackQuery()
-                ? update.getCallbackQuery().getMessage().getText()
-                : update.getMessage().getText();
+        return DevlAPI.getTextMessFromUpdate(update);
     }
 
 
@@ -77,58 +91,145 @@ public class UpdateController {
 
         try {
             if (utilsSendMessage.isERROR()) {
+                log.error(utilsSendMessage.getMessageErr());
                 throw new Exception("Internal error");
             }
 
-            if (update.hasMessage()) {
-                if (!update.hasMessage() || !update.getMessage().hasText()) {
-                    return;
+            if (sessionServiceUpdate.isExistsStateSession(update)) {
+                telegramBot.sendAnswerMessage(sessionServiceUpdate.distributionUpdate(update));
+            } else {
+                switch (DevlAPI.typeUpdate(update, false)) {
+                    case TEXT_MESSAGE -> distributeMessagesBytype(update);
+                    case COLLBACK -> distributeCallbackQueryMessages(update);
+                    default -> {
+                        throw new IllegalArgumentException("Тип не определен");
+                    }
                 }
-
-                distrtMessagesBytype(update);
-            } else if (update.hasCallbackQuery()) {
-                distributeCallbackQueryMessages(update);
             }
-        } catch (Exception e) {
-            var chartId = getCharIdFromUpdate(update);
 
-            var sendMessage = utilsMessage.generateSendMessageWithText(chartId, e.getMessage());
-            telegramBot.sendAnswerMessage(sendMessage);
+        } catch (Exception e) {
+            try {
+                var chartId = getCharIdFromUpdate(update);
+
+                var sendMessage = utilsMessage.generateSendMessageWithText(chartId, e.getMessage());
+                log.error(sendMessage);
+
+                telegramBot.sendAnswerMessage(sendMessage);
+
+            } catch (Exception ex) {
+                log.error(ex.getMessage());
+            }
         }
     }
+
+// ------------------------ load photo
+    private ResponseEntity<String> getFilePath(String fileId) {
+        var restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        var request = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(
+                fileInfoUri,
+                HttpMethod.GET,
+                request,
+                String.class,
+                token,
+                fileId
+        );
+
+    }
+
+    private String getFilePath(ResponseEntity<String> response) {
+        var jsonObject = new JSONObject(response.getBody());
+        return String.valueOf(jsonObject
+                .getJSONObject("result")
+                .getString("file_path"));
+    }
+
+    private byte[] downloadFile(String filePath) throws Exception {
+        var fullUri = fileStorageUri.replace("{token}", token)
+                .replace("{filePath}", filePath);
+        URL urlObj = null;
+        try {
+            urlObj = new URL(fullUri);
+        } catch (MalformedURLException e) {
+            log.error(e.getMessage());
+            throw new UploadFileException(e.getMessage());
+        }
+
+        try (InputStream is = urlObj.openStream()) {
+            return is.readAllBytes();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new UploadFileException(e.getMessage());
+        }
+    }
+
+    private void distributePhoto(Update update) throws Exception {
+        var telegramMessage = update.getMessage();
+
+        var photoSizeCount = telegramMessage.getPhoto().size();
+        var photoIndex = photoSizeCount > 1 ? telegramMessage.getPhoto().size() - 1 : 0;
+        var telegramPhoto = telegramMessage.getPhoto().get(photoIndex);
+        var fileId = telegramPhoto.getFileId();
+        var response = getFilePath(fileId);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+
+            var filePath = getFilePath(response);
+            var fileInByte = downloadFile(filePath);
+
+            log.info("File download");
+        } else {
+            throw new UploadFileException("Error configue response");
+        }
+
+    }
+
+    // -------------------- end load photo
 
     /**
      * Менеджер текстовых сообщений
      * @param update
      * @throws Exception
      */
-    private void distrtMessagesBytype(Update update) throws Exception {
+    private void distributeMessagesBytype(Update update) throws Exception {
 
         String textMess = getTextMessFromUpdate(update);
         Long charId = getCharIdFromUpdate(update);
 
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
-        var enumType = structureCommand.getEnumTypeMessage();
+        switch (structureCommand.getEnumTypeMessage()) {
+            case BTMMENU -> sendButtonMenu(charId, textMess);
+            case TEXT_MESSAGE -> sendTextMessageFromFile(charId, textMess);
+            case SELMENU -> sendButtonMenuByParse(charId);
+            default -> {
+                throw new IllegalArgumentException("");
+            }
+        };
+    }
 
-        if ( enumType == EnumTypeParamMessage.TEXT_MESSAGE) {
-            sendTextMessage(charId, structureCommand.getSource());
-        } else if (enumType == EnumTypeParamMessage.BTMMENU
-                        || enumType == EnumTypeParamMessage.START) {
-            distributeMenu(charId, textMess);
-        } else {
-            throw new Exception("The command was not found");
+    /**
+     * обработка команды /start в зависимости от статуса пользователя
+     * @param charId
+     * @throws Exception
+     */
+    private void sendButtonMenuByParse(Long charId) throws Exception {
+        var statusUser = servUserBot.statudUserBot(charId);
+        var btnMenuStart = switch (statusUser) {
+            case USER_NOT_REGISTER -> "register";
+            case NO_PROBATION_PERIOD -> "noprobation";
+            case ON_PROBATION_PERIOD -> "onprobation";
+            default -> "empty";
+        };
+
+        if (statusUser.equals("empty")) {
+            throw new Exception("the command was not found");
         }
 
+        sendButtonMenu(charId, btnMenuStart);
     }
 
-    private void distributeMenu(Long chartId, String textMess) throws Exception {
-        var structureCommand = utilsSendMessage.getStructureCommand(textMess);
-
-        var sendMessage = utilsMessage.generateSendMessageWithBtn(chartId, structureCommand);
-
-        telegramBot.sendAnswerMessage(sendMessage);
-
-    }
 
     /**
      * Обработка collback команд
@@ -142,29 +243,42 @@ public class UpdateController {
 
         var enumType = structCollbackCommand.getEnumTypeParameter();
         if (enumType == EnumTypeParamCollback.TCL_TXT) {
-            sendTextMessage(chartId,
+            sendTextMessageFromFile(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
         } else if (enumType == EnumTypeParamCollback.TCL_BTN) {
-            distributeMenu(chartId,
+            sendButtonMenu(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
 
         } else if (enumType == EnumTypeParamCollback.TCL_DBD) {
-
             // TODO: исправить идентификатор метода
             var sendMessage = commonCollbackService.distributeStrCommand(chartId, structCollbackCommand);
 
             telegramBot.sendAnswerMessage(sendMessage);
 
+        } else if (enumType == EnumTypeParamCollback.TCL_DST){
+            var sendMessge = sessionServiceUpdate.distributionUpdate(update);
+            telegramBot.sendAnswerMessage(sendMessge);
         } else {
-            distributeMenu(chartId, textQuery);
+            sendButtonMenu(chartId, textQuery);
         }
-
     }
 
 
-    private void sendTextMessage(Long charId,
-                                 String fileSource) throws Exception {
+
+    @Override
+    public void sendButtonMenu(Long charId, String textMess) throws Exception {
+        var structureCommand = utilsSendMessage.getStructureCommand(textMess);
+
+        var sendMessage = utilsMessage.generateSendMessageWithBtn(charId, structureCommand);
+
+        telegramBot.sendAnswerMessage(sendMessage);
+
+    }
+
+    @Override
+    public void sendTextMessageFromFile(Long charId,
+                                         String fileSource) throws Exception {
 
         ValueFromMethod<String> dataFromFile = FileAPI.readDataFromFile(fileSource);
 
