@@ -19,7 +19,6 @@ public class UserBotRepositoryTest {
     @Autowired
     private SessionServiceImpl sessionService;
 
-
     @Test
     public void testRepository() {
 
