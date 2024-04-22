@@ -45,21 +45,4 @@ public class ParsingMessage {
         }
 
     }
-
-    /*public static ValueFromMethod parsingTemplateString(String strMessage) {
-
-        ValueFromMethod result;
-
-        StructForBaseConfig dataFromParser = new StructForBaseConfig();
-
-        var arrFromStr = strMessage.split("##");
-
-        dataFromParser.setCommand(arrFromStr[0].trim());
-        dataFromParser.setTypeCommand(arrFromStr[1].trim());
-        dataFromParser.setParameter(arrFromStr[2].trim());
-        dataFromParser.setSource(arrFromStr[3].trim());
-
-        return new ValueFromMethod(dataFromParser);
-
-    }*/
 }
