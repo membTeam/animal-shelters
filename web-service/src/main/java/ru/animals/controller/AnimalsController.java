@@ -11,7 +11,7 @@ import ru.animals.sevice.impl.AnimalServiceImpl;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/web-animal") //localhost:8085/web-animal/...
+@RequestMapping("/web-animal") //localhost:8085/web-animal/list-animals/1
 @RequiredArgsConstructor
 public class AnimalsController {
 

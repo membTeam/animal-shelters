@@ -61,6 +61,12 @@
         </dependency>
 
         <dependency>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-55</artifactId>
+            <version>${hibernate-55.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>ru.animals</groupId>
             <artifactId>utills-any</artifactId>
             <version>1.0-SNAPSHOT</version>
