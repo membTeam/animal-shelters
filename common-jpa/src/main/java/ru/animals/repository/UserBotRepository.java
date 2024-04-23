@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 public interface UserBotRepository extends JpaRepository<UserBot, Long> {
-    @Query("From UserBot where userChat > 0")
+    @Query("From UserBot where id > 0")
     Collection<UserBot> lsUserBot();
 
     Optional<UserBot> findByChatId(Long charId);

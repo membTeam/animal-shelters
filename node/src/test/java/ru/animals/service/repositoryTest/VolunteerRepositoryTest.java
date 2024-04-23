@@ -15,13 +15,6 @@ public class VolunteerRepositoryTest {
     private VolunteerRepository volunteerRepository;
 
     @Test
-    public void volunteerRepositoryTest_forBreeds() {
-        var res = volunteerRepository.getBreedsFromFilter(2L);
-
-        assertTrue(res.size()>0);
-    }
-
-    @Test
     public void volunteerRepositoryTest_byName() {
         var res = volunteerRepository.getVolunteersByFilter("Климов В.П.");
 

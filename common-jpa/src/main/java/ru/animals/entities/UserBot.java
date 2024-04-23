@@ -2,8 +2,6 @@ package ru.animals.entities;
 
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import ru.animals.entities.commenModel.AuditEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

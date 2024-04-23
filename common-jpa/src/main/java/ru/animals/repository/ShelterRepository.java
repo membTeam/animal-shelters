@@ -11,9 +11,4 @@ public interface ShelterRepository extends JpaRepository<Shelters, Long> {
     @Query("From shelters sh where sh.rulesConduct = :rulesConduct")
     List<Shelters> getDataShelters(String rulesConduct);
 
-    //Collection<Shelters> findAllByRulesConduct(String str);
-
-/*    @Query("select sh FROM Shelters sh where sh.rulesConduct = :str")
-    List<Shelters> getAnyDataShelters(String str);*/
-
 }

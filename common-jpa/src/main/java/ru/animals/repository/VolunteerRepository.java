@@ -12,7 +12,4 @@ public interface VolunteerRepository extends JpaRepository<Volunteers, Long> {
     @Query("From volunteers where name = :str")
     Collection<Volunteers> getVolunteersByFilter(String str);
 
-    @Query("From breeds where typeAnimationsId = :typeid")
-    Collection<Breeds> getBreedsFromFilter(Long typeid);
-
 }

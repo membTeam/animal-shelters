@@ -28,7 +28,6 @@ public class ServUserBotImpl implements ServUserBot {
     public EnumStatusUserBot statudUserBot(long chatId) {
 
         var optionalRes = userRepository.findByChatId(chatId);
-                //findById(id);
 
         if (optionalRes.isEmpty()) {
             return EnumStatusUserBot.USER_NOT_REGISTER;
