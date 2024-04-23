@@ -6,9 +6,10 @@ import ru.animals.models.WebAnimal;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface AnimalService {
-    Collection<Breeds> getListBreeds (Long typeAnimationsId);
+    List<Breeds> getListBreeds (Long typeAnimationsId);
 
     ValueFromMethod addAnimal(WebAnimal webAnimal, MultipartFile photo);
 }

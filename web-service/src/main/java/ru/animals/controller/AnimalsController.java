@@ -20,8 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/web-animal")
 //localhost:8085/web-animal/list-animals/1
-// localhost:8085/web-animal/any
-// localhost:8085/web-animal/user-api
+// localhost:8085/web-animal/shelter
 public class AnimalsController {
 
     private final AnimalService animalService;
@@ -29,15 +28,13 @@ public class AnimalsController {
 
     private final UserBotRepository userBotRepository;
 
-    @GetMapping("user-api")
-    public List<Shelters> getUser() {
-        var lsUser = shelterRepository.findAll();
-        return lsUser;
+    @GetMapping("shelter")
+    public List<Shelters> getShelter() {
+        return shelterRepository.findAll();
     }
 
     @GetMapping("list-animals/{breed}")
-    public Collection<Breeds> getListAnimals(@PathVariable Long breed ) {
-        Collection<Breeds> res = animalService.getListBreeds(breed);;
-        return res;
+    public List<Breeds> getListAnimals(@PathVariable Long breed ) {
+        return animalService.getListBreeds(breed);
     }
 }

@@ -1,7 +1,5 @@
 package ru.animals.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +9,7 @@ import ru.animals.repository.BreedsRepository;
 import ru.animals.service.AnimalService;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -21,9 +19,8 @@ public class AnimalServiceImpl implements AnimalService {
     private final BreedsRepository breedsRepository;
 
     @Override
-    public Collection<Breeds> getListBreeds(Long typeAnimationsId) {
-        var res = breedsRepository.findAllByTypeAnimationsId(typeAnimationsId);
-        return res;
+    public List<Breeds> getListBreeds(Long typeAnimationsId) {
+        return breedsRepository.findAllByTypeAnimationsId(typeAnimationsId);
     }
 
     @Override
