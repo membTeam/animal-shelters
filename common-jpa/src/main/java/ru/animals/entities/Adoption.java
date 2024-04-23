@@ -2,6 +2,8 @@ package ru.animals.entities;
 
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
 
@@ -40,5 +42,6 @@ public class Adoption {
 
     @OneToMany
     @JoinColumn(name = "adoption_id")
+    @JsonIgnore
     private Collection<ContentReport> lsContentReport;
 }

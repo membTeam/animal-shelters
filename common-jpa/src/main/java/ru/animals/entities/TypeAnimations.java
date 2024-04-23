@@ -1,6 +1,7 @@
 package ru.animals.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class TypeAnimations {
 
     @OneToMany
     @JoinColumn(name = "type_animations_id")
+    @JsonIgnore
     private Collection<Breeds> breeds;
 
 }
