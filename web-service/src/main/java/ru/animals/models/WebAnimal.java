@@ -1,5 +1,6 @@
 package ru.animals.models;
 
+
 import lombok.*;
 
 @Builder
@@ -9,4 +10,5 @@ import lombok.*;
 public class WebAnimal {
     private Long breedId;
     private String nickname;
+    private byte[] data;
 }

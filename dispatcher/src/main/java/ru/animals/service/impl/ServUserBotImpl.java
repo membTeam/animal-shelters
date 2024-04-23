@@ -6,8 +6,8 @@ import ru.animals.entities.UserBot;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
 import ru.animals.repository.AdoptionalRepository;
 import ru.animals.repository.UserBotRepository;
-import ru.animals.service.ServUserBot;
 import ru.animals.service.enumStatusUser.EnumStatusUserBot;
+import ru.animals.service.ServUserBot;
 
 import java.util.Collection;
 
@@ -28,6 +28,7 @@ public class ServUserBotImpl implements ServUserBot {
     public EnumStatusUserBot statudUserBot(long chatId) {
 
         var optionalRes = userRepository.findByChatId(chatId);
+                //findById(id);
 
         if (optionalRes.isEmpty()) {
             return EnumStatusUserBot.USER_NOT_REGISTER;
