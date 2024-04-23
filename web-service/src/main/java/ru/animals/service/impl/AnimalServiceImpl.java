@@ -1,43 +1,130 @@
 package ru.animals.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.animals.controller.AnimalsController;
+import ru.animals.entities.Animals;
 import ru.animals.entities.Breeds;
+import ru.animals.entities.commonModel.MetaDataPhoto;
 import ru.animals.models.WebAnimal;
+import ru.animals.repository.AnimalsRepository;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.service.AnimalService;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
+import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+import java.beans.Transient;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
-@RequiredArgsConstructor
 public class AnimalServiceImpl implements AnimalService {
 
+    private final Path imageStorageDir;
     private final BreedsRepository breedsRepository;
+    private final AnimalsRepository animalsRepository;
+
+    public AnimalServiceImpl(@Value("${image-storage-dir}") Path imageStorageDir, BreedsRepository breedsRepository, AnimalsRepository animalsRepository) {
+        this.imageStorageDir = imageStorageDir;
+        this.breedsRepository = breedsRepository;
+        this.animalsRepository = animalsRepository;
+    }
+
+    @PostConstruct
+    public void ensureDirectoryExists() throws IOException  {
+        if (!Files.exists(this.imageStorageDir)) {
+            Files.createDirectories(this.imageStorageDir);
+        }
+    }
 
     @Override
     public List<Breeds> getListBreeds(Long typeAnimationsId) {
         return breedsRepository.findAllByTypeAnimationsId(typeAnimationsId);
     }
 
+    @Transactional
     @Override
-    public ValueFromMethod addAnimal(WebAnimal webAnimal, MultipartFile photo) {
-        var nickname = webAnimal.getNickname();
-        var fileName = photo.getOriginalFilename();
+    public ValueFromMethod addAnimal(WebAnimal webAnimal, MultipartFile imageFile) {
 
-        return new ValueFromMethod(true, "ok");
+        var optBreed = breedsRepository.findById(webAnimal.getBreedId());
+        if (optBreed.isEmpty()) {
+            return new ValueFromMethod("internal error") ;
+        }
+
+        MetaDataPhoto metaDataPhoto = MetaDataPhoto.builder()
+                .filepath("empty")
+                .filesize(imageFile.getSize())
+                .metatype(imageFile.getContentType())
+                .file("empty")
+                .build();
+
+        Animals animals = Animals.builder()
+                .breedId(webAnimal.getBreedId())
+                .status(true)
+                .nickname(webAnimal.getNickname())
+                .limitations(webAnimal.getLimitations())
+                .metaDataPhoto(metaDataPhoto)
+                .build();
+
+        var resSaveAnimatin = animalsRepository.save(animals);
+
+        var breed = optBreed.get();
+        final String strBreed = breed.getTypeAnimationsId() == 1 ? "dog" : "cat";
+        final String fileExtension = Optional.ofNullable(imageFile.getOriginalFilename())
+                .flatMap(this::getFileExtension)
+                .orElse("");
+
+        final String targetFileName = String.format("%s/%s%d-%d.%s",
+                strBreed,
+                strBreed, webAnimal.getBreedId(), resSaveAnimatin.getId(), fileExtension);
+        final Path targetPath = this.imageStorageDir.resolve(targetFileName);
+
+        metaDataPhoto.setFile(targetFileName);
+        metaDataPhoto.setFilepath(targetPath.toString());
+
+        try (InputStream in = imageFile.getInputStream()) {
+            resSaveAnimatin.setMetaDataPhoto(metaDataPhoto);
+            animalsRepository.save(resSaveAnimatin);
+
+            OutputStream out = Files.newOutputStream(targetPath, StandardOpenOption.CREATE);
+            in.transferTo(out);
+        } catch (IOException e) {
+            return new ValueFromMethod("Internal error");
+        }
+
+        return new ValueFromMethod(true, targetFileName);
     }
 
-    private int getNumberRandom() {
-        int min = 10000;
-        int max = 20000;
-        int diff = max - min;
+    @Override
+    public String addPhoto(Long id, MultipartFile photo) {
+        var optBreed = breedsRepository.findById(id);
+        if (optBreed.isEmpty()) {
+            return "error" ;
+        }
 
-        Random random = new Random();
-        return random.nextInt(diff + 1) + min;
+        return "ok";
     }
+
+
+    private Optional<String> getFileExtension(String fileName) {
+        final int indexOfLastDot = fileName.lastIndexOf('.');
+
+        if (indexOfLastDot == -1) {
+            return Optional.empty();
+        } else {
+            return Optional.of(fileName.substring(indexOfLastDot + 1));
+        }
+    }
+
 
 }

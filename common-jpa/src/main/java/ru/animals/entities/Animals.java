@@ -2,14 +2,13 @@ package ru.animals.entities;
 
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+
+import ru.animals.entities.commonModel.MetaDataPhoto;
 import ru.animals.entities.enumEntity.EnumLimitations;
 
 
@@ -34,6 +33,7 @@ public class Animals {
      */
     @Type(type = "jsonb")
     @Column(name = "meta_data_photo", columnDefinition = "jsonb")
+    @Setter
     private MetaDataPhoto metaDataPhoto;
 
     /**

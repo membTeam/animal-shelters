@@ -1,5 +1,6 @@
 package ru.animals.service;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import ru.animals.entities.Breeds;
 import ru.animals.models.WebAnimal;
@@ -11,5 +12,8 @@ import java.util.List;
 public interface AnimalService {
     List<Breeds> getListBreeds (Long typeAnimationsId);
 
-    ValueFromMethod addAnimal(WebAnimal webAnimal, MultipartFile photo);
+    ValueFromMethod addAnimal(WebAnimal webAnimal, MultipartFile imageFile);
+
+    String addPhoto(Long id, MultipartFile photo);
+
 }

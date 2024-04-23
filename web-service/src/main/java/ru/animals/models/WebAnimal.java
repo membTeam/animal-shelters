@@ -2,6 +2,7 @@ package ru.animals.models;
 
 
 import lombok.*;
+import ru.animals.entities.enumEntity.EnumLimitations;
 
 @Builder
 @Getter
@@ -10,5 +11,5 @@ import lombok.*;
 public class WebAnimal {
     private Long breedId;
     private String nickname;
-    private byte[] data;
+    private EnumLimitations limitations;
 }

@@ -5,11 +5,12 @@ import org.springframework.data.jpa.repository.Query;
 import ru.animals.entities.Breeds;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface BreedsRepository extends JpaRepository<Breeds, Long> {
     @Query("From breeds where typeAnimationsId = :typeid")
     Collection<Breeds> getBreedsFromFilter(Long typeid);
 
-    Collection<Breeds> findAllByTypeAnimationsId(Long typeId);
+    List<Breeds> findAllByTypeAnimationsId(Long typeId);
 
 }

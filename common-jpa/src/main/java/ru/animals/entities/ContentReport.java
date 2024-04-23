@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import lombok.*;
+import ru.animals.entities.commonModel.MetaDataPhoto;
 import ru.animals.entities.enumEntity.EnumStatusReport;
 
 import java.util.Date;
