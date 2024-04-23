@@ -1,4 +1,4 @@
-package ru.animals.service.serviceRepostory;
+package ru.animals.service;
 
 public interface VolunteersService {
     String contactsVoluteers ();

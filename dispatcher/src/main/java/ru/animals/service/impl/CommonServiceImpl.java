@@ -1,9 +1,9 @@
-package ru.animals.service.serviceRepostory.impl;
+package ru.animals.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.repository.CommonReposities;
-import ru.animals.service.serviceRepostory.CommonService;
+import ru.animals.service.CommonService;
 import ru.animals.utils.parser.StructForCollbackConfig;
 
 

@@ -1,7 +1,7 @@
-package ru.animals.service.serviceRepostory.impl;
+package ru.animals.service.impl;
 
 import org.springframework.stereotype.Service;
-import ru.animals.service.serviceRepostory.VolunteersService;
+import ru.animals.service.VolunteersService;
 import ru.animals.repository.VolunteerRepository;
 
 

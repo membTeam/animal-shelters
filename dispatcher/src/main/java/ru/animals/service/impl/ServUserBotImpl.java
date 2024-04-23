@@ -1,4 +1,4 @@
-package ru.animals.service.serviceRepostory.impl;
+package ru.animals.service.impl;
 
 import org.springframework.stereotype.Service;
 import ru.animals.entities.Adoption;
@@ -6,8 +6,8 @@ import ru.animals.entities.UserBot;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
 import ru.animals.repository.AdoptionalRepository;
 import ru.animals.repository.UserBotRepository;
-import ru.animals.service.serviceRepostory.ServUserBot;
-import ru.animals.service.serviceRepostory.enumStatusUser.EnumStatusUserBot;
+import ru.animals.service.ServUserBot;
+import ru.animals.service.enumStatusUser.EnumStatusUserBot;
 
 import java.util.Collection;
 

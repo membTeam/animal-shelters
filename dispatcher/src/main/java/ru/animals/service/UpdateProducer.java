@@ -1,4 +1,4 @@
-package ru.animals.service.serviceRepostory;
+package ru.animals.service;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
