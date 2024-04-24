@@ -7,4 +7,5 @@ import java.nio.file.Path;
 public interface AnimalServiceExt {
     BreedsRepository getBreedsRepository();
     Path getImageStorageDir();
+    int getPort();
 }

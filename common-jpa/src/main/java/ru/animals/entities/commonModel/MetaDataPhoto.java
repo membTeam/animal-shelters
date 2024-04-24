@@ -17,4 +17,6 @@ public class MetaDataPhoto {
     private String filepath;
     private Long filesize;
     private String metatype;
+    private String url;
+    private String breed;
 }

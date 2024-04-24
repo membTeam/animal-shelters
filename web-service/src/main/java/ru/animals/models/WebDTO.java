@@ -1,10 +1,8 @@
 package ru.animals.models;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.animals.entities.Animals;
+import ru.animals.entities.Breeds;
 import ru.animals.entities.commonModel.MetaDataPhoto;
 
 import java.nio.file.Path;
@@ -12,11 +10,23 @@ import java.nio.file.Path;
 @Builder
 @Getter
 @Setter
-@NoArgsConstructor
+@AllArgsConstructor
 public class WebDTO {
+    @Getter
+    private boolean result = true;
+    @Getter
+    private String message = "ok";
+
     private Animals animals;
+    private Animals savedAnimal;
+    private Breeds breeds;
     private MetaDataPhoto metaDataPhoto;
-    private String strBreed;
     private Path targetPath;
     private String targetFileName;
+    private String fileExtension;
+
+    public WebDTO(String err) {
+        this.result = false;
+        this.message = err;
+    }
 }

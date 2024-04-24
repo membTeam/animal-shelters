@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.animals.entities.Animals;
 import ru.animals.entities.Breeds;
-import ru.animals.entities.commonModel.MetaDataPhoto;
+import ru.animals.models.FileWebAPI;
 import ru.animals.models.WebAnimal;
+import ru.animals.models.WebDTO;
 import ru.animals.repository.AnimalsRepository;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.service.AnimalService;
@@ -20,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
@@ -29,8 +29,13 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
     private final BreedsRepository breedsRepository;
     private final AnimalsRepository animalsRepository;
 
-    public AnimalServiceImpl(@Value("${image-storage-dir}") Path imageStorageDir, BreedsRepository breedsRepository, AnimalsRepository animalsRepository) {
+    private final int port;
+
+    public AnimalServiceImpl(@Value("${image-storage-dir}") Path imageStorageDir,
+                             @Value("${server.port}") int port,
+                             BreedsRepository breedsRepository, AnimalsRepository animalsRepository) {
         this.imageStorageDir = imageStorageDir;
+        this.port = port;
         this.breedsRepository = breedsRepository;
         this.animalsRepository = animalsRepository;
     }
@@ -47,7 +52,7 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
         return breedsRepository.findAllByTypeAnimationsId(typeAnimationsId);
     }
 
-    private MetaDataPhoto initMetaDataPhoto(WebAnimal webAnimal) {
+/*    private MetaDataPhoto initMetaDataPhoto(WebAnimal webAnimal) {
         var imageFile = webAnimal.getPhoto();
 
         return MetaDataPhoto.builder()
@@ -56,68 +61,45 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
                 .metatype(imageFile.getContentType())
                 .file("empty")
                 .build();
-    }
+    }*/
 
-    private Animals initAnimals(WebAnimal webAnimal) {
+ /*   private Animals initAnimals(WebAnimal webAnimal) {
         return Animals.builder()
                 .breedId(webAnimal.getBreedId())
                 .status(true)
                 .nickname(webAnimal.getNickname())
                 .limitations(webAnimal.getLimitations())
                 .build();
-    }
+    }*/
 
     @Override
     public ValueFromMethod addAnimal(WebAnimal webAnimal) {
 
-        var optBreed = breedsRepository.findById(webAnimal.getBreedId());
-        if (optBreed.isEmpty()) {
-            return new ValueFromMethod("internal error") ;
+        WebDTO webDTO = FileWebAPI.preparationAnimalData(this, webAnimal);
+        if (!webDTO.isResult()) {
+            return new ValueFromMethod(webDTO.getMessage());
+        }
+
+        FileWebAPI.preparationAnimalData(this, webDTO);
+        if (!webDTO.isResult()) {
+            return new ValueFromMethod(webDTO.getMessage());
         }
 
         var imageFile = webAnimal.getPhoto();
-
-        MetaDataPhoto metaDataPhoto = initMetaDataPhoto(webAnimal);
-
-        Animals animals = initAnimals(webAnimal);
-        animals.setMetaDataPhoto(metaDataPhoto);
-
-        var resSaveAnimal = animalsRepository.save(animals);
-
-        var breed = optBreed.get();
-        final String strBreed = breed.getTypeAnimationsId() == 1 ? "dog" : "cat";
-        final String fileExtension = Optional.ofNullable(imageFile.getOriginalFilename())
-                .flatMap(AnimalServiceImpl::getFileExtension)
-                .orElse("");
-
-        final String targetFileName = String.format("%s%d-%d.%s",
-                strBreed, webAnimal.getBreedId(), resSaveAnimal.getId(), fileExtension);
-
-        final Path baseStoredDir = imageStorageDir.resolve(strBreed);
-        final Path targetPath = baseStoredDir.resolve(targetFileName);
-
-        if (Files.exists(targetPath)) {
-            try {
-                Files.delete(targetPath);
-            } catch (IOException ex) {
-                return new ValueFromMethod(false, "internal error.");
-            }
-        }
-
-        metaDataPhoto.setFile(targetFileName);
-        metaDataPhoto.setFilepath(targetPath.toString());
-
         try (InputStream in = imageFile.getInputStream()) {
-            resSaveAnimal.setMetaDataPhoto(metaDataPhoto);
-            animalsRepository.save(resSaveAnimal);
+            Animals animalSaved = webDTO.getSavedAnimal();
+            animalSaved.setMetaDataPhoto(webDTO.getMetaDataPhoto());
 
-            OutputStream out = Files.newOutputStream(targetPath, StandardOpenOption.CREATE);
+            animalsRepository.save(animalSaved);
+
+            OutputStream out = Files.newOutputStream(webDTO.getTargetPath(), StandardOpenOption.CREATE);
             in.transferTo(out);
+
         } catch (IOException e) {
             return new ValueFromMethod("Internal error");
         }
 
-        return new ValueFromMethod(true, targetFileName);
+        return new ValueFromMethod(true, webDTO.getTargetFileName());
     }
 
  /*   public static Optional<String> getFileExtension(String fileName) {
@@ -139,5 +121,10 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
     @Override
     public Path getImageStorageDir() {
         return imageStorageDir;
+    }
+
+    @Override
+    public int getPort() {
+        return port;
     }
 }
