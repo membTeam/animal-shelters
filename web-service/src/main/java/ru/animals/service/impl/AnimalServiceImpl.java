@@ -1,10 +1,7 @@
 package ru.animals.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import ru.animals.controller.AnimalsController;
 import ru.animals.entities.Animals;
 import ru.animals.entities.Breeds;
 import ru.animals.entities.commonModel.MetaDataPhoto;
@@ -12,24 +9,21 @@ import ru.animals.models.WebAnimal;
 import ru.animals.repository.AnimalsRepository;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.service.AnimalService;
+import ru.animals.service.AnimalServiceExt;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
-import java.beans.Transient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
-public class AnimalServiceImpl implements AnimalService {
+public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
 
     private final Path imageStorageDir;
     private final BreedsRepository breedsRepository;
@@ -126,7 +120,7 @@ public class AnimalServiceImpl implements AnimalService {
         return new ValueFromMethod(true, targetFileName);
     }
 
-    public static Optional<String> getFileExtension(String fileName) {
+ /*   public static Optional<String> getFileExtension(String fileName) {
         final int indexOfLastDot = fileName.lastIndexOf('.');
 
         if (indexOfLastDot == -1) {
@@ -134,7 +128,16 @@ public class AnimalServiceImpl implements AnimalService {
         } else {
             return Optional.of(fileName.substring(indexOfLastDot + 1));
         }
+    }*/
+
+
+    @Override
+    public BreedsRepository getBreedsRepository() {
+        return breedsRepository;
     }
 
-
+    @Override
+    public Path getImageStorageDir() {
+        return imageStorageDir;
+    }
 }

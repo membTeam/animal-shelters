@@ -1,18 +1,13 @@
 package ru.animals.session;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.controller.UpdateControllerService;
-import ru.animals.entities.UserBot;
 import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.session.stateImpl.BaseState;
-import ru.animals.session.stateImpl.StateRegister;
 import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utils.DevlAPI;
 import ru.animals.utils.UtilsMessage;
@@ -22,7 +17,6 @@ import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
 import java.lang.reflect.Constructor;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
