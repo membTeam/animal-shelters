@@ -12,8 +12,6 @@ import java.util.List;
 public interface AnimalService {
     List<Breeds> getListBreeds (Long typeAnimationsId);
 
-    ValueFromMethod addAnimal(WebAnimal webAnimal, MultipartFile imageFile);
-
-    String addPhoto(Long id, MultipartFile photo);
+    ValueFromMethod addAnimal(WebAnimal webAnimal);
 
 }

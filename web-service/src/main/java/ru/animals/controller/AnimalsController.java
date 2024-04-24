@@ -12,6 +12,7 @@ import java.io.IOException;
 import ru.animals.models.WebAnimal;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.service.AnimalService;
+import ru.animals.service.impl.AnimalServiceImpl;
 
 import javax.annotation.PostConstruct;
 import java.io.OutputStream;
@@ -29,35 +30,21 @@ import java.util.Random;
 public class AnimalsController {
 
     private final AnimalService animalService;
-    private final BreedsRepository breedsRepository;
 
-    public AnimalsController(@Value("${image-storage-dir}") String imageStorageDir, AnimalService animalService, BreedsRepository breedsRepository) {
+    public AnimalsController( AnimalService animalService) {
         this.animalService = animalService;
-        this.breedsRepository = breedsRepository;
     }
 
-    @PostMapping(value = "/add-image/(id)", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String addImage(@PathVariable Long id, @RequestParam MultipartFile photo) {
-        var res = animalService.addPhoto(id, photo);
-        return "ok";
-    }
+    @PostMapping(value = "/upload-image", consumes = {"multipart/form-data"})
+    public String uploadImage(@ModelAttribute WebAnimal webAnimal) {
 
-    @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadImage(@RequestBody WebAnimal webAnimal,
-                              @RequestBody MultipartFile imageFile) {
-
-        var res = animalService.addAnimal(webAnimal, imageFile);
+        var res = animalService.addAnimal(webAnimal);
         return res.MESSAGE;
     }
-
 
     @GetMapping("list-animals/{breed}")
     public ResponseEntity<Collection<Breeds>> getListAnimals(@PathVariable Long breed ) {
         return ResponseEntity.ok(animalService.getListBreeds(breed));
     }
-
-
-
-
 
 }

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
@@ -52,49 +53,69 @@ public class AnimalServiceImpl implements AnimalService {
         return breedsRepository.findAllByTypeAnimationsId(typeAnimationsId);
     }
 
-    @Transactional
+    private MetaDataPhoto initMetaDataPhoto(WebAnimal webAnimal) {
+        var imageFile = webAnimal.getPhoto();
+
+        return MetaDataPhoto.builder()
+                .filepath("empty")
+                .filesize(imageFile.getSize())
+                .metatype(imageFile.getContentType())
+                .file("empty")
+                .build();
+    }
+
+    private Animals initAnimals(WebAnimal webAnimal) {
+        return Animals.builder()
+                .breedId(webAnimal.getBreedId())
+                .status(true)
+                .nickname(webAnimal.getNickname())
+                .limitations(webAnimal.getLimitations())
+                .build();
+    }
+
     @Override
-    public ValueFromMethod addAnimal(WebAnimal webAnimal, MultipartFile imageFile) {
+    public ValueFromMethod addAnimal(WebAnimal webAnimal) {
 
         var optBreed = breedsRepository.findById(webAnimal.getBreedId());
         if (optBreed.isEmpty()) {
             return new ValueFromMethod("internal error") ;
         }
 
-        MetaDataPhoto metaDataPhoto = MetaDataPhoto.builder()
-                .filepath("empty")
-                .filesize(imageFile.getSize())
-                .metatype(imageFile.getContentType())
-                .file("empty")
-                .build();
+        var imageFile = webAnimal.getPhoto();
 
-        Animals animals = Animals.builder()
-                .breedId(webAnimal.getBreedId())
-                .status(true)
-                .nickname(webAnimal.getNickname())
-                .limitations(webAnimal.getLimitations())
-                .metaDataPhoto(metaDataPhoto)
-                .build();
+        MetaDataPhoto metaDataPhoto = initMetaDataPhoto(webAnimal);
 
-        var resSaveAnimatin = animalsRepository.save(animals);
+        Animals animals = initAnimals(webAnimal);
+        animals.setMetaDataPhoto(metaDataPhoto);
+
+        var resSaveAnimal = animalsRepository.save(animals);
 
         var breed = optBreed.get();
         final String strBreed = breed.getTypeAnimationsId() == 1 ? "dog" : "cat";
         final String fileExtension = Optional.ofNullable(imageFile.getOriginalFilename())
-                .flatMap(this::getFileExtension)
+                .flatMap(AnimalServiceImpl::getFileExtension)
                 .orElse("");
 
-        final String targetFileName = String.format("%s/%s%d-%d.%s",
-                strBreed,
-                strBreed, webAnimal.getBreedId(), resSaveAnimatin.getId(), fileExtension);
-        final Path targetPath = this.imageStorageDir.resolve(targetFileName);
+        final String targetFileName = String.format("%s%d-%d.%s",
+                strBreed, webAnimal.getBreedId(), resSaveAnimal.getId(), fileExtension);
+
+        final Path baseStoredDir = imageStorageDir.resolve(strBreed);
+        final Path targetPath = baseStoredDir.resolve(targetFileName);
+
+        if (Files.exists(targetPath)) {
+            try {
+                Files.delete(targetPath);
+            } catch (IOException ex) {
+                return new ValueFromMethod(false, "internal error.");
+            }
+        }
 
         metaDataPhoto.setFile(targetFileName);
         metaDataPhoto.setFilepath(targetPath.toString());
 
         try (InputStream in = imageFile.getInputStream()) {
-            resSaveAnimatin.setMetaDataPhoto(metaDataPhoto);
-            animalsRepository.save(resSaveAnimatin);
+            resSaveAnimal.setMetaDataPhoto(metaDataPhoto);
+            animalsRepository.save(resSaveAnimal);
 
             OutputStream out = Files.newOutputStream(targetPath, StandardOpenOption.CREATE);
             in.transferTo(out);
@@ -105,18 +126,7 @@ public class AnimalServiceImpl implements AnimalService {
         return new ValueFromMethod(true, targetFileName);
     }
 
-    @Override
-    public String addPhoto(Long id, MultipartFile photo) {
-        var optBreed = breedsRepository.findById(id);
-        if (optBreed.isEmpty()) {
-            return "error" ;
-        }
-
-        return "ok";
-    }
-
-
-    private Optional<String> getFileExtension(String fileName) {
+    public static Optional<String> getFileExtension(String fileName) {
         final int indexOfLastDot = fileName.lastIndexOf('.');
 
         if (indexOfLastDot == -1) {
