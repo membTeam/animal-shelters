@@ -126,49 +126,11 @@ public class UpdateController  implements UpdateControllerService {
         }
     }
 
-// ------------------------ load photo
-    private ResponseEntity<String> getFilePath(String fileId) {
-        var restTemplate = new RestTemplate();
-        var headers = new HttpHeaders();
-        var request = new HttpEntity<>(headers);
-
-        return restTemplate.exchange(
-                fileInfoUri,
-                HttpMethod.GET,
-                request,
-                String.class,
-                token,
-                fileId
-        );
-
-    }
-
-    private String getFilePath(ResponseEntity<String> response) {
-        var jsonObject = new JSONObject(response.getBody());
-        return String.valueOf(jsonObject
-                .getJSONObject("result")
-                .getString("file_path"));
-    }
-
-    private byte[] downloadFile(String filePath) throws Exception {
-        var fullUri = fileStorageUri.replace("{token}", token)
-                .replace("{filePath}", filePath);
-        URL urlObj = null;
-        try {
-            urlObj = new URL(fullUri);
-        } catch (MalformedURLException e) {
-            log.error(e.getMessage());
-            throw new UploadFileException(e.getMessage());
-        }
-
-        try (InputStream is = urlObj.openStream()) {
-            return is.readAllBytes();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new UploadFileException(e.getMessage());
-        }
-    }
-
+    /**
+     * Загрузка фотографий из telegram bot
+     * @param update
+     * @throws Exception
+     */
     private void distributePhoto(Update update) throws Exception {
 
         var fileExt = "jpg";
@@ -183,8 +145,6 @@ public class UpdateController  implements UpdateControllerService {
         telegramBot.downloadFile(update, file);
 
     }
-
-    // -------------------- end load photo
 
     /**
      * Менеджер текстовых сообщений

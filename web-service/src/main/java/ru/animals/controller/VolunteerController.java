@@ -1,5 +1,6 @@
 package ru.animals.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.animals.models.VolunteerWeb;
 import ru.animals.repository.VolunteerRepository;
