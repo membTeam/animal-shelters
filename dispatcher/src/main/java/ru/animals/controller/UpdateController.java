@@ -23,10 +23,12 @@ import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.exceptions.UploadFileException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 
 @Log4j
 @Component
@@ -168,7 +170,18 @@ public class UpdateController  implements UpdateControllerService {
     }
 
     private void distributePhoto(Update update) throws Exception {
-        var resText = telegramBot.downloadFile(update, imageStoragDirReport);
+
+        var fileExt = "jpg";
+        var chatId = update.getMessage().getChatId();
+
+        var strFileDistination = String.format("rep-%d.%s", chatId, fileExt);
+
+        var strFilePath = Path.of(imageStoragDirReport, strFileDistination).toString();
+
+        File file = new java.io.File(strFilePath);
+
+        telegramBot.downloadFile(update, file);
+
     }
 
     // -------------------- end load photo
