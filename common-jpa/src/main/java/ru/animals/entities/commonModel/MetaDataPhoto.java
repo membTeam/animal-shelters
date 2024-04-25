@@ -19,4 +19,5 @@ public class MetaDataPhoto {
     private String metatype;
     private String url;
     private String breed;
+    private int hashcode;
 }

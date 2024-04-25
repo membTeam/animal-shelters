@@ -41,6 +41,9 @@ public class UpdateController  implements UpdateControllerService {
     private final ServUserBot servUserBot;
     private final SessionServiceImpl sessionServiceUpdate;
 
+    @Value("${image-storage-dir-report}")
+    private String imageStoragDirReport;
+
     @Value("${service.file_info.url}")
     private String fileInfoUri;
 
@@ -74,19 +77,18 @@ public class UpdateController  implements UpdateControllerService {
         return res.getValue();
     }
 
-    private String getTextMessFromUpdate(Update update) {
-        return DevlAPI.getTextMessFromUpdate(update);
-    }
-
-
     /**
      * Менеджер команд в зависимости от типа сообщения
      * @param update
      */
-    public void distributeMessages(Update update) {
+    public void distributeMessages(Update update) throws Exception {
 
         if (update == null) {
             return;
+        }
+
+        if (update.getMessage().hasPhoto()) {
+            distributePhoto(update);
         }
 
         try {
@@ -166,24 +168,7 @@ public class UpdateController  implements UpdateControllerService {
     }
 
     private void distributePhoto(Update update) throws Exception {
-        var telegramMessage = update.getMessage();
-
-        var photoSizeCount = telegramMessage.getPhoto().size();
-        var photoIndex = photoSizeCount > 1 ? telegramMessage.getPhoto().size() - 1 : 0;
-        var telegramPhoto = telegramMessage.getPhoto().get(photoIndex);
-        var fileId = telegramPhoto.getFileId();
-        var response = getFilePath(fileId);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-
-            var filePath = getFilePath(response);
-            var fileInByte = downloadFile(filePath);
-
-            log.info("File download");
-        } else {
-            throw new UploadFileException("Error configue response");
-        }
-
+        var resText = telegramBot.downloadFile(update, imageStoragDirReport);
     }
 
     // -------------------- end load photo
@@ -195,7 +180,7 @@ public class UpdateController  implements UpdateControllerService {
      */
     private void distributeMessagesBytype(Update update) throws Exception {
 
-        String textMess = getTextMessFromUpdate(update);
+        String textMess = DevlAPI.getTextMessFromUpdate(update); // getTextMessFromUpdate(update);
         Long charId = getCharIdFromUpdate(update);
 
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);

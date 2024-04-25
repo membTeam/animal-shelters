@@ -1,6 +1,7 @@
 package ru.animals.models;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.animals.entities.Animals;
 import ru.animals.entities.Breeds;
 import ru.animals.entities.commonModel.MetaDataPhoto;
@@ -12,10 +13,8 @@ import java.nio.file.Path;
 @Setter
 @AllArgsConstructor
 public class WebDTO {
-    @Getter
-    private boolean result = true;
-    @Getter
-    private String message = "ok";
+    private boolean result;
+    private String message;
 
     private Animals animals;
     private Animals savedAnimal;
@@ -24,6 +23,7 @@ public class WebDTO {
     private Path targetPath;
     private String targetFileName;
     private String fileExtension;
+    private MultipartFile photo;
 
     public WebDTO(String err) {
         this.result = false;

@@ -1,6 +1,7 @@
 package ru.animals.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -10,6 +11,8 @@ import javax.persistence.*;
 
 import ru.animals.entities.commonModel.MetaDataPhoto;
 import ru.animals.entities.enumEntity.EnumLimitations;
+
+import java.util.Collection;
 
 
 @Getter
@@ -47,4 +50,9 @@ public class Animals {
      */
     @Enumerated(EnumType.STRING)
     private EnumLimitations limitations;
+
+    @OneToMany
+    @JoinColumn(name = "animals_id")
+    @JsonIgnore
+    private Collection<Adoption> lsAdoptional;
 }

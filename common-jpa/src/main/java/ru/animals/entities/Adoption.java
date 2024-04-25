@@ -33,8 +33,8 @@ public class Adoption {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "animate_id")
-    private Long animateId;
+    @Column(name = "animals_id")
+    private Long animalsIid;
 
     @Column(name = "adoption_state")
     @Enumerated(EnumType.STRING)

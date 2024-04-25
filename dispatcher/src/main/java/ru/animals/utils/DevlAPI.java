@@ -52,8 +52,8 @@ public class DevlAPI {
     }
 
     public static String getTextMessFromUpdate(Update update) {
-        var text = update.hasCallbackQuery()
-                ? update.getCallbackQuery().getMessage().getText()
+        String text = update.hasCallbackQuery()
+                ? update.getCallbackQuery().getData()
                 : update.getMessage().getText();
 
         return text.charAt(0) == '/' ? text.substring(1): text;

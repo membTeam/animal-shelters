@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
@@ -80,6 +81,8 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
             return new ValueFromMethod(webDTO.getMessage());
         }
 
+        webDTO.setSavedAnimal(animalsRepository.save(webDTO.getAnimals()));
+
         FileWebAPI.preparationAnimalData(this, webDTO);
         if (!webDTO.isResult()) {
             return new ValueFromMethod(webDTO.getMessage());
@@ -91,15 +94,15 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
             animalSaved.setMetaDataPhoto(webDTO.getMetaDataPhoto());
 
             animalsRepository.save(animalSaved);
-
-            OutputStream out = Files.newOutputStream(webDTO.getTargetPath(), StandardOpenOption.CREATE);
+            Path targetPath = Paths.get(webDTO.getSavedAnimal().getMetaDataPhoto().getFilepath());
+            OutputStream out = Files.newOutputStream(targetPath, StandardOpenOption.CREATE);
             in.transferTo(out);
 
         } catch (IOException e) {
             return new ValueFromMethod("Internal error");
         }
 
-        return new ValueFromMethod(true, webDTO.getTargetFileName());
+        return new ValueFromMethod(true, webDTO.getSavedAnimal().getMetaDataPhoto().getFile());
     }
 
  /*   public static Optional<String> getFileExtension(String fileName) {

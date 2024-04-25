@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.Random;
 
 import ru.animals.entities.Animals;
 import ru.animals.entities.commonModel.MetaDataPhoto;
@@ -34,6 +35,9 @@ public class FileWebAPI {
         }
 
         return WebDTO.builder()
+                .result(true)
+                .message("ok")
+                .photo(photo)
                 .animals(animals)
                 .metaDataPhoto(metaDataPhoto)
                 .breeds(optBreed.get())
@@ -46,8 +50,10 @@ public class FileWebAPI {
         Path imageStorageDir = animalServiceExt.getImageStorageDir();
         int port = animalServiceExt.getPort();
 
-        final String strPrefix = webDTO.getBreeds().getTypeAnimationsId() == 1 ? "dog" : "cat";
-        final String fileExtension = Optional.ofNullable( webDTO.getTargetFileName())
+        int typeAnimationsId = Math.toIntExact(webDTO.getBreeds().getTypeAnimationsId());
+
+        final String strPrefix =  typeAnimationsId == 1 ? "dog" : "cat";
+        final String fileExtension = Optional.ofNullable( webDTO.getPhoto().getOriginalFilename())
                 .flatMap(FileWebAPI::getFileExtension)
                 .orElse("");
 
@@ -67,15 +73,17 @@ public class FileWebAPI {
             }
         }
 
-        webDTO.getMetaDataPhoto().setFile(targetFileName);
-        webDTO.getMetaDataPhoto().setFilepath(targetPath.toString());
-
         MetaDataPhoto metaDataPhoto = webDTO.getMetaDataPhoto();
-        metaDataPhoto.setBreed(webDTO.getBreeds().getBreed());
 
-        var strFile = targetFileName.substring(0,targetFileName.lastIndexOf("."));
-        metaDataPhoto.setUrl(String.format("localhost:%d/view-animal/", port, strFile ));
+        metaDataPhoto.setFile(targetFileName);
+        metaDataPhoto.setFilepath(targetPath.toString());
+        metaDataPhoto.setBreed(webDTO.getBreeds().getBreed());
+        metaDataPhoto.setHashcode( randomNumber(typeAnimationsId));
+
+        metaDataPhoto.setUrl(String.format("localhost:%d/view-animal/%s-%d",
+                port, strPrefix, metaDataPhoto.getHashcode() ));
     }
+
 
     private static Animals initAnimals(WebAnimal webAnimal) {
         return Animals.builder()
@@ -97,7 +105,7 @@ public class FileWebAPI {
                 .build();
     }
 
-    public static Optional<String> getFileExtension(String fileName) {
+    private static Optional<String> getFileExtension(String fileName) {
         final int indexOfLastDot = fileName.lastIndexOf('.');
 
         if (indexOfLastDot == -1) {
@@ -106,4 +114,16 @@ public class FileWebAPI {
             return Optional.of(fileName.substring(indexOfLastDot + 1));
         }
     }
+
+    private static int randomNumber(int grupAnimal) {
+
+        int min = 10000;
+        int max = 20000;
+        int diff = max - min;
+
+        Random random = new Random();
+        int number = random.nextInt(diff + 1) + min;
+        return grupAnimal * 100000 + number;
+    }
+
 }
