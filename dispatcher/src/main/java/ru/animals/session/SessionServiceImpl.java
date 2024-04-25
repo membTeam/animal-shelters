@@ -1,10 +1,13 @@
 package ru.animals.session;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.animals.repository.AdoptionalRepository;
 import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.session.stateImpl.BaseState;
@@ -21,26 +24,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+
+@Log4j
 @Service
 @Getter
-@Log4j
+@RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService{
+
+    @Value("${image-storage-dir-report}")
+    private String imageStorageDirReport;
 
     private final UserBotRepository userBotRepository;
     private final ReportsRepository reportsRepository;
+    private final AdoptionalRepository adoptionalRepository;
 
     private final UtilsMessage utilsMessage;
     private final UtilsSendMessage utilsSendMessage;
 
 
     private Map<Long, BaseState> mapItems = new HashMap<>();
-
-    public SessionServiceImpl(UserBotRepository userBotRepository, ReportsRepository reportsRepository, UtilsMessage utilsMessage, UtilsSendMessage utilsSendMessage) {
-        this.userBotRepository = userBotRepository;
-        this.reportsRepository = reportsRepository;
-        this.utilsMessage = utilsMessage;
-        this.utilsSendMessage = utilsSendMessage;
-    }
 
     /**
      * Регистрация СОСТОЯНИЯ для регистрации пользователя и отчет о состоянии животного
@@ -130,6 +132,11 @@ public class SessionServiceImpl implements SessionService{
     }
 
     @Override
+    public AdoptionalRepository getAdoptionalRepository() {
+        return adoptionalRepository;
+    }
+
+    @Override
     public UtilsMessage getUtilsMessage() {
         return utilsMessage;
     }
@@ -137,6 +144,11 @@ public class SessionServiceImpl implements SessionService{
     @Override
     public UtilsSendMessage getUtilsSendMessage() {
         return utilsSendMessage;
+    }
+
+    @Override
+    public String getImageStorageDirReport() {
+        return imageStorageDirReport;
     }
 
     public boolean isExistsStateSession(Update update) throws Exception {

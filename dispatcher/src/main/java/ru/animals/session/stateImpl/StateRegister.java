@@ -32,7 +32,7 @@ public class StateRegister extends BaseState {
     private final String STR_PATTERN = "^(\\(\\+7\\)) (\\(9\\d{2}\\)) (\\(\\d{3}\\)) (\\(\\d{2}-\\d{2}\\))$";
 
 
-    public final String TEXT_START = "Введите свои данные согласно шаблона:\n" +
+    private final String TEXT_START = "Введите свои данные согласно шаблона:\n" +
             "ВашеИмя (+7) (9NN) (NNN) (NN-NN)\n" +
             "где N числовые значения вашего телефона\n" +
             "отказ от регистрации /cancel";

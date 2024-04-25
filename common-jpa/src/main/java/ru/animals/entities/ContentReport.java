@@ -10,6 +10,7 @@ import lombok.*;
 import ru.animals.entities.commonModel.MetaDataPhoto;
 import ru.animals.entities.enumEntity.EnumStatusReport;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -26,7 +27,7 @@ public class ContentReport {
     private Long id;
 
     @Column(columnDefinition = "date")
-    private Date date;
+    private LocalDate date;
     private Long adoption_id;
 
     /**
