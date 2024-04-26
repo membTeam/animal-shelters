@@ -2,11 +2,8 @@ package ru.animals.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -21,19 +18,15 @@ import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
-import ru.animals.exceptions.UploadFileException;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 
 @Log4j
 @Component
 @RequiredArgsConstructor
-public class UpdateController  implements UpdateControllerService {
+public class UpdateController implements UpdateControllerService {
     private TelegramBot telegramBot;
     private final UtilsMessage utilsMessage;
     private final UpdateProducer updateProducer;
@@ -57,6 +50,7 @@ public class UpdateController  implements UpdateControllerService {
 
     public void registerBot(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
+        sessionServiceUpdate.init(this.telegramBot);
     }
 
     /**
@@ -89,9 +83,9 @@ public class UpdateController  implements UpdateControllerService {
             return;
         }
 
-        if (update.getMessage().hasPhoto()) {
+        /*if (update.getMessage().hasPhoto()) {
             distributePhoto(update);
-        }
+        }*/
 
         try {
             if (utilsSendMessage.isERROR()) {
@@ -206,7 +200,7 @@ public class UpdateController  implements UpdateControllerService {
 
         } else if (enumType == EnumTypeParamCollback.TCL_BTN) {
             sendButtonMenu(chartId,
-                    utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
+                    utilsSendMessage.getStructureCommand(structCollbackCommand).getCommand());
 
         } else if (enumType == EnumTypeParamCollback.TCL_DBD) {
             // TODO: исправить идентификатор метода
@@ -250,6 +244,10 @@ public class UpdateController  implements UpdateControllerService {
 
         sendMessage.setParseMode(ParseMode.MARKDOWN);
         telegramBot.sendAnswerMessage(sendMessage);
+    }
+
+    public TelegramBot getTelegramBot() {
+        return telegramBot;
     }
 
     public void setView(SendMessage sendMessage) {

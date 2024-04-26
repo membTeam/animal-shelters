@@ -12,7 +12,11 @@ import ru.animals.entities.Animals;
 import ru.animals.entities.commonModel.MetaDataPhoto;
 import ru.animals.service.AnimalServiceExt;
 
-
+/**
+ * Заполнение структуры объекта Animals в RestAPI в два этапа:
+ * WebDTO preparationAnimalData предварительное заполнение полей
+ * void preparationAnimalData   заключительная операция
+ */
 public class FileWebAPI {
     public static WebDTO preparationAnimalData(AnimalServiceExt animalServiceExt, WebAnimal webAnimal) {
 
@@ -20,7 +24,7 @@ public class FileWebAPI {
 
         var optBreed = breedsRepository.findById(webAnimal.getBreedId());
         if (optBreed.isEmpty()) {
-            return new WebDTO("internal error");
+            return new WebDTO("internal error.\nThere is no data on the breed of the animal");
         }
 
         MetaDataPhoto metaDataPhoto = initMetaDataPhoto(webAnimal);
@@ -77,13 +81,15 @@ public class FileWebAPI {
 
         metaDataPhoto.setFile(targetFileName);
         metaDataPhoto.setFilepath(targetPath.toString());
-        metaDataPhoto.setBreed(webDTO.getBreeds().getBreed());
+        metaDataPhoto.setOtherinf(webDTO.getBreeds().getBreed());
         metaDataPhoto.setHashcode( randomNumber(typeAnimationsId));
 
         metaDataPhoto.setUrl(String.format("localhost:%d/view-animal/%s-%d",
                 port, strPrefix, metaDataPhoto.getHashcode() ));
     }
 
+
+    //************ Вспомогательные методы
 
     private static Animals initAnimals(WebAnimal webAnimal) {
         return Animals.builder()

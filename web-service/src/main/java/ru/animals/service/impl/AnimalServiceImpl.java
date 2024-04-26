@@ -105,17 +105,6 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
         return new ValueFromMethod(true, webDTO.getSavedAnimal().getMetaDataPhoto().getFile());
     }
 
- /*   public static Optional<String> getFileExtension(String fileName) {
-        final int indexOfLastDot = fileName.lastIndexOf('.');
-
-        if (indexOfLastDot == -1) {
-            return Optional.empty();
-        } else {
-            return Optional.of(fileName.substring(indexOfLastDot + 1));
-        }
-    }*/
-
-
     @Override
     public BreedsRepository getBreedsRepository() {
         return breedsRepository;

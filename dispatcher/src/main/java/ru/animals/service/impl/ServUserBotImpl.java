@@ -28,19 +28,18 @@ public class ServUserBotImpl implements ServUserBot {
     public EnumStatusUserBot statudUserBot(long chatId) {
 
         var optionalRes = userRepository.findByChatId(chatId);
-                //findById(id);
 
         if (optionalRes.isEmpty()) {
             return EnumStatusUserBot.USER_NOT_REGISTER;
         }
 
-        UserBot userBot = optionalRes.orElseThrow();
-        Collection<Adoption> optionalAdoption =
-                adoptionalRepository.findByUserIdAndOnProbational(chatId, EnumAdoptionState.ON_PROBATION);
+        UserBot userBot = optionalRes.get();
+        Collection<Adoption> collectionAdoption =
+                adoptionalRepository.findByUserIdAndOnProbational(userBot.getId(), EnumAdoptionState.ON_PROBATION);
 
-        return optionalAdoption.isEmpty()
-                ? EnumStatusUserBot.NO_PROBATION_PERIOD
-                : EnumStatusUserBot.ON_PROBATION_PERIOD;
+        return collectionAdoption.size() > 0
+                ? EnumStatusUserBot.ON_PROBATION_PERIOD
+                : EnumStatusUserBot.NO_PROBATION_PERIOD;
 
     }
 

@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.animals.entities.enumEntity.EnumAdoptionState;
-import ru.animals.models.enumWeb.EnumTypeAnimation;
+import ru.animals.entities.enumEntity.EnumTypeAnimation;
 
 @Getter
 @Setter

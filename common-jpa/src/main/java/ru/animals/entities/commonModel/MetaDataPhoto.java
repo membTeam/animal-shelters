@@ -18,6 +18,6 @@ public class MetaDataPhoto {
     private Long filesize;
     private String metatype;
     private String url;
-    private String breed;
+    private String otherinf;
     private int hashcode;
 }

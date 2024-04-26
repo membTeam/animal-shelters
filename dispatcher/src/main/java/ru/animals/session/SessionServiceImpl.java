@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.animals.controller.TelegramBot;
+import ru.animals.controller.UpdateController;
 import ru.animals.repository.AdoptionalRepository;
+import ru.animals.repository.BreedsRepository;
 import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.session.stateImpl.BaseState;
@@ -19,6 +22,7 @@ import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,13 +38,22 @@ public class SessionServiceImpl implements SessionService{
     @Value("${image-storage-dir-report}")
     private String imageStorageDirReport;
 
+    @Value("${web-server-port}")
+    int webServerPort;
+
+
     private final UserBotRepository userBotRepository;
     private final ReportsRepository reportsRepository;
     private final AdoptionalRepository adoptionalRepository;
+    private TelegramBot telegramBot;
+    private final BreedsRepository breedsRepository;
 
     private final UtilsMessage utilsMessage;
     private final UtilsSendMessage utilsSendMessage;
 
+    public void init (TelegramBot telegramBot) {
+        this.telegramBot = telegramBot;
+    }
 
     private Map<Long, BaseState> mapItems = new HashMap<>();
 
@@ -149,6 +162,21 @@ public class SessionServiceImpl implements SessionService{
     @Override
     public String getImageStorageDirReport() {
         return imageStorageDirReport;
+    }
+
+    @Override
+    public TelegramBot getTelegramBot() {
+        return telegramBot;
+    }
+
+    @Override
+    public int getWebServerPort() {
+        return webServerPort;
+    }
+
+    @Override
+    public BreedsRepository getBreedsRepository() {
+        return breedsRepository;
     }
 
     public boolean isExistsStateSession(Update update) throws Exception {

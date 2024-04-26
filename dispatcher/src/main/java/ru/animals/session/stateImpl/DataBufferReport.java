@@ -15,6 +15,7 @@ public class DataBufferReport {
     private StateSession stateSession;
     private String errMessage;
 
+    private Long chatId;
     private String animalDiet;
     private String generalWellBeing;
     private String changeInBehavior;

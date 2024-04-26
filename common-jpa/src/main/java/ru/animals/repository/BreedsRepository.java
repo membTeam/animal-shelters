@@ -13,4 +13,19 @@ public interface BreedsRepository extends JpaRepository<Breeds, Long> {
 
     List<Breeds> findAllByTypeAnimationsId(Long typeId);
 
+    @Query(value = "select b.type_animations_id from adoption ad" +
+            " left join animals an on ad.animals_id = an.id" +
+            " and ad.user_id = :userid" +
+            " and ad.adoption_state = 'ON_PROBATION'" +
+            " left join breeds b on an.breed_id = b.id ;", nativeQuery = true)
+    Integer getTypeAnimationFromReport(Integer userid);
+
+    /*
+    select b.type_animations_id from adoption ad
+	left join animals an on ad.animals_id = an.id
+		and ad.user_id = 30
+		and ad.adoption_state = 'ON_PROBATION'
+	left join breeds b on an.breed_id = b.id ;
+     */
+
 }

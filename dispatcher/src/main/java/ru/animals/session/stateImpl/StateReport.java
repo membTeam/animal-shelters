@@ -3,19 +3,28 @@ package ru.animals.session.stateImpl;
 import lombok.Getter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.animals.entities.Adoption;
-import ru.animals.entities.ContentReport;
-import ru.animals.entities.enumEntity.EnumStatusReport;
-import ru.animals.session.SessionServiceImpl;
-import ru.animals.telegramComp.TelgramComp;
-
-import java.time.LocalDate;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class StateReport extends BaseState {
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.animals.controller.TelegramBot;
+import ru.animals.entities.ContentReport;
+import ru.animals.entities.commonModel.MetaDataPhoto;
+import ru.animals.session.SessionServiceImpl;
+import ru.animals.session.StateReportServ;
+import ru.animals.telegramComp.TelgramComp;
+import ru.animals.utils.filePhoto.FilePhotoAPI;
+import ru.animals.utils.filePhoto.FilePhotoDTO;
+import ru.animals.entities.enumEntity.EnumTypeAnimation;
+
+
+public class StateReport extends BaseState implements StateReportServ {
 
     private Long chatId;
 
@@ -31,10 +40,16 @@ public class StateReport extends BaseState {
 
     private LinkedList<DataBufferReportDTO> lsState;
 
-    public StateReport(long chatId) {
+    public StateReport(Long chatId) {
         this.chatId = chatId;
         this.dateTimeLastAppeal = LocalDateTime.now();
         this.dataBufferReport = new DataBufferReport();
+        this.dataBufferReport.setChatId(chatId);
+
+        // TODO: только для отладки процедуры загрузки фотографии
+        this.dataBufferReport.setChangeInBehavior("ChangeInBehavior");
+        this.dataBufferReport.setAnimalDiet("AnimalDie");
+        this.dataBufferReport.setGeneralWellBeing("GeneralWellBeing");
 
         lsState = new LinkedList<>();
         lsState.addAll(List.of(
@@ -49,6 +64,8 @@ public class StateReport extends BaseState {
                                 на любом этапе регистрацию можно отменить /cancel
                                 """,
                         "startRegister"),
+
+                        /*
                 new DataBufferReportDTO(
                         "animalDiet",
                         "Опишите рацион питания отказ от обработки /cancel",
@@ -60,7 +77,7 @@ public class StateReport extends BaseState {
                 new DataBufferReportDTO(
                         "changeInBehavior",
                         "Опишите изменение в поведении отказ от обработки /cancel",
-                        "generalMethod"),
+                        "generalMethod"),*/
                 new DataBufferReportDTO(
                         "metaDataPhoto",
                         "Вставьте фото животного отказ от обработки /cancel",
@@ -101,47 +118,78 @@ public class StateReport extends BaseState {
 
     private SendMessage photoAnimal(SessionServiceImpl sessionService, Update update) {
         DataBufferReportDTO reportDTO = lsState.getFirst();
-
-        var sendMessage = update.getMessage();
-        var chatId = sendMessage.getChatId();
-
-        var imageStorageDirReport = sessionService.getImageStorageDirReport();
-
-        var userbotRepo = sessionService.getUserBotRepository();
         var reportRepo = sessionService.getReportsRepository();
-        var adoptionalRepo = sessionService.getAdoptionalRepository();
 
-        var optionalUserBot = userbotRepo.findByChatId(chatId);
-        if (optionalUserBot.isEmpty()) {
-            return TelgramComp.defaultSendMessage(chatId,"Пользователь не найден");
-        }
-
-        var userBot = optionalUserBot.get();
-
-        if (!adoptionalRepo.containsByUserId(userBot.getId())) {
-            return TelgramComp.defaultSendMessage(chatId,"Нет данных по усыновлению");
-        }
-
-        Adoption adoption = adoptionalRepo.findByUserIdForONPROBATION(userBot.getId()).get(0);
-
-        ContentReport contentReport = ContentReport.builder()
-                .date(LocalDate.now())
-                .adoption_id(adoption.getId())
-                .statusReport(EnumStatusReport.RECEIPT_REPORT)
-                .generalWellBeing(dataBufferReport.getGeneralWellBeing())
-                .changeBehavior(dataBufferReport.getChangeInBehavior())
-                .animalDiet(dataBufferReport.getAnimalDiet())
-                .metaDataPhoto(null)
-                .build();
+        FilePhotoDTO filePhotoDTO = FilePhotoAPI.preparationContentRepository(sessionService, this);
 
         ContentReport savedReport = null;
         try {
-            savedReport = reportRepo.save(contentReport);
+            savedReport = reportRepo.save(filePhotoDTO.getContentReport());
         } catch (Exception ex) {
             return TelgramComp.defaultSendMessage(chatId, "Error save data");
         }
 
-        return null;
+        String imageStoragDirReport = sessionService.getImageStorageDirReport();
+        var fileExt = "jpg";
+        var strFileDistination = String.format("rep-%d-%d.%s", chatId, savedReport.getId(),  fileExt);
+
+        var typeAnimation = sessionService.getBreedsRepository()
+                .getTypeAnimationFromReport(Math.toIntExact(filePhotoDTO.getUserBot().getId()));
+        var strTypeAnimation = EnumTypeAnimation.getStringTypeAnimation(typeAnimation).toLowerCase();
+
+        var dirRep = "report-" + chatId;
+        var pathRootDirReport = Path.of(imageStoragDirReport, dirRep, strTypeAnimation);
+
+        if (!Files.exists(pathRootDirReport)) {
+            try {
+                Files.createDirectories(pathRootDirReport);
+            } catch (IOException ex) {
+                reportRepo.deleteById(savedReport.getId());
+                return TelgramComp.defaultSendMessage(chatId,"error creating directory");
+            }
+        }
+
+        var strDirectoryPath =
+                Path.of(pathRootDirReport.toString(), strFileDistination).toString();
+
+        File file = new java.io.File(strDirectoryPath);
+        TelegramBot telegramBot = sessionService.getTelegramBot();
+
+        try {
+            telegramBot.downloadFile(update, file);
+        } catch (TelegramApiException ex) {
+            reportRepo.deleteById(savedReport.getId());
+            return TelgramComp.defaultSendMessage(chatId, "Error download photo");
+        }
+
+        int port = sessionService.getWebServerPort();
+        var info = strFileDistination.substring(strFileDistination.indexOf("."));
+        String url = String.format("localhost:%d/report/%s/%s",port,strTypeAnimation, info);
+
+        MetaDataPhoto metaDataPhoto = MetaDataPhoto.builder()
+                .file(strFileDistination)
+                .filepath(strDirectoryPath)
+                .metatype("image/jpeg")
+                .filepath(strDirectoryPath)
+                .otherinf(info)
+                .url(url)
+                .hashcode(0)
+                .build();
+
+        savedReport.setMetaDataPhoto(metaDataPhoto);
+        try {
+            reportRepo.save(savedReport);
+        } catch (Exception ex) {
+            try {
+                reportRepo.deleteById(savedReport.getId());
+                Files.deleteIfExists(Paths.get(strDirectoryPath));
+            } catch(Exception ignored) { }
+
+            return TelgramComp.defaultSendMessage(chatId,"The server rejected the processing");
+        }
+
+        resultEnd = true;
+        return TelgramComp.defaultSendMessage(chatId, "Отчет принят на проверку");
     }
 
     @Override
@@ -171,4 +219,8 @@ public class StateReport extends BaseState {
                 .build();
     }
 
+    @Override
+    public DataBufferReport getDataBufferReport() {
+        return dataBufferReport;
+    }
 }

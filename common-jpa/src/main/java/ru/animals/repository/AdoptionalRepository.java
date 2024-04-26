@@ -13,6 +13,11 @@ public interface AdoptionalRepository extends JpaRepository<Adoption, Long> {
     @Query("FROM adoption a where a.userId = :id and adoptionState = :state")
     Collection<Adoption> findByUserIdAndOnProbational(Long id, EnumAdoptionState state);
 
+    /**
+     * фактическое кол-во 1, но из-за особенности выборки данных Hibernate используется List
+     * @param id
+     * @return
+     */
     @Query(value = "FROM adoption a where a.userId = :id and a.adoptionState = 'ON_PROBATION' ")
     List<Adoption> findByUserIdForONPROBATION(Long id);
 

@@ -14,6 +14,13 @@ public class BreedsRepositoryTest {
     private BreedsRepository breedsRepository;
 
     @Test
+    public void getTypeAnimation() {
+        var resulst = breedsRepository.getTypeAnimationFromReport(30);
+
+        assertNotNull(resulst);
+    }
+
+    @Test
     public void getListBreeds() {
         var res = breedsRepository.findAllByTypeAnimationsId(1L);
 

@@ -28,7 +28,9 @@ public class ContentReport {
 
     @Column(columnDefinition = "date")
     private LocalDate date;
-    private Long adoption_id;
+
+    @Column(name = "adoption_id")
+    private Long adoptionId;
 
     /**
      * Питание животного
@@ -56,6 +58,7 @@ public class ContentReport {
      * Сведения по развемещнию фото в файле
      */
     @Type(type = "jsonb")
+    @Setter
     @Column(name = "meta_data_photo", columnDefinition = "jsonb")
     private MetaDataPhoto metaDataPhoto;
 
