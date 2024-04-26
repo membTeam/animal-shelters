@@ -83,10 +83,6 @@ public class UpdateController implements UpdateControllerService {
             return;
         }
 
-        /*if (update.getMessage().hasPhoto()) {
-            distributePhoto(update);
-        }*/
-
         try {
             if (utilsSendMessage.isERROR()) {
                 log.error(utilsSendMessage.getMessageErr());
@@ -215,8 +211,6 @@ public class UpdateController implements UpdateControllerService {
             sendButtonMenu(chartId, textQuery);
         }
     }
-
-
 
     @Override
     public void sendButtonMenu(Long charId, String textMess) throws Exception {

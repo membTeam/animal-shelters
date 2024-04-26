@@ -64,8 +64,6 @@ public class StateReport extends BaseState implements StateReportServ {
                                 на любом этапе регистрацию можно отменить /cancel
                                 """,
                         "startRegister"),
-
-                        /*
                 new DataBufferReportDTO(
                         "animalDiet",
                         "Опишите рацион питания отказ от обработки /cancel",
@@ -77,7 +75,7 @@ public class StateReport extends BaseState implements StateReportServ {
                 new DataBufferReportDTO(
                         "changeInBehavior",
                         "Опишите изменение в поведении отказ от обработки /cancel",
-                        "generalMethod"),*/
+                        "generalMethod"),
                 new DataBufferReportDTO(
                         "metaDataPhoto",
                         "Вставьте фото животного отказ от обработки /cancel",
@@ -155,22 +153,26 @@ public class StateReport extends BaseState implements StateReportServ {
         File file = new java.io.File(strDirectoryPath);
         TelegramBot telegramBot = sessionService.getTelegramBot();
 
+        long fileSize = 0;
+
         try {
-            telegramBot.downloadFile(update, file);
+           var resFile = telegramBot.downloadFile(update, file);
+            fileSize = resFile.getFileSize();
+
         } catch (TelegramApiException ex) {
             reportRepo.deleteById(savedReport.getId());
             return TelgramComp.defaultSendMessage(chatId, "Error download photo");
         }
 
         int port = sessionService.getWebServerPort();
-        var info = strFileDistination.substring(strFileDistination.indexOf("."));
+        var info = strFileDistination.substring(0, strFileDistination.indexOf("."));
         String url = String.format("localhost:%d/report/%s/%s",port,strTypeAnimation, info);
 
         MetaDataPhoto metaDataPhoto = MetaDataPhoto.builder()
                 .file(strFileDistination)
                 .filepath(strDirectoryPath)
                 .metatype("image/jpeg")
-                .filepath(strDirectoryPath)
+                .filesize(fileSize)
                 .otherinf(info)
                 .url(url)
                 .hashcode(0)
@@ -199,7 +201,7 @@ public class StateReport extends BaseState implements StateReportServ {
 
             return switch (lsState.getFirst().getStrMethod()) {
                 case "startRegister" -> startRegister(sessionService, update);
-                case "GeneralWellBeing" -> generalMethod(sessionService, update);
+                case "generalMethod" -> generalMethod(sessionService, update);
                 case "photoAnimal" -> photoAnimal(sessionService, update);
 
                 default -> TelgramComp.defaultSendMessage(chatId, "Метод не найден");

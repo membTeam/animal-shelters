@@ -43,8 +43,7 @@ public class TelegramBot extends TelegramLongPollingBot{
         }
     }
 
-
-    public String downloadFile(Update update, java.io.File fileDist) throws TelegramApiException {
+    public File downloadFile(Update update, java.io.File fileDist) throws TelegramApiException {
         var telegramMess = update.getMessage();
 
         var photoSizeCount = telegramMess.getPhoto().size();
@@ -58,7 +57,7 @@ public class TelegramBot extends TelegramLongPollingBot{
 
         downloadFile(file, fileDist);
 
-        return "Файл загружен.";
+        return file;
 
     }
 

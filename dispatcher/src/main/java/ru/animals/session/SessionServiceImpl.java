@@ -41,7 +41,6 @@ public class SessionServiceImpl implements SessionService{
     @Value("${web-server-port}")
     int webServerPort;
 
-
     private final UserBotRepository userBotRepository;
     private final ReportsRepository reportsRepository;
     private final AdoptionalRepository adoptionalRepository;
@@ -120,8 +119,13 @@ public class SessionServiceImpl implements SessionService{
             return addSessionObject(chatId, update);
         }
 
-        var baseState = mapItems.get(chatId);
+        var textMessage = DevlAPI.getTextMessFromUpdate(update);
+        if (textMessage.equals("cancel")) {
+            mapItems.remove(chatId);
 
+        }
+
+        var baseState = mapItems.get(chatId);
         var resultSendMessage = baseState.getSendMessage(this, update);
 
         var resState = baseState.getResultState();
