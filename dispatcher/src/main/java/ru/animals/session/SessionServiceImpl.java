@@ -119,10 +119,14 @@ public class SessionServiceImpl implements SessionService{
             return addSessionObject(chatId, update);
         }
 
-        var textMessage = DevlAPI.getTextMessFromUpdate(update);
-        if (textMessage.equals("cancel")) {
-            mapItems.remove(chatId);
+        if (update.getMessage().hasText()) {
+            var textMessage = DevlAPI.getTextMessFromUpdate(update);
+            if (textMessage.equals("cancel")) {
+                mapItems.remove(chatId);
 
+                var structureCommand = utilsSendMessage.getStructureCommand("onprobation");
+                return utilsMessage.generateSendMessageWithBtn(chatId, structureCommand);
+            }
         }
 
         var baseState = mapItems.get(chatId);

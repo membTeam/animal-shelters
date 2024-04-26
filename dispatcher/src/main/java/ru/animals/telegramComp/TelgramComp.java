@@ -1,6 +1,7 @@
 package ru.animals.telegramComp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.animals.utilsDEVL.FileAPI;

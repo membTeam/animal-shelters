@@ -62,6 +62,8 @@ public class StateReport extends BaseState implements StateReportServ {
                                 - изменение в поведении
                                 - фото животного на текущий момент
                                 на любом этапе регистрацию можно отменить /cancel
+                                -------------------------
+                                Опишите рацион животного
                                 """,
                         "startRegister"),
                 new DataBufferReportDTO(
@@ -93,15 +95,15 @@ public class StateReport extends BaseState implements StateReportServ {
     private SendMessage generalMethod(SessionServiceImpl sessionService, Update update) {
         DataBufferReportDTO reportDTO = lsState.getFirst();
 
-        var text = update.getMessage().getText();
+        var textFromUpdate = update.getMessage().getText();
         String textMessage = null;
 
         if (reportDTO.getStrProperty().equals("animalDiet")) {
-            dataBufferReport.setAnimalDiet(text);
+            dataBufferReport.setAnimalDiet(textFromUpdate);
         } else if (reportDTO.getStrProperty().equals("generalWellBeing")) {
-            dataBufferReport.setGeneralWellBeing(text);
+            dataBufferReport.setGeneralWellBeing(textFromUpdate);
         } else if (reportDTO.getStrProperty().equals("changeInBehavior")) {
-            dataBufferReport.setChangeInBehavior(text);
+            dataBufferReport.setChangeInBehavior(textFromUpdate);
         } else {
             textMessage = "The processing method was not found";
         }
@@ -119,15 +121,24 @@ public class StateReport extends BaseState implements StateReportServ {
         var reportRepo = sessionService.getReportsRepository();
 
         FilePhotoDTO filePhotoDTO = FilePhotoAPI.preparationContentRepository(sessionService, this);
+        if (!filePhotoDTO.isResult()) {
+            return TelgramComp.defaultSendMessage(chatId,"Data preparation error");
+        }
 
         ContentReport savedReport = null;
         try {
             savedReport = reportRepo.save(filePhotoDTO.getContentReport());
+            filePhotoDTO.setContentReport(savedReport);
         } catch (Exception ex) {
             return TelgramComp.defaultSendMessage(chatId, "Error save data");
         }
 
-        String imageStoragDirReport = sessionService.getImageStorageDirReport();
+        FilePhotoAPI.preparationContentRepository(sessionService, filePhotoDTO);
+        if (!filePhotoDTO.isResult()) {
+            return TelgramComp.defaultSendMessage(chatId,"File system error");
+        }
+
+        /*String imageStoragDirReport = sessionService.getImageStorageDirReport();
         var fileExt = "jpg";
         var strFileDistination = String.format("rep-%d-%d.%s", chatId, savedReport.getId(),  fileExt);
 
@@ -148,15 +159,18 @@ public class StateReport extends BaseState implements StateReportServ {
         }
 
         var strDirectoryPath =
-                Path.of(pathRootDirReport.toString(), strFileDistination).toString();
+                Path.of(pathRootDirReport.toString(), strFileDistination).toString();*/
 
-        File file = new java.io.File(strDirectoryPath);
-        TelegramBot telegramBot = sessionService.getTelegramBot();
+        var strFileDistination  = filePhotoDTO.getStrFileDistination();
+        var strTypeAnimation = filePhotoDTO.getStrTypeAnimation();
+        var strDirectoryPath = filePhotoDTO.getStrDirectoryPath();
 
         long fileSize = 0;
-
         try {
-           var resFile = telegramBot.downloadFile(update, file);
+            File file = new java.io.File(strDirectoryPath);
+            TelegramBot telegramBot = sessionService.getTelegramBot();
+
+            var resFile = telegramBot.downloadFile(update, file);
             fileSize = resFile.getFileSize();
 
         } catch (TelegramApiException ex) {

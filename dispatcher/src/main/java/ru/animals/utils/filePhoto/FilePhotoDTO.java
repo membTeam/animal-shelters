@@ -20,19 +20,20 @@ public class FilePhotoDTO {
 
     private UserBot userBot;
     private ContentReport contentReport;
-
-    /*private Long adoptionId;
-    private LocalDate date;
-
-    private String animalDiet;
-    private String changeBehavior;
-    private String generalWellBeing;
-
-    private EnumStatusReport statusReport;
-    private MetaDataPhoto metaDataPhoto;*/
+    private String strDirectoryPath;
+    private String strFileDistination;
+    private String strTypeAnimation;
 
     public void setError(String mes) {
         mesError = mes;
         result = false;
     }
+
+    public static FilePhotoDTO getFilePhotoDTO() {
+        return FilePhotoDTO.builder()
+                .result(true)
+                .mesError("ok")
+                .build();
+    }
+
 }

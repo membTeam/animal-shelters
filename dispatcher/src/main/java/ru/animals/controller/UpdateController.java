@@ -104,9 +104,10 @@ public class UpdateController implements UpdateControllerService {
         } catch (Exception e) {
             try {
                 var chartId = getCharIdFromUpdate(update);
+                var mesText = "Processing failure on the server";
+                var sendMessage = utilsMessage.generateSendMessageWithText(chartId, mesText);
 
-                var sendMessage = utilsMessage.generateSendMessageWithText(chartId, e.getMessage());
-                log.error(sendMessage);
+                log.error(mesText);
 
                 telegramBot.sendAnswerMessage(sendMessage);
 
