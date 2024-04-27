@@ -2,7 +2,6 @@ package ru.animals.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,10 +18,6 @@ import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.nio.file.Path;
-
 @Log4j
 @Component
 @RequiredArgsConstructor
@@ -36,30 +31,10 @@ public class UpdateController implements UpdateControllerService {
     private final ServUserBot servUserBot;
     private final SessionServiceImpl sessionServiceUpdate;
 
-    @Value("${image-storage-dir-report}")
-    private String imageStoragDirReport;
-
-    @Value("${service.file_info.url}")
-    private String fileInfoUri;
-
-    @Value("${service.file_storage.url}")
-    String fileStorageUri;
-
-    @Value("${bot.token}")
-    private String token;
 
     public void registerBot(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
         sessionServiceUpdate.init(this.telegramBot);
-    }
-
-    /**
-     * Убирает начальный /
-     * @param text
-     * @return
-     */
-    private String modifingTextMessage(String text) {
-        return text.charAt(0) == '/' ? text.substring(1) : text;
     }
 
     private Long getCharIdFromUpdate(Update update) throws Exception {
@@ -79,9 +54,7 @@ public class UpdateController implements UpdateControllerService {
      */
     public void distributeMessages(Update update) throws Exception {
 
-        if (update == null) {
-            return;
-        }
+        if (update == null) { return;  }
 
         try {
             if (utilsSendMessage.isERROR()) {
@@ -115,26 +88,6 @@ public class UpdateController implements UpdateControllerService {
                 log.error(ex.getMessage());
             }
         }
-    }
-
-    /**
-     * Загрузка фотографий из telegram bot
-     * @param update
-     * @throws Exception
-     */
-    private void distributePhoto(Update update) throws Exception {
-
-        var fileExt = "jpg";
-        var chatId = update.getMessage().getChatId();
-
-        var strFileDistination = String.format("rep-%d.%s", chatId, fileExt);
-
-        var strFilePath = Path.of(imageStoragDirReport, strFileDistination).toString();
-
-        File file = new java.io.File(strFilePath);
-
-        telegramBot.downloadFile(update, file);
-
     }
 
     /**
