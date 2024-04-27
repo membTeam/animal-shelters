@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Optional;
 
 import java.util.Collection;
@@ -42,7 +43,27 @@ public class AnimalsController {
         return res.MESSAGE;
     }
 
-    @GetMapping("list-animals/{breed}")
+    @GetMapping("/animals")
+    public ResponseEntity<List<String>> getListAnimals() {
+        var res = animalService.getListAnimals();
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("report/{info}")
+    public ResponseEntity<byte[]> dowloadPhotoReport(@PathVariable String info) {
+
+        var res = animalService.getPhotReport(info);
+
+        if (!res.isResult()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .headers(res.getHttpHeaders())
+                .body(res.getByteData());
+    }
+
+    @GetMapping("type-animals/{breed}")
     public ResponseEntity<Collection<Breeds>> getListAnimals(@PathVariable Long breed ) {
         return ResponseEntity.ok(animalService.getListBreeds(breed));
     }

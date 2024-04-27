@@ -42,47 +42,14 @@ public class StateReport extends BaseState implements StateReportServ {
 
     public StateReport(Long chatId) {
         this.chatId = chatId;
+
         this.dateTimeLastAppeal = LocalDateTime.now();
         this.dataBufferReport = new DataBufferReport();
         this.dataBufferReport.setChatId(chatId);
 
-        // TODO: только для отладки процедуры загрузки фотографии
-        this.dataBufferReport.setChangeInBehavior("ChangeInBehavior");
-        this.dataBufferReport.setAnimalDiet("AnimalDie");
-        this.dataBufferReport.setGeneralWellBeing("GeneralWellBeing");
-
         lsState = new LinkedList<>();
-        lsState.addAll(List.of(
-                new DataBufferReportDTO(
-                        "",
-                        """
-                                Для регистрации отчета Вам необходимо ввести следующие данные о животном:
-                                - рацион животного
-                                - общее самочувствие
-                                - изменение в поведении
-                                - фото животного на текущий момент
-                                на любом этапе регистрацию можно отменить /cancel
-                                -------------------------
-                                Опишите рацион животного
-                                """,
-                        "startRegister"),
-                new DataBufferReportDTO(
-                        "animalDiet",
-                        "Опишите рацион питания отказ от обработки /cancel",
-                        "generalMethod"),
-                new DataBufferReportDTO(
-                        "generalWellBeing",
-                        "Опишите общее самочувствие животного отказ от обработки /cancel",
-                        "generalMethod"),
-                new DataBufferReportDTO(
-                        "changeInBehavior",
-                        "Опишите изменение в поведении отказ от обработки /cancel",
-                        "generalMethod"),
-                new DataBufferReportDTO(
-                        "metaDataPhoto",
-                        "Вставьте фото животного отказ от обработки /cancel",
-                        "photoAnimal")
-        ));
+        FilePhotoAPI.preparationLsContent(lsState);
+
     }
 
     private SendMessage startRegister(SessionServiceImpl sessionService, Update update) {
@@ -98,19 +65,13 @@ public class StateReport extends BaseState implements StateReportServ {
         var textFromUpdate = update.getMessage().getText();
         String textMessage = null;
 
-        if (reportDTO.getStrProperty().equals("animalDiet")) {
-            dataBufferReport.setAnimalDiet(textFromUpdate);
-        } else if (reportDTO.getStrProperty().equals("generalWellBeing")) {
-            dataBufferReport.setGeneralWellBeing(textFromUpdate);
-        } else if (reportDTO.getStrProperty().equals("changeInBehavior")) {
-            dataBufferReport.setChangeInBehavior(textFromUpdate);
-        } else {
-            textMessage = "The processing method was not found";
-        }
+        var resSetting = dataBufferReport.setProperty(reportDTO, textFromUpdate);
 
-        if (textMessage == null) {
+        if (resSetting) {
             lsState.removeFirst();
             textMessage = lsState.getFirst().getTextMessage();
+        } else {
+            textMessage = "Error processing the message string";
         }
 
         return TelgramComp.defaultSendMessage(chatId, textMessage);
@@ -125,9 +86,9 @@ public class StateReport extends BaseState implements StateReportServ {
             return TelgramComp.defaultSendMessage(chatId,"Data preparation error");
         }
 
-        ContentReport savedReport = null;
+        ContentReport savedReport = filePhotoDTO.getContentReport();
         try {
-            savedReport = reportRepo.save(filePhotoDTO.getContentReport());
+            savedReport = reportRepo.save(savedReport);
             filePhotoDTO.setContentReport(savedReport);
         } catch (Exception ex) {
             return TelgramComp.defaultSendMessage(chatId, "Error save data");
@@ -138,61 +99,21 @@ public class StateReport extends BaseState implements StateReportServ {
             return TelgramComp.defaultSendMessage(chatId,"File system error");
         }
 
-        /*String imageStoragDirReport = sessionService.getImageStorageDirReport();
-        var fileExt = "jpg";
-        var strFileDistination = String.format("rep-%d-%d.%s", chatId, savedReport.getId(),  fileExt);
-
-        var typeAnimation = sessionService.getBreedsRepository()
-                .getTypeAnimationFromReport(Math.toIntExact(filePhotoDTO.getUserBot().getId()));
-        var strTypeAnimation = EnumTypeAnimation.getStringTypeAnimation(typeAnimation).toLowerCase();
-
-        var dirRep = "report-" + chatId;
-        var pathRootDirReport = Path.of(imageStoragDirReport, dirRep, strTypeAnimation);
-
-        if (!Files.exists(pathRootDirReport)) {
-            try {
-                Files.createDirectories(pathRootDirReport);
-            } catch (IOException ex) {
-                reportRepo.deleteById(savedReport.getId());
-                return TelgramComp.defaultSendMessage(chatId,"error creating directory");
-            }
-        }
-
-        var strDirectoryPath =
-                Path.of(pathRootDirReport.toString(), strFileDistination).toString();*/
-
-        var strFileDistination  = filePhotoDTO.getStrFileDistination();
-        var strTypeAnimation = filePhotoDTO.getStrTypeAnimation();
         var strDirectoryPath = filePhotoDTO.getStrDirectoryPath();
-
-        long fileSize = 0;
         try {
             File file = new java.io.File(strDirectoryPath);
             TelegramBot telegramBot = sessionService.getTelegramBot();
 
             var resFile = telegramBot.downloadFile(update, file);
-            fileSize = resFile.getFileSize();
+            var fileSize = resFile.getFileSize();
+
+            savedReport.getMetaDataPhoto().setFilesize(fileSize);
 
         } catch (TelegramApiException ex) {
             reportRepo.deleteById(savedReport.getId());
             return TelgramComp.defaultSendMessage(chatId, "Error download photo");
         }
 
-        int port = sessionService.getWebServerPort();
-        var info = strFileDistination.substring(0, strFileDistination.indexOf("."));
-        String url = String.format("localhost:%d/report/%s/%s",port,strTypeAnimation, info);
-
-        MetaDataPhoto metaDataPhoto = MetaDataPhoto.builder()
-                .file(strFileDistination)
-                .filepath(strDirectoryPath)
-                .metatype("image/jpeg")
-                .filesize(fileSize)
-                .otherinf(info)
-                .url(url)
-                .hashcode(0)
-                .build();
-
-        savedReport.setMetaDataPhoto(metaDataPhoto);
         try {
             reportRepo.save(savedReport);
         } catch (Exception ex) {

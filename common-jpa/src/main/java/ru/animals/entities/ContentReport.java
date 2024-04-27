@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "content_report")
+@Table(name = "content_report", uniqueConstraints = @UniqueConstraint(columnNames={"hashmetadata"}))
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class ContentReport {
 
@@ -53,6 +53,10 @@ public class ContentReport {
     @Column(name = "status_report")
     @Enumerated(EnumType.STRING)
     private EnumStatusReport statusReport;
+
+    @Setter
+    @Column(columnDefinition = "varchar(200)")
+    private String hashmetadata;
 
     /**
      * Сведения по развемещнию фото в файле

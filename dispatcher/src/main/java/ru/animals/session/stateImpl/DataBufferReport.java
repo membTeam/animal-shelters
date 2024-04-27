@@ -21,6 +21,24 @@ public class DataBufferReport {
     private String changeInBehavior;
     private MetaDataPhoto metaDataPhoto;
 
+    public boolean setProperty(DataBufferReportDTO reportDTO, String textFromUpdate) {
+
+        boolean result = true;
+        final String strFromReportDTO = reportDTO.getStrProperty();
+
+        if (strFromReportDTO.equals("animalDiet")) {
+            animalDiet = textFromUpdate;
+        } else if (strFromReportDTO.equals("generalWellBeing")) {
+            generalWellBeing = textFromUpdate;
+        } else if (strFromReportDTO.equals("changeInBehavior")) {
+            changeInBehavior = textFromUpdate;
+        } else {
+            result = false;
+        }
+
+        return result;
+    }
+
     public void sendMessage() {
         stateSession = StateSession.SEND_MESSAGE;
         errMessage = "ok";
