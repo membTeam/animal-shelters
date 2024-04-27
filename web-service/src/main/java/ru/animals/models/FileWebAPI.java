@@ -6,10 +6,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.Random;
 
 import ru.animals.entities.Animals;
 import ru.animals.entities.commonModel.MetaDataPhoto;
+import ru.animals.entities.enumEntity.EnumTypeAnimation;
+import ru.animals.repository.AnimalsRepository;
 import ru.animals.service.AnimalServiceExt;
 
 /**
@@ -22,8 +23,8 @@ public class FileWebAPI {
 
         var breedsRepository = animalServiceExt.getBreedsRepository();
 
-        var optBreed = breedsRepository.findById(webAnimal.getBreedId());
-        if (optBreed.isEmpty()) {
+        var optionalBreed = breedsRepository.findById(webAnimal.getBreedId());
+        if (optionalBreed.isEmpty()) {
             return new WebDTO("internal error.\nThere is no data on the breed of the animal");
         }
 
@@ -40,11 +41,11 @@ public class FileWebAPI {
 
         return WebDTO.builder()
                 .result(true)
-                .message("ok")
+                .mesError("ok")
                 .photo(photo)
                 .animals(animals)
                 .metaDataPhoto(metaDataPhoto)
-                .breeds(optBreed.get())
+                .breeds(optionalBreed.get())
                 .fileExtension(fileExtension.get())
                 .build();
     }
@@ -52,40 +53,61 @@ public class FileWebAPI {
     public static void preparationAnimalData(AnimalServiceExt animalServiceExt, WebDTO webDTO) {
 
         Path imageStorageDir = animalServiceExt.getImageStorageDir();
+        AnimalsRepository animalsRepository = animalServiceExt.getAnimalRepository();
         int port = animalServiceExt.getPort();
+
+        var animal = webDTO.getAnimals();
+        var breed = webDTO.getBreeds();
 
         int typeAnimationsId = Math.toIntExact(webDTO.getBreeds().getTypeAnimationsId());
 
-        final String strPrefix =  typeAnimationsId == 1 ? "dog" : "cat";
+        final String strPrefix = EnumTypeAnimation
+                .getStringTypeAnimation(typeAnimationsId).toLowerCase();
+
         final String fileExtension = Optional.ofNullable( webDTO.getPhoto().getOriginalFilename())
                 .flatMap(FileWebAPI::getFileExtension)
-                .orElse("");
+                .orElse("empty");
 
-        final String targetFileName = String.format("%s%d-%d.%s",
-                strPrefix, webDTO.getBreeds().getId(), webDTO.getSavedAnimal().getId(), fileExtension);
+        if (fileExtension.equals("empty")) {
+            animalsRepository.deleteById(animal.getId());
+
+            webDTO.setResult(false);
+            webDTO.setMesError("Нет расширения файла");
+            return;
+        }
+
+        var hashCode = String.format("%d%d",
+                breed.getId(), animal.getId() ).hashCode();
+
+        var hashmetadata = hashCode < 0
+                ? "animal-" + strPrefix + "-img-" + hashCode
+                : "animal-" + strPrefix + "-" + hashCode;
+
+        final String targetFileName = String.format("%s.%s",
+                hashmetadata, fileExtension);
 
         final Path baseStoredDir = imageStorageDir.resolve(strPrefix);
         final Path targetPath = baseStoredDir.resolve(targetFileName);
 
-        if (Files.exists(targetPath)) {
-            try {
-                Files.delete(targetPath);
-            } catch (IOException ex) {
-                webDTO.setResult(false);
-                webDTO.setMessage("internal error");
-                return;
-            }
+        try {
+            Files.deleteIfExists(targetPath);
+        } catch (IOException ex) {
+            webDTO.setResult(false);
+            webDTO.setMesError("internal error");
+
+            return;
         }
 
-        MetaDataPhoto metaDataPhoto = webDTO.getMetaDataPhoto();
+        animal.setHashmetadata(hashmetadata);
 
+        MetaDataPhoto metaDataPhoto = webDTO.getMetaDataPhoto();
         metaDataPhoto.setFile(targetFileName);
         metaDataPhoto.setFilepath(targetPath.toString());
-        metaDataPhoto.setOtherinf(webDTO.getBreeds().getBreed());
-        metaDataPhoto.setHashcode( randomNumber(typeAnimationsId));
+        metaDataPhoto.setOtherinf(hashmetadata);
+        metaDataPhoto.setHashcode(hashCode);
 
-        metaDataPhoto.setUrl(String.format("localhost:%d/view-animal/%s-%d",
-                port, strPrefix, metaDataPhoto.getHashcode() ));
+        metaDataPhoto.setUrl(String.format("localhost:%d/view-animal/%s",
+                port, metaDataPhoto.getOtherinf() ));
     }
 
 
@@ -104,10 +126,8 @@ public class FileWebAPI {
         var imageFile = webAnimal.getPhoto();
 
         return MetaDataPhoto.builder()
-                .filepath("empty")
                 .filesize(imageFile.getSize())
                 .metatype(imageFile.getContentType())
-                .file("empty")
                 .build();
     }
 
@@ -121,7 +141,7 @@ public class FileWebAPI {
         }
     }
 
-    private static int randomNumber(int grupAnimal) {
+  /*  private static int randomNumber(int grupAnimal) {
 
         int min = 10000;
         int max = 20000;
@@ -131,5 +151,5 @@ public class FileWebAPI {
         int number = random.nextInt(diff + 1) + min;
         return grupAnimal * 100000 + number;
     }
-
+*/
 }

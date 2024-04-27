@@ -14,7 +14,7 @@ import java.nio.file.Path;
 @AllArgsConstructor
 public class WebDTO {
     private boolean result;
-    private String message;
+    private String mesError;
 
     private Animals animals;
     private Animals savedAnimal;
@@ -27,6 +27,14 @@ public class WebDTO {
 
     public WebDTO(String err) {
         this.result = false;
-        this.message = err;
+        this.mesError = err;
     }
+
+    public static WebDTO getInstance() {
+        return WebDTO.builder()
+                .result(true)
+                .mesError("ok")
+                .build();
+    }
+
 }

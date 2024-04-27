@@ -2,7 +2,6 @@ package ru.animals.service.impl;
 
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -69,14 +68,14 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
 
         WebDTO webDTO = FileWebAPI.preparationAnimalData(this, webAnimal);
         if (!webDTO.isResult()) {
-            return new ValueFromMethod(webDTO.getMessage());
+            return new ValueFromMethod(webDTO.getMesError());
         }
 
         webDTO.setSavedAnimal(animalsRepository.save(webDTO.getAnimals()));
 
         FileWebAPI.preparationAnimalData(this, webDTO);
         if (!webDTO.isResult()) {
-            return new ValueFromMethod(webDTO.getMessage());
+            return new ValueFromMethod(webDTO.getMesError());
         }
 
         var imageFile = webAnimal.getPhoto();
@@ -145,6 +144,11 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
     @Override
     public BreedsRepository getBreedsRepository() {
         return breedsRepository;
+    }
+
+    @Override
+    public AnimalsRepository getAnimalRepository() {
+        return animalsRepository;
     }
 
     @Override
