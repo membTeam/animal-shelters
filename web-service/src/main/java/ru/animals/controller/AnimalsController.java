@@ -10,6 +10,7 @@ import ru.animals.entities.Breeds;
 import java.io.IOException;
 
 import ru.animals.models.WebAnimal;
+import ru.animals.models.WebAnimalResponse;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.service.AnimalService;
 import ru.animals.service.impl.AnimalServiceImpl;
@@ -43,8 +44,20 @@ public class AnimalsController {
         return res.MESSAGE;
     }
 
-    @GetMapping("/animals")
-    public ResponseEntity<List<String>> getListAnimals() {
+    @GetMapping("/view-animal/{info}")
+    public ResponseEntity<byte[]> downloadPhotoAnimation(@PathVariable String info) {
+        var res = animalService.getPhotoAnimal(info);
+        if (!res.isResult()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .headers(res.getHttpHeaders())
+                .body(res.getByteData());
+    }
+
+    @GetMapping("/list-animals")
+    public ResponseEntity<List<WebAnimalResponse>> getListAnimals() {
         var res = animalService.getListAnimals();
         return ResponseEntity.ok(res);
     }

@@ -19,10 +19,7 @@ import org.springframework.http.MediaType;
 import ru.animals.entities.Animals;
 import ru.animals.entities.Breeds;
 import ru.animals.entities.commonModel.MetaDataPhoto;
-import ru.animals.models.FileWebAPI;
-import ru.animals.models.WebAnimal;
-import ru.animals.models.WebDTO;
-import ru.animals.models.WebResultData;
+import ru.animals.models.*;
 import ru.animals.repository.AnimalsRepository;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.repository.ReportsRepository;
@@ -98,9 +95,7 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
     @Override
     public WebResultData getPhotReport(String info) {
 
-        // rep-dog-48688
-
-        var report = reportsRepository.findByHashmetadata(info);
+        var report = reportsRepository.getReportByHashmetadata(info);
         if (report == null) {
             return new WebResultData("Отчет не найден");
         }
@@ -126,15 +121,49 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
     }
 
     @Override
-    public List<String> getListAnimals() {
-        var lsAnimal = animalsRepository.findAll();
-        List<String> result = new ArrayList<>();
+    public WebResultData getPhotoAnimal(String info) {
+        var report = animalsRepository.findByHashmetadata(info);
+        if (report == null) {
+            return new WebResultData("Животное не найдено");
+        }
+
+        MetaDataPhoto metaDataPhoto = report.getMetaDataPhoto();
+
+        var strPathFile = metaDataPhoto.getFilepath();
+        byte[] bytes = null;
+        try {
+            bytes = Files.readAllBytes(Paths.get(strPathFile));
+        } catch (IOException es) {
+            new WebResultData("Нет файла");
+        }
+
+        HttpHeaders headers;
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(metaDataPhoto.getMetatype()));
+        headers.setContentLength(metaDataPhoto.getFilesize());
+
+        var webResultData = new WebResultData(bytes, headers);
+
+        return webResultData;
+    }
+
+    @Override
+    public List<WebAnimalResponse> getListAnimals() {
+        var lsAnimal = breedsRepository.getDataForAnimation();
+        List<WebAnimalResponse> result = new ArrayList<>();
+
         lsAnimal.forEach(item->
                 {
-                    var data = String.format("%s кличка:%s",
-                            item.getMetaDataPhoto().getOtherinf(),
-                            item.getNickname()
-                            );
+                    var breed = item.get(0);
+                    var nikname = item.get(1);
+                    var url = item.get(2);
+
+                    var data = WebAnimalResponse.builder()
+                            .breed(breed)
+                            .nickname(nikname)
+                            .urlPath(url)
+                            .build();
+
                     result.add(data);
                 });
 

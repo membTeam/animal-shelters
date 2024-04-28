@@ -58,6 +58,9 @@ public class ContentReport {
     @Column(columnDefinition = "varchar(200)")
     private String hashmetadata;
 
+    @Column(name = "volunteer_id")
+    private Long volunteerId;
+
     /**
      * Сведения по развемещнию фото в файле
      */

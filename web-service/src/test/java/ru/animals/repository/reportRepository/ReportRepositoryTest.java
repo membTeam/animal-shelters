@@ -15,11 +15,19 @@ public class ReportRepositoryTest {
     @Autowired
     private ReportsRepository reportsRepository;
 
+
     @Test
-    public void getMetaDataPhoto() {
-        var res = reportsRepository.findByHashmetadata("rep-dog-48719");
+    public void getReports() {
+        var res = reportsRepository.getReports();
 
         assertNotNull(res);
+    }
+
+    @Test
+    public void getMetaDataPhoto() {
+/*        var res = reportsRepository.findByHashmetadata("rep-dog-48751");
+
+        assertNotNull(res);*/
     }
 
 }

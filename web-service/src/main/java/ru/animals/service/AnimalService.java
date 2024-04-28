@@ -3,6 +3,7 @@ package ru.animals.service;
 import org.springframework.http.ResponseEntity;
 import ru.animals.entities.Breeds;
 import ru.animals.models.WebAnimal;
+import ru.animals.models.WebAnimalResponse;
 import ru.animals.models.WebResultData;
 import ru.animals.utilsDEVL.ValueFromMethod;
 
@@ -15,6 +16,7 @@ public interface AnimalService {
 
     WebResultData getPhotReport(String info);
 
-    List<String> getListAnimals();
+    WebResultData getPhotoAnimal(String info);
 
+    List<WebAnimalResponse> getListAnimals();
 }

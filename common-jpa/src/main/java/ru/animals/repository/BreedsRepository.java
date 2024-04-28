@@ -20,12 +20,7 @@ public interface BreedsRepository extends JpaRepository<Breeds, Long> {
             " left join breeds b on an.breed_id = b.id ;", nativeQuery = true)
     Integer getTypeAnimationFromReport(Integer userid);
 
-    /*
-    select b.type_animations_id from adoption ad
-	left join animals an on ad.animals_id = an.id
-		and ad.user_id = 30
-		and ad.adoption_state = 'ON_PROBATION'
-	left join breeds b on an.breed_id = b.id ;
-     */
+    @Query(value = "select q.breed, q.nikname, q.url from fun_list_animals() q ", nativeQuery = true)
+    List<List<String>> getDataForAnimation();
 
 }

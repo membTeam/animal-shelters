@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import ru.animals.entities.ContentReport;
 import ru.animals.entities.Shelters;
 import ru.animals.entities.Volunteers;
+import ru.animals.entities.commonModel.WebReportSelectDTO;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface CommonReposities extends JpaRepository<ContentReport, Long> {
@@ -17,8 +19,9 @@ public interface CommonReposities extends JpaRepository<ContentReport, Long> {
     @Query("from volunteers")
     Collection<Volunteers> findAllVolunteer();
 
-    // TODO: изменить идентификатор поля char_id into chat_id
     @Query(value = "select exists(select * from user_bot where char_id = :chatid) res", nativeQuery = true)
     boolean isExistsUserBot(Long chatid);
+
+
 
 }
