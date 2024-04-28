@@ -59,7 +59,6 @@ public class FilePhotoAPI {
 
     public static void preparationContentRepository(SessionService sessionService, FilePhotoDTO filePhotoDTO ) {
         final String imageStoragDirReport = sessionService.getImageStorageDirReport();
-        final int port = sessionService.getWebServerPort();
         final ReportsRepository reportRepo = sessionService.getReportsRepository();
         final Long chatId = filePhotoDTO.getUserBot().getChatId();
         final ContentReport savedReport = filePhotoDTO.getContentReport();
@@ -91,7 +90,7 @@ public class FilePhotoAPI {
                 : "rep-" + strTypeAnimation + "-" + hashCode;
 
         var strFileDistination = String.format("%s.%s", strInfo, fileExt);
-        var url = String.format("localhost:%d/report/%s",port, strInfo);
+        var url = String.format("/web-animal/report/%s",strInfo);
         var strDirectoryPath = Path.of(pathRootDirReport.toString(), strFileDistination).toString();
 
         MetaDataPhoto metaDataPhoto = MetaDataPhoto.builder()

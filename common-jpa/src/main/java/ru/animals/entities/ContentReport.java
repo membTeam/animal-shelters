@@ -2,6 +2,7 @@ package ru.animals.entities;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -68,5 +69,17 @@ public class ContentReport {
     @Setter
     @Column(name = "meta_data_photo", columnDefinition = "jsonb")
     private MetaDataPhoto metaDataPhoto;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id", insertable = false, updatable = false, nullable = false)
+    @JsonIgnore
+    private Adoption adoption;
+
+
+/*    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "volunteer_id", nullable = true)
+    private Volunteers volunteers;*/
+
 
 }

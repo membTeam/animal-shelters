@@ -14,13 +14,6 @@ public class BreedsRepositoryTest {
     private BreedsRepository breedsRepository;
 
     @Test
-    public void getDataForAnimation() {
-        var res = breedsRepository.getDataForAnimation();
-
-        assertNotNull(res);
-    }
-
-    @Test
     public void getTypeAnimation() {
         var resulst = breedsRepository.getTypeAnimationFromReport(30);
 

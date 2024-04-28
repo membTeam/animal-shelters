@@ -7,8 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
 
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 
 /**
@@ -40,8 +39,8 @@ public class Adoption {
     @Enumerated(EnumType.STRING)
     private EnumAdoptionState adoptionState;
 
-    @OneToMany
+   /* @OneToMany
     @JoinColumn(name = "adoption_id")
-    @JsonIgnore
-    private Collection<ContentReport> lsContentReport;
+    private Collection<ContentReport> lsContentReport;*/
+
 }

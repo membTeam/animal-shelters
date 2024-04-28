@@ -54,7 +54,6 @@ public class FileWebAPI {
 
         Path imageStorageDir = animalServiceExt.getImageStorageDir();
         AnimalsRepository animalsRepository = animalServiceExt.getAnimalRepository();
-        int port = animalServiceExt.getPort();
 
         var animal = webDTO.getAnimals();
         var breed = webDTO.getBreeds();
@@ -106,8 +105,8 @@ public class FileWebAPI {
         metaDataPhoto.setOtherinf(hashmetadata);
         metaDataPhoto.setHashcode(hashCode);
 
-        metaDataPhoto.setUrl(String.format("localhost:%d/view-animal/%s",
-                port, metaDataPhoto.getOtherinf() ));
+        metaDataPhoto.setUrl(String.format("/web-animal/view-animal/%s",
+                metaDataPhoto.getOtherinf() ));
     }
 
 
@@ -141,15 +140,4 @@ public class FileWebAPI {
         }
     }
 
-  /*  private static int randomNumber(int grupAnimal) {
-
-        int min = 10000;
-        int max = 20000;
-        int diff = max - min;
-
-        Random random = new Random();
-        int number = random.nextInt(diff + 1) + min;
-        return grupAnimal * 100000 + number;
-    }
-*/
 }
