@@ -6,5 +6,7 @@ public enum EnumStatusReport {
     MODIFICATION,
     RETURN_ANIMAL,
     ADOPTED,
-    EXTENSION_TERM;
+    EXTENSION_TERM_14,
+    EXTENSION_TERM_30,
+    NONE;
 }

@@ -1,31 +1,35 @@
 package ru.animals.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.animals.entities.Adoption;
+import ru.animals.entities.commonModel.WebResponseResultVerificationDTO;
+import ru.animals.entities.commonModel.WebVerificationResponseDTO;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
+import ru.animals.entities.enumEntity.EnumStatusReport;
+import ru.animals.entities.enumEntity.EnumWebResponseReport;
 import ru.animals.models.VolunteerWeb;
 import ru.animals.repository.AdoptionalRepository;
 import ru.animals.repository.AnimalsRepository;
+import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.service.VolunteerService;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class VolunteerServiceImpl implements VolunteerService {
 
     private final AdoptionalRepository adoptionalRepository;
     private final UserBotRepository userBotRepository;
     private final AnimalsRepository animalsRepository;
-
-    public VolunteerServiceImpl(AdoptionalRepository adoptionalRepository, UserBotRepository userBotRepository, AnimalsRepository animalsRepository) {
-        this.adoptionalRepository = adoptionalRepository;
-        this.userBotRepository = userBotRepository;
-        this.animalsRepository = animalsRepository;
-    }
+    private final ReportsRepository reportsRepository;
 
 
     @Override
@@ -61,5 +65,26 @@ public class VolunteerServiceImpl implements VolunteerService {
         } catch (Exception ex) {
             return "the server rejected the processing";
         }
+    }
+
+    @Override
+    public List<WebVerificationResponseDTO> getReprotForVerification() {
+
+        var lsReport = reportsRepository.verificationReport();
+
+        List<WebVerificationResponseDTO> lsResult = new ArrayList<>();
+        lsReport.forEach(list-> lsResult.add(new WebVerificationResponseDTO(list)) );
+
+        return lsResult;
+    }
+
+    @Override
+    public String verificationReport(WebResponseResultVerificationDTO verReport) {
+
+        Long id = verReport.getId();
+
+        EnumStatusReport enumStatusReport = EnumWebResponseReport.convertToStatusReport(verReport.getEnumWebResponseReport().getIndex());
+
+        return "Обработка не реализована";
     }
 }
