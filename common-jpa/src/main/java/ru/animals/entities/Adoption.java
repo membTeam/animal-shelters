@@ -37,6 +37,7 @@ public class Adoption {
 
     @Column(name = "adoption_state")
     @Enumerated(EnumType.STRING)
+    @Setter
     private EnumAdoptionState adoptionState;
 
    /* @OneToMany

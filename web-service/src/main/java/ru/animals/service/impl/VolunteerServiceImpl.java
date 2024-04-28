@@ -3,6 +3,7 @@ package ru.animals.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.animals.entities.Adoption;
+import ru.animals.entities.ContentReport;
 import ru.animals.entities.commonModel.WebResponseResultVerificationDTO;
 import ru.animals.entities.commonModel.WebVerificationResponseDTO;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
@@ -15,6 +16,7 @@ import ru.animals.repository.ReportsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.service.VolunteerService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -82,8 +84,32 @@ public class VolunteerServiceImpl implements VolunteerService {
     public String verificationReport(WebResponseResultVerificationDTO verReport) {
 
         Long id = verReport.getId();
+        LocalDateTime finishDate = reportsRepository.getDateFinishReport(id);
+        LocalDateTime dateTimeNow = LocalDateTime.now();
 
         EnumStatusReport enumStatusReport = EnumWebResponseReport.convertToStatusReport(verReport.getEnumWebResponseReport().getIndex());
+
+        if (finishDate.isBefore(dateTimeNow) && enumStatusReport == EnumStatusReport.REPORT_ACCEPTED )  {
+            var optionalContentReport = reportsRepository.findById(id);
+            if (optionalContentReport.isEmpty()) {
+                return "Отчет не найден";
+            }
+
+            ContentReport contentReport = optionalContentReport.get();
+            var optionalAdoption = adoptionalRepository.findById(contentReport.getAdoption().getId());
+
+            Adoption adoption = optionalAdoption.get();
+
+            adoption.setAdoptionState(EnumStatusReport.ADOPTED);
+            contentReport.setStatusReport(EnumStatusReport.ADOPTED);
+
+            adoptionalRepository.save(adoption);
+            reportsRepository.save(contentReport);
+
+            return "Животное усыновлено";
+        }
+
+
 
         return "Обработка не реализована";
     }

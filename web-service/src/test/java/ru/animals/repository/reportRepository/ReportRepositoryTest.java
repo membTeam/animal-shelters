@@ -9,6 +9,7 @@ import ru.animals.entities.ContentReport;
 import ru.animals.entities.commonModel.WebVerificationResponseDTO;
 import ru.animals.repository.ReportsRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ReportRepositoryTest {
     @Autowired
     private ReportsRepository reportsRepository;
+
+
+    @Test
+    public void getDateFinishReport() {
+        LocalDateTime dateFinish = reportsRepository.getDateFinishReport(18L);
+
+        assertNotNull(dateFinish);
+    }
 
 
     @Test

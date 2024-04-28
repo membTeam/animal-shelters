@@ -52,6 +52,7 @@ public class ContentReport {
     private String changeBehavior;
 
     @Column(name = "status_report")
+    @Setter
     @Enumerated(EnumType.STRING)
     private EnumStatusReport statusReport;
 

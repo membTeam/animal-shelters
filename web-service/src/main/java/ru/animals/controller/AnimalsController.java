@@ -1,31 +1,14 @@
 package ru.animals.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import ru.animals.entities.Breeds;
-import java.io.IOException;
-
 import ru.animals.models.WebAnimal;
 import ru.animals.models.WebAnimalResponse;
-import ru.animals.repository.BreedsRepository;
 import ru.animals.service.AnimalService;
-import ru.animals.service.impl.AnimalServiceImpl;
-
-import javax.annotation.PostConstruct;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.List;
-import java.util.Optional;
 
 import java.util.Collection;
-import java.util.Random;
+import java.util.List;
 
 @RestController
 @RequestMapping("/web-animal") //localhost:8085/web-animal/list-animals/1
