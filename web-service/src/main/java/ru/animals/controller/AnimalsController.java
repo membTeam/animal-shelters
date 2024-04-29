@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/web-animal") //localhost:8085/web-animal/list-animals/1
+@RequestMapping("/web-animal")
 public class AnimalsController {
 
     private final AnimalService animalService;

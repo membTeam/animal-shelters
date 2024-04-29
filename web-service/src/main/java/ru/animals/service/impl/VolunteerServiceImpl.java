@@ -109,7 +109,7 @@ public class VolunteerServiceImpl implements VolunteerService {
 
             ContentReport contentReport = reportsRepository.findById(id).orElseThrow();
             Long chatId = reportsRepository.getChatId(contentReport.getId());
-            UserBot userBot = userBotRepository.findByChatId(chatId)s
+            UserBot userBot = userBotRepository.findByChatId(chatId).orElseThrow();
 
             if (finishDate.isBefore(dateTimeNow) && enumStatusReport == EnumStatusReport.REPORT_ACCEPTED) {
 

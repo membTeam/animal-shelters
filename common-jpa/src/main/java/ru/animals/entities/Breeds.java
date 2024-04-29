@@ -25,8 +25,4 @@ public class Breeds {
     @Column(name = "type_animations_id")
     private Long typeAnimationsId;
 
-    @OneToMany
-    @JoinColumn(name = "breed_id")
-    @JsonIgnore
-    private Collection<Animals> animals;
 }

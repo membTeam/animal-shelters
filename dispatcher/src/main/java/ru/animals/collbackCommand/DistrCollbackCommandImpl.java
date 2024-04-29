@@ -1,5 +1,6 @@
 package ru.animals.collbackCommand;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -17,16 +18,12 @@ import java.lang.reflect.Constructor;
 
 @Service
 @Log4j
+@RequiredArgsConstructor
 public class DistrCollbackCommandImpl implements DistrCollbackCommand{
 
     private final VolunteerRepository volunteerRepository;
     private final UserBotRepository userBotRepository;
     private final AnimalsRepository animalsRepository;
-
-    public DistrCollbackCommandImpl(VolunteerRepository volunteerRepository, UserBotRepository userBotRepository) {
-        this.volunteerRepository = volunteerRepository;
-        this.userBotRepository = userBotRepository;
-    }
 
 
     @Override

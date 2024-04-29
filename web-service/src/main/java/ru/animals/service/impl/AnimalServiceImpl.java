@@ -154,11 +154,13 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
 
         lsAnimal.forEach(item->
                 {
-                    var breed = item.get(0);
-                    var nikname = item.get(1);
-                    var url = item.get(2);
+                    var shortName = item.get(0);
+                    var breed = item.get(1);
+                    var nikname = item.get(2);
+                    var url = item.get(3);
 
                     var data = WebAnimalResponse.builder()
+                            .shortname(shortName)
                             .breed(breed)
                             .nickname(nikname)
                             .urlPath(url)

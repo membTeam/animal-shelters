@@ -59,4 +59,9 @@ public class Animals {
     @JoinColumn(name = "animals_id")
     @JsonIgnore
     private Collection<Adoption> lsAdoptional;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "breed_id", updatable = false, insertable = false, nullable = false)
+    private Breeds breeds;
+
 }
