@@ -11,8 +11,6 @@ import ru.animals.entities.enumEntity.EnumWebResponseReport;
 @AllArgsConstructor
 public class WebResponseResultVerificationDTO {
 
-    private Long id;
-
     private EnumWebResponseReport enumWebResponseReport;
 
     private String message;

@@ -8,6 +8,9 @@ public class CollbackComdAllanimalfree extends BaseObject {
 
     @Override
     public SendMessage apply(DistrCollbackCommand repositoryServ, Long chartId, StructForCollbackConfig dataFromParser) {
+        var animationRepo = repositoryServ.getAnimalsRepository();
+
+
         var sendMessage = new SendMessage();
         sendMessage.setChatId(chartId);
         sendMessage.setText("Method CollbackComdAllanimalfree.apply не определен");

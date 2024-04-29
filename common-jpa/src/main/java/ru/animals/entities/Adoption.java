@@ -1,13 +1,11 @@
 package ru.animals.entities;
 
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
 
-import java.util.*;
+import javax.persistence.*;
+import java.util.Date;
 
 
 /**

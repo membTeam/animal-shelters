@@ -7,7 +7,7 @@ public enum EnumWebResponseReport {
     Отчет_не_принят(4),
     Отчет_принят(5);
 
-    public static EnumStatusReport convertToStatusReport(int index) {
+    public static EnumStatusReport convertToEnumStatusReport(int index) {
         return switch (index) {
             case 1 -> EnumStatusReport.EXTENSION_TERM_14;
             case 2 -> EnumStatusReport.EXTENSION_TERM_30;

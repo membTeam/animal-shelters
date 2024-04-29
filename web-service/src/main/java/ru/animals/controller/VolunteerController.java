@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.animals.entities.commonModel.WebResponseResultVerificationDTO;
 import ru.animals.entities.commonModel.WebVerificationResponseDTO;
 import ru.animals.models.VolunteerWeb;
+import ru.animals.models.WebResponseOkOrNo;
 import ru.animals.repository.VolunteerRepository;
 import ru.animals.service.VolunteerService;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -30,10 +32,10 @@ public class VolunteerController {
         return volunteerService.adoption(volunteerWeb);
     }
 
-    @PostMapping(value="checking-report", consumes={"multipart/form-data"})
-    public String verificationReport(@ModelAttribute WebResponseResultVerificationDTO verReport ) {
+    @PostMapping(value="checking-report/{id}", consumes={"multipart/form-data"})
+    public WebResponseOkOrNo verificationReport(@PathVariable("id") Long id, @ModelAttribute WebResponseResultVerificationDTO verReport ) {
 
-        var res = volunteerService.verificationReport(verReport);
+        var res = volunteerService.verificationReport(id, verReport);
 
         return res;
     }

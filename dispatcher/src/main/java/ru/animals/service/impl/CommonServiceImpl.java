@@ -1,23 +1,52 @@
 package ru.animals.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ru.animals.entities.Logmessage;
+import ru.animals.entities.UserBot;
 import ru.animals.repository.CommonReposities;
+import ru.animals.repository.LogmessageRepository;
+import ru.animals.repository.UserBotRepository;
 import ru.animals.service.CommonService;
 import ru.animals.utils.parser.StructForCollbackConfig;
 
+import java.util.List;
+
 
 @Service
+@RequiredArgsConstructor
 public class CommonServiceImpl implements CommonService {
 
-    private CommonReposities commonRepo;
+    private final CommonReposities commonRepo;
+    private final UserBotRepository userBotRepository;
+    private final LogmessageRepository logmessageRepository;
 
-    public CommonServiceImpl(CommonReposities comnRepo) {
-        this.commonRepo = comnRepo;
-    }
 
     private interface processingMethod{
         SendMessage apply(Long chartId, StructForCollbackConfig dataFromParser);
+    }
+
+    /**
+     * Сообщения от волонтеров
+     * @return null or SendMessage()
+     */
+    @Override
+    public List<SendMessage> messageForUser(Long chartId) {
+
+        UserBot userBot = userBotRepository.findByChatId(chartId).orElseThrow();
+        List<Logmessage> lsLog = logmessageRepository.findAllByChatId(userBot.getId());
+
+        var strChatId = String.valueOf(chartId);
+
+        if (lsLog.size() > 0) {
+            logmessageRepository.deleteAll(lsLog);
+            return lsLog.stream().map(item->  new SendMessage(strChatId, item.getMessage()) ).toList();
+        } else {
+            return null;
+        }
+
+
     }
 
     @Override

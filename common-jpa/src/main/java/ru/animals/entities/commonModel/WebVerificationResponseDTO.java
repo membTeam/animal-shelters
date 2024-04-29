@@ -14,6 +14,7 @@ public final class WebVerificationResponseDTO {
     private final String dateStart;
     private final String dateFinish;
     private final String url;
+    private final String urlReport;
 
     public WebVerificationResponseDTO(List<String> lsData) {
         id = Integer.parseInt(lsData.get(0));
@@ -23,6 +24,7 @@ public final class WebVerificationResponseDTO {
         dateStart = lsData.get(4);
         dateFinish = lsData.get(5);
         url = lsData.get(6);
+        urlReport = "/web-volunteer/checking-report/"+id;
     }
 
 }

@@ -1,37 +1,43 @@
 package ru.animals.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.animals.entities.Adoption;
 import ru.animals.entities.ContentReport;
+import ru.animals.entities.Logmessage;
+import ru.animals.entities.UserBot;
 import ru.animals.entities.commonModel.WebResponseResultVerificationDTO;
 import ru.animals.entities.commonModel.WebVerificationResponseDTO;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
 import ru.animals.entities.enumEntity.EnumStatusReport;
 import ru.animals.entities.enumEntity.EnumWebResponseReport;
+import ru.animals.exeption.WebException;
 import ru.animals.models.VolunteerWeb;
-import ru.animals.repository.AdoptionalRepository;
-import ru.animals.repository.AnimalsRepository;
-import ru.animals.repository.ReportsRepository;
-import ru.animals.repository.UserBotRepository;
+import ru.animals.models.WebResponseOkOrNo;
+import ru.animals.models.serviceWebModels.WebAnimalsResponseServ;
+import ru.animals.repository.*;
 import ru.animals.service.VolunteerService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
+
+@Log4j
 @Service
 @RequiredArgsConstructor
 public class VolunteerServiceImpl implements VolunteerService {
+    private final LogmessageRepository logMessage;
 
     private final AdoptionalRepository adoptionalRepository;
     private final UserBotRepository userBotRepository;
     private final AnimalsRepository animalsRepository;
     private final ReportsRepository reportsRepository;
+    private final LogmessageRepository logmessageRepository;
 
 
     @Override
@@ -72,45 +78,77 @@ public class VolunteerServiceImpl implements VolunteerService {
     @Override
     public List<WebVerificationResponseDTO> getReprotForVerification() {
 
-        var lsReport = reportsRepository.verificationReport();
-
-        List<WebVerificationResponseDTO> lsResult = new ArrayList<>();
-        lsReport.forEach(list-> lsResult.add(new WebVerificationResponseDTO(list)) );
-
-        return lsResult;
+        return WebAnimalsResponseServ.getListWebVerification(reportsRepository);
     }
 
     @Override
-    public String verificationReport(WebResponseResultVerificationDTO verReport) {
+    @Transactional
+    public WebResponseOkOrNo verificationReport(Long id, WebResponseResultVerificationDTO verReport) {
 
-        Long id = verReport.getId();
-        LocalDateTime finishDate = reportsRepository.getDateFinishReport(id);
-        LocalDateTime dateTimeNow = LocalDateTime.now();
+        WebResponseOkOrNo result;
 
-        EnumStatusReport enumStatusReport = EnumWebResponseReport.convertToStatusReport(verReport.getEnumWebResponseReport().getIndex());
+        try {
 
-        if (finishDate.isBefore(dateTimeNow) && enumStatusReport == EnumStatusReport.REPORT_ACCEPTED )  {
-            var optionalContentReport = reportsRepository.findById(id);
-            if (optionalContentReport.isEmpty()) {
-                return "Отчет не найден";
+            if (verReport.getEnumWebResponseReport() == null || verReport.getMessage().isBlank()) {
+                throw new WebException("Проверьте заполнение полей");
             }
 
-            ContentReport contentReport = optionalContentReport.get();
-            var optionalAdoption = adoptionalRepository.findById(contentReport.getAdoption().getId());
+            String message = verReport.getMessage();
 
-            Adoption adoption = optionalAdoption.get();
+            LocalDateTime finishDate = reportsRepository.getDateFinishReport(id);
+            if (finishDate == null) {
+                throw new WebException("Нет данных по усыновлению");
+            }
 
-            adoption.setAdoptionState(EnumStatusReport.ADOPTED);
-            contentReport.setStatusReport(EnumStatusReport.ADOPTED);
+            LocalDateTime dateTimeNow = LocalDateTime.now();
 
-            adoptionalRepository.save(adoption);
-            reportsRepository.save(contentReport);
+            EnumStatusReport enumStatusReport = EnumWebResponseReport.convertToEnumStatusReport(verReport.getEnumWebResponseReport().getIndex());
+            if (enumStatusReport == EnumStatusReport.NONE) {
+                throw new IllegalArgumentException("Перечисление не определено");
+            }
 
-            return "Животное усыновлено";
+            ContentReport contentReport = reportsRepository.findById(id).orElseThrow();
+            Long chatId = reportsRepository.getChatId(contentReport.getId());
+            UserBot userBot = userBotRepository.findByChatId(chatId)s
+
+            if (finishDate.isBefore(dateTimeNow) && enumStatusReport == EnumStatusReport.REPORT_ACCEPTED) {
+
+                Long adoptionId = contentReport.getAdoption().getId();
+                Adoption adoption = adoptionalRepository.findById(adoptionId).orElseThrow();
+
+                adoption.setAdoptionState(EnumAdoptionState.ADOPTED);
+                contentReport.setStatusReport(EnumStatusReport.ADOPTED);
+
+                adoptionalRepository.save(adoption);
+                reportsRepository.save(contentReport);
+
+            } else {
+                contentReport.setStatusReport(enumStatusReport);
+                reportsRepository.save(contentReport);
+            }
+
+            result = enumStatusReport.getIndex() >= 100
+                    ? new WebResponseOkOrNo(true, message)
+                    : new WebResponseOkOrNo(false, message);
+
+            Logmessage logmessage = Logmessage.builder()
+                    .dateMessage(LocalDateTime.now())
+                    .chatId(userBot.getId())
+                    .message(message)
+                    .build();
+
+            logmessageRepository.save(logmessage);
+
+        } catch (Exception ex) {
+            log.error("verificationReport: \n" + ex.getMessage());
+
+            if (ex instanceof WebException) {
+                result = new WebResponseOkOrNo(false, ex.getMessage());
+            } else {
+                result = new WebResponseOkOrNo(false, "Сервер отклонил обработку");
+            }
         }
 
-
-
-        return "Обработка не реализована";
+        return result;
     }
 }
