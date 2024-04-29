@@ -13,5 +13,4 @@ import ru.animals.entities.enumEntity.EnumTypeAnimation;
 public class VolunteerWeb {
     private Long userId;
     private Long animalsIid;
-    private EnumTypeAnimation typeAnimal = EnumTypeAnimation.DOG;
 }

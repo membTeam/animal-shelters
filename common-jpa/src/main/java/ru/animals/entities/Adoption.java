@@ -1,13 +1,10 @@
 package ru.animals.entities;
 
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ru.animals.entities.enumEntity.EnumAdoptionState;
 
-import java.util.Collection;
+import javax.persistence.*;
 import java.util.Date;
 
 
@@ -38,10 +35,11 @@ public class Adoption {
 
     @Column(name = "adoption_state")
     @Enumerated(EnumType.STRING)
+    @Setter
     private EnumAdoptionState adoptionState;
 
-    @OneToMany
+   /* @OneToMany
     @JoinColumn(name = "adoption_id")
-    @JsonIgnore
-    private Collection<ContentReport> lsContentReport;
+    private Collection<ContentReport> lsContentReport;*/
+
 }

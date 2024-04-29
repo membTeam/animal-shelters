@@ -1,18 +1,8 @@
 package ru.animals.service.impl;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.animals.entities.Animals;
-import ru.animals.entities.Breeds;
-import ru.animals.models.FileWebAPI;
-import ru.animals.models.WebAnimal;
-import ru.animals.models.WebDTO;
-import ru.animals.repository.AnimalsRepository;
-import ru.animals.repository.BreedsRepository;
-import ru.animals.service.AnimalService;
-import ru.animals.service.AnimalServiceExt;
-import ru.animals.utilsDEVL.ValueFromMethod;
-
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +11,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
+import ru.animals.entities.Animals;
+import ru.animals.entities.Breeds;
+import ru.animals.entities.commonModel.MetaDataPhoto;
+import ru.animals.models.*;
+import ru.animals.repository.AnimalsRepository;
+import ru.animals.repository.BreedsRepository;
+import ru.animals.repository.ReportsRepository;
+import ru.animals.service.AnimalService;
+import ru.animals.service.AnimalServiceExt;
+import ru.animals.utilsDEVL.ValueFromMethod;
+
 
 @Service
 public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
@@ -29,16 +34,18 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
     private final Path imageStorageDir;
     private final BreedsRepository breedsRepository;
     private final AnimalsRepository animalsRepository;
+    private final ReportsRepository reportsRepository;
 
     private final int port;
 
     public AnimalServiceImpl(@Value("${image-storage-dir}") Path imageStorageDir,
                              @Value("${server.port}") int port,
-                             BreedsRepository breedsRepository, AnimalsRepository animalsRepository) {
+                             BreedsRepository breedsRepository, AnimalsRepository animalsRepository, ReportsRepository reportsRepository) {
         this.imageStorageDir = imageStorageDir;
         this.port = port;
         this.breedsRepository = breedsRepository;
         this.animalsRepository = animalsRepository;
+        this.reportsRepository = reportsRepository;
     }
 
     @PostConstruct
@@ -53,39 +60,19 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
         return breedsRepository.findAllByTypeAnimationsId(typeAnimationsId);
     }
 
-/*    private MetaDataPhoto initMetaDataPhoto(WebAnimal webAnimal) {
-        var imageFile = webAnimal.getPhoto();
-
-        return MetaDataPhoto.builder()
-                .filepath("empty")
-                .filesize(imageFile.getSize())
-                .metatype(imageFile.getContentType())
-                .file("empty")
-                .build();
-    }*/
-
- /*   private Animals initAnimals(WebAnimal webAnimal) {
-        return Animals.builder()
-                .breedId(webAnimal.getBreedId())
-                .status(true)
-                .nickname(webAnimal.getNickname())
-                .limitations(webAnimal.getLimitations())
-                .build();
-    }*/
-
     @Override
     public ValueFromMethod addAnimal(WebAnimal webAnimal) {
 
         WebDTO webDTO = FileWebAPI.preparationAnimalData(this, webAnimal);
         if (!webDTO.isResult()) {
-            return new ValueFromMethod(webDTO.getMessage());
+            return new ValueFromMethod(webDTO.getMesError());
         }
 
         webDTO.setSavedAnimal(animalsRepository.save(webDTO.getAnimals()));
 
         FileWebAPI.preparationAnimalData(this, webDTO);
         if (!webDTO.isResult()) {
-            return new ValueFromMethod(webDTO.getMessage());
+            return new ValueFromMethod(webDTO.getMesError());
         }
 
         var imageFile = webAnimal.getPhoto();
@@ -106,8 +93,93 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
     }
 
     @Override
+    public WebResultData getPhotReport(String info) {
+
+        var report = reportsRepository.getReportByHashmetadata(info);
+        if (report == null) {
+            return new WebResultData("Отчет не найден");
+        }
+
+        MetaDataPhoto metaDataPhoto = report.getMetaDataPhoto();
+
+        var strPathFile = metaDataPhoto.getFilepath();
+        byte[] bytes = null;
+        try {
+            bytes = Files.readAllBytes(Paths.get(strPathFile));
+        } catch (IOException es) {
+            new WebResultData("Нет файла");
+        }
+
+        HttpHeaders headers;
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(metaDataPhoto.getMetatype()));
+        headers.setContentLength(metaDataPhoto.getFilesize());
+
+        var webResultData = new WebResultData(bytes, headers);
+
+        return webResultData;
+    }
+
+    @Override
+    public WebResultData getPhotoAnimal(String info) {
+        var report = animalsRepository.findByHashmetadata(info);
+        if (report == null) {
+            return new WebResultData("Животное не найдено");
+        }
+
+        MetaDataPhoto metaDataPhoto = report.getMetaDataPhoto();
+
+        var strPathFile = metaDataPhoto.getFilepath();
+        byte[] bytes = null;
+        try {
+            bytes = Files.readAllBytes(Paths.get(strPathFile));
+        } catch (IOException es) {
+            new WebResultData("Нет файла");
+        }
+
+        HttpHeaders headers;
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(metaDataPhoto.getMetatype()));
+        headers.setContentLength(metaDataPhoto.getFilesize());
+
+        var webResultData = new WebResultData(bytes, headers);
+
+        return webResultData;
+    }
+
+    @Override
+    public List<WebAnimalResponse> getListAnimals() {
+        var lsAnimal = breedsRepository.getDataForAnimation();
+        List<WebAnimalResponse> result = new ArrayList<>();
+
+        lsAnimal.forEach(item->
+                {
+                    var shortName = item.get(0);
+                    var breed = item.get(1);
+                    var nikname = item.get(2);
+                    var url = item.get(3);
+
+                    var data = WebAnimalResponse.builder()
+                            .shortname(shortName)
+                            .breed(breed)
+                            .nickname(nikname)
+                            .urlPath(url)
+                            .build();
+
+                    result.add(data);
+                });
+
+        return result;
+    }
+
+    @Override
     public BreedsRepository getBreedsRepository() {
         return breedsRepository;
+    }
+
+    @Override
+    public AnimalsRepository getAnimalRepository() {
+        return animalsRepository;
     }
 
     @Override

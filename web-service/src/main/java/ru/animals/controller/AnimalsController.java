@@ -1,32 +1,17 @@
 package ru.animals.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import ru.animals.entities.Breeds;
-import java.io.IOException;
-
 import ru.animals.models.WebAnimal;
-import ru.animals.repository.BreedsRepository;
+import ru.animals.models.WebAnimalResponse;
 import ru.animals.service.AnimalService;
-import ru.animals.service.impl.AnimalServiceImpl;
-
-import javax.annotation.PostConstruct;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Optional;
 
 import java.util.Collection;
-import java.util.Random;
+import java.util.List;
 
 @RestController
-@RequestMapping("/web-animal") //localhost:8085/web-animal/list-animals/1
+@RequestMapping("/web-animal")
 public class AnimalsController {
 
     private final AnimalService animalService;
@@ -42,7 +27,39 @@ public class AnimalsController {
         return res.MESSAGE;
     }
 
-    @GetMapping("list-animals/{breed}")
+    @GetMapping("/view-animal/{info}")
+    public ResponseEntity<byte[]> downloadPhotoAnimation(@PathVariable String info) {
+        var res = animalService.getPhotoAnimal(info);
+        if (!res.isResult()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .headers(res.getHttpHeaders())
+                .body(res.getByteData());
+    }
+
+    @GetMapping("/list-animals")
+    public ResponseEntity<List<WebAnimalResponse>> getListAnimals() {
+        var res = animalService.getListAnimals();
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("report/{info}")
+    public ResponseEntity<byte[]> dowloadPhotoReport(@PathVariable String info) {
+
+        var res = animalService.getPhotReport(info);
+
+        if (!res.isResult()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .headers(res.getHttpHeaders())
+                .body(res.getByteData());
+    }
+
+    @GetMapping("type-animals/{breed}")
     public ResponseEntity<Collection<Breeds>> getListAnimals(@PathVariable Long breed ) {
         return ResponseEntity.ok(animalService.getListBreeds(breed));
     }

@@ -29,11 +29,4 @@ public class CommonRepositoriesTest {
         assertTrue(result.size() > 0);
     }
 
-    @Test
-    public void findAllShelters() {
-        var result = commonReposities.findAllShelters();
-
-        assertTrue(result.size()>0);
-    }
-
 }

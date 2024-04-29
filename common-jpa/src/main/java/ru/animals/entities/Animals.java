@@ -20,7 +20,8 @@ import java.util.Collection;
 @AllArgsConstructor
 @Builder
 @Entity(name = "animals")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+@Table(uniqueConstraints = @UniqueConstraint(columnNames={"hashmetadata"}))
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class )
 public class Animals {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +32,9 @@ public class Animals {
 
     private String nickname;
 
+    @Column(columnDefinition = "varchar(200)")
+    @Setter
+    private String hashmetadata;
     /**
      * Сведения по развемещнию фото в файле
      */
@@ -55,4 +59,9 @@ public class Animals {
     @JoinColumn(name = "animals_id")
     @JsonIgnore
     private Collection<Adoption> lsAdoptional;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "breed_id", updatable = false, insertable = false, nullable = false)
+    private Breeds breeds;
+
 }

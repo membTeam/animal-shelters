@@ -2,6 +2,7 @@ package ru.animals.utils.filePhoto;
 
 
 import lombok.*;
+import ru.animals.entities.Adoption;
 import ru.animals.entities.ContentReport;
 import ru.animals.entities.UserBot;
 import ru.animals.entities.commonModel.MetaDataPhoto;
@@ -21,8 +22,8 @@ public class FilePhotoDTO {
     private UserBot userBot;
     private ContentReport contentReport;
     private String strDirectoryPath;
-    private String strFileDistination;
-    private String strTypeAnimation;
+    private Adoption adoptional;
+
 
     public void setError(String mes) {
         mesError = mes;

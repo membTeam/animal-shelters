@@ -31,7 +31,7 @@ public class Volunteers {
     @Column(name = "chart_name", columnDefinition = "varchar(50)")
     private String chartName;
 
-    @OneToMany
+    /*@OneToMany
     @JoinColumn(name = "volunteer_id")
-    private Collection<ContentReport> listContentReport;
+    private Collection<ContentReport> listContentReport; */
 }

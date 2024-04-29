@@ -65,6 +65,14 @@ public class UpdateController implements UpdateControllerService {
             if (sessionServiceUpdate.isExistsStateSession(update)) {
                 telegramBot.sendAnswerMessage(sessionServiceUpdate.distributionUpdate(update));
             } else {
+
+                var messageForUser = commonService.messageForUser(getCharIdFromUpdate(update));
+                if (messageForUser != null) {
+                    messageForUser.forEach(item -> telegramBot.sendAnswerMessage(item));
+
+                    return;
+                }
+
                 switch (DevlAPI.typeUpdate(update, false)) {
                     case TEXT_MESSAGE -> distributeMessagesBytype(update);
                     case COLLBACK -> distributeCallbackQueryMessages(update);
@@ -103,7 +111,7 @@ public class UpdateController implements UpdateControllerService {
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
         switch (structureCommand.getEnumTypeMessage()) {
             case BTMMENU -> sendButtonMenu(charId, textMess);
-            case TEXT_MESSAGE -> sendTextMessageFromFile(charId, textMess);
+            case TEXT_MESSAGE -> sendTextMessageFromFile(charId, structureCommand.getSource());
             case SELMENU -> sendButtonMenuByParse(charId);
             default -> {
                 throw new IllegalArgumentException("");

@@ -18,6 +18,9 @@ public class Shelters {
     @Column(name = "name_shelter", columnDefinition = "varchar(100)")
     private String nameShelter;
 
+    @Column(columnDefinition = "char(3)")
+    private String shortName;
+
     @Column(columnDefinition = "varchar(200)")
     private String adress;
 
@@ -50,8 +53,5 @@ public class Shelters {
      */
     @Column(name = "history_shelter", columnDefinition = "varchar(100)")
     private String historyShelter;
-
-    @OneToOne
-    private TypeAnimations typeAnimations;
 
 }
