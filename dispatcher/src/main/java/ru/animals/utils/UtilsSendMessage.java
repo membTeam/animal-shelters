@@ -42,8 +42,6 @@ public class UtilsSendMessage implements UtilsSendMessageServ {
     public UtilsSendMessage(@Value("${menu.configuration}") String fileConfig,
                             @Value("${collback.configuration}") String fileConfCollback )  {
 
-        // TODO: добавить вывод в логФайл
-
         fillingMapSendMessage(fileConfig);
 
         if (!isERROR()) {
