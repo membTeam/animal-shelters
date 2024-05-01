@@ -19,6 +19,7 @@ import ru.animals.models.WebResponseOkOrNo;
 import ru.animals.models.serviceWebModels.WebAnimalsResponseServ;
 import ru.animals.repository.*;
 import ru.animals.service.VolunteerService;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeConfCommand;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -86,7 +87,7 @@ public class VolunteerServiceImpl implements VolunteerService {
     public WebResponseOkOrNo verificationReport(Long id, WebResponseResultVerificationDTO verReport) {
 
         WebResponseOkOrNo result;
-
+        EnumTypeConfCommand enumTypeConfCommand = null;
         try {
 
             if (verReport.getEnumWebResponseReport() == null || verReport.getMessage().isBlank()) {
@@ -119,11 +120,14 @@ public class VolunteerServiceImpl implements VolunteerService {
                 adoption.setAdoptionState(EnumAdoptionState.ADOPTED);
                 contentReport.setStatusReport(EnumStatusReport.ADOPTED);
 
+                enumTypeConfCommand = EnumTypeConfCommand.FILE_CONGRATULATION_ADOPTION;
+
                 adoptionalRepository.save(adoption);
                 reportsRepository.save(contentReport);
 
             } else {
                 contentReport.setStatusReport(enumStatusReport);
+                enumTypeConfCommand = EnumTypeConfCommand.TEXT;
                 reportsRepository.save(contentReport);
             }
 
@@ -135,6 +139,7 @@ public class VolunteerServiceImpl implements VolunteerService {
                     .dateMessage(LocalDateTime.now())
                     .chatId(userBot.getId())
                     .message(message)
+                    .typeConfCommand(enumTypeConfCommand)
                     .build();
 
             logmessageRepository.save(logmessage);

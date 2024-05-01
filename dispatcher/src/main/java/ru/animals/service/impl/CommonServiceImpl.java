@@ -10,6 +10,8 @@ import ru.animals.repository.LogmessageRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.service.CommonService;
 import ru.animals.utils.parser.StructForCollbackConfig;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeConfCommand;
+import ru.animals.utils.UtilsMessage;
 
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class CommonServiceImpl implements CommonService {
     private final CommonReposities commonRepo;
     private final UserBotRepository userBotRepository;
     private final LogmessageRepository logmessageRepository;
-
+    private final UtilsMessage utilsMessage;
 
     private interface processingMethod{
         SendMessage apply(Long chartId, StructForCollbackConfig dataFromParser);
@@ -41,11 +43,21 @@ public class CommonServiceImpl implements CommonService {
 
         if (lsLog.size() > 0) {
             logmessageRepository.deleteAll(lsLog);
-            return lsLog.stream().map(item->  new SendMessage(strChatId, item.getMessage()) ).toList();
+            return lsLog.stream().map(item-> {
+
+                    SendMessage result = null;
+                        if (item.getTypeConfCommand() == EnumTypeConfCommand.FILE_CONGRATULATION_ADOPTION) {
+                            result = utilsMessage.generaleSendMessageCongratulation(chartId);
+                        } else {
+                            result = new SendMessage(strChatId, item.getMessage());
+                        }
+
+                        return result;
+                    }
+            ).toList();
         } else {
             return null;
         }
-
 
     }
 

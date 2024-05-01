@@ -1,23 +1,30 @@
 package ru.animals.utils;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.telegramComp.TelgramComp;
 import ru.animals.utils.parser.StructForBaseConfig;
 import ru.animals.utilsDEVL.FileAPI;
+import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeFile;
 
-@Component
-public class UtilsMessage {
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeConfCommand;
 
-    public SendMessage generateSendMessageWithBtn(Long chartId,
+@Component
+@RequiredArgsConstructor
+public class UtilsMessage {
+    private final UtilsSendMessage utilsSendMessage;
+
+    public SendMessage generateSendMessageWithBtn(Long chatId,
                                       StructForBaseConfig dataParser) throws Exception {
 
         var file = dataParser.getSource();
         var valueFromMethod = TelgramComp.sendMessageFromJSON(file);
         SendMessage sendMessage = valueFromMethod.getValue();
 
-        sendMessage.setChatId(chartId);
+        sendMessage.setChatId(chatId);
 
         var text = sendMessage.getText();
 
@@ -40,12 +47,35 @@ public class UtilsMessage {
         return sendMessage;
     }
 
-    public SendMessage generateSendMessageWithText(Long chartId, String text) {
+    public SendMessage generateSendMessageWithText(Long chatId, String text) {
         var sendMessage = new SendMessage();
 
-        sendMessage.setChatId(chartId);
+        sendMessage.setChatId(chatId);
         sendMessage.setText(text);
 
         return sendMessage;
     }
+
+    /**
+     * SendMessage поздравление усыновителю
+     * @param chatId
+     * @return
+     */
+    public SendMessage generaleSendMessageCongratulation(Long chatId) {
+
+        StructForBaseConfig structForBaseConfig = utilsSendMessage.getStructureForCongratulation();
+        var fileSource = structForBaseConfig.getSource();
+        var resLoad = FileAPI.readDataFromFile(fileSource);
+
+        if (!resLoad.RESULT) {
+            return TelgramComp.defaultSendMessage(chatId, "Нет файла поздарвления");
+        }
+
+        var sendMessage = generateSendMessageWithText(chatId, resLoad.getValue());
+
+        sendMessage.setParseMode(ParseMode.MARKDOWN);
+
+        return sendMessage;
+    }
+
 }

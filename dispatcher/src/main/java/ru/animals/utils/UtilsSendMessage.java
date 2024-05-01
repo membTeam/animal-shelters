@@ -7,6 +7,7 @@ import ru.animals.utils.parser.StructForCollbackConfig;
 import ru.animals.utils.parser.ParsingFromBaseConfigFile;
 import ru.animals.utils.parser.StructForBaseConfig;
 import ru.animals.utilsDEVL.*;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeConfCommand;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 
 import java.util.HashMap;
@@ -128,6 +129,22 @@ public class UtilsSendMessage implements UtilsSendMessageServ {
     @Override
     public String getMessageErr() {
         return mesRrror;
+    }
+
+
+    /**
+     * Структура конфигурационного файла для создания сообщения поздравления усыновителю животного
+     * @return
+     */
+    @Override
+    public StructForBaseConfig getStructureForCongratulation() {
+         var result = mapSendMessage.values()
+                .stream()
+                .filter(item-> item.getTypeCommand().toUpperCase()
+                            .equals(EnumTypeConfCommand.FILE_CONGRATULATION_ADOPTION.toString()) )
+                .findFirst();
+
+         return result.orElseThrow();
     }
 
     public StructForBaseConfig getStructureCommand(String strCommand) throws Exception {
