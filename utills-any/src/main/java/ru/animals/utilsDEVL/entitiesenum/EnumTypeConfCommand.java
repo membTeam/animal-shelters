@@ -7,5 +7,16 @@ package ru.animals.utilsDEVL.entitiesenum;
  * остальные параметры информационные
  */
 public enum EnumTypeConfCommand {
-    TEXT, FILE_CONGRATULATION_ADOPTION, NONE;
+    NONE(0), TEXT(1), FILE_CONGRATULATION_ADOPTION(10), FILE_REPORTGOOD(11),  FILE_WARNING_ADOPTION(12);
+
+    private int index;
+
+    EnumTypeConfCommand(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
 }

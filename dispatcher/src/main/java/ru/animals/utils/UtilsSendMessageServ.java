@@ -2,6 +2,7 @@ package ru.animals.utils;
 
 
 import ru.animals.utils.parser.StructForBaseConfig;
+import ru.animals.utilsDEVL.entitiesenum.EnumTypeConfCommand;
 
 /**
  * используется в UtilSendMessage
@@ -12,5 +13,5 @@ public interface UtilsSendMessageServ {
     boolean isExitsInMapCollback(String strCommand) throws Exception;
     String getMessageErr();
 
-    StructForBaseConfig getStructureForCongratulation();
+    StructForBaseConfig getStructureForCongratulation(EnumTypeConfCommand enumTypeConfCommand);
 }

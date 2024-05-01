@@ -61,14 +61,15 @@ public class UtilsMessage {
      * @param chatId
      * @return
      */
-    public SendMessage generaleSendMessageCongratulation(Long chatId) {
+    public SendMessage generaleSendMessageCongratulation(Long chatId, EnumTypeConfCommand enumTypeConfCommand) {
 
-        StructForBaseConfig structForBaseConfig = utilsSendMessage.getStructureForCongratulation();
+        StructForBaseConfig structForBaseConfig = utilsSendMessage.getStructureForCongratulation(enumTypeConfCommand);
+
         var fileSource = structForBaseConfig.getSource();
         var resLoad = FileAPI.readDataFromFile(fileSource);
 
         if (!resLoad.RESULT) {
-            return TelgramComp.defaultSendMessage(chatId, "Нет файла поздарвления");
+            return TelgramComp.defaultSendMessage(chatId, "Нет файла");
         }
 
         var sendMessage = generateSendMessageWithText(chatId, resLoad.getValue());

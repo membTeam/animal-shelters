@@ -39,9 +39,9 @@ public class AnimalsController {
                 .body(res.getByteData());
     }
 
-    @GetMapping("/list-animals")
-    public ResponseEntity<List<WebAnimalResponse>> getListAnimals() {
-        var res = animalService.getListAnimals();
+    @GetMapping("/list-animals/{id}")
+    public ResponseEntity<List<WebAnimalResponse>> getListAnimals(@PathVariable Long id) {
+        var res = animalService.getListAnimals(id);
         return ResponseEntity.ok(res);
     }
 
@@ -60,7 +60,7 @@ public class AnimalsController {
     }
 
     @GetMapping("type-animals/{breed}")
-    public ResponseEntity<Collection<Breeds>> getListAnimals(@PathVariable Long breed ) {
+    public ResponseEntity<Collection<Breeds>> getListBreeds(@PathVariable Long breed ) {
         return ResponseEntity.ok(animalService.getListBreeds(breed));
     }
 

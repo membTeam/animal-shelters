@@ -137,11 +137,11 @@ public class UtilsSendMessage implements UtilsSendMessageServ {
      * @return
      */
     @Override
-    public StructForBaseConfig getStructureForCongratulation() {
+    public StructForBaseConfig getStructureForCongratulation(EnumTypeConfCommand enumTypeConfCommand) {
          var result = mapSendMessage.values()
                 .stream()
                 .filter(item-> item.getTypeCommand().toUpperCase()
-                            .equals(EnumTypeConfCommand.FILE_CONGRATULATION_ADOPTION.toString()) )
+                            .equals(enumTypeConfCommand.toString()) )
                 .findFirst();
 
          return result.orElseThrow();

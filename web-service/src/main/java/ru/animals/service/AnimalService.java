@@ -18,5 +18,5 @@ public interface AnimalService {
 
     WebResultData getPhotoAnimal(String info);
 
-    List<WebAnimalResponse> getListAnimals();
+    List<WebAnimalResponse> getListAnimals(Long id);
 }

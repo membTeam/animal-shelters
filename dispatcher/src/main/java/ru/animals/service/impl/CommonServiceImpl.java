@@ -37,24 +37,28 @@ public class CommonServiceImpl implements CommonService {
     public List<SendMessage> messageForUser(Long chartId) {
 
         UserBot userBot = userBotRepository.findByChatId(chartId).orElseThrow();
-        List<Logmessage> lsLog = logmessageRepository.findAllByChatId(userBot.getId());
-
-        var strChatId = String.valueOf(chartId);
+        List<Logmessage> lsLog = logmessageRepository.findAllByChatId(chartId);
 
         if (lsLog.size() > 0) {
-            logmessageRepository.deleteAll(lsLog);
-            return lsLog.stream().map(item-> {
 
-                    SendMessage result = null;
-                        if (item.getTypeConfCommand() == EnumTypeConfCommand.FILE_CONGRATULATION_ADOPTION) {
-                            result = utilsMessage.generaleSendMessageCongratulation(chartId);
+            var strChatId = String.valueOf(chartId);
+
+            var result = lsLog.stream().map(item -> {
+                        SendMessage localResult;
+                        var typeconfigCommand = item.getTypeConfCommand();
+
+                        if ( typeconfigCommand.getIndex() >= 10 ) {
+                            localResult = utilsMessage.generaleSendMessageCongratulation(chartId, typeconfigCommand);
                         } else {
-                            result = new SendMessage(strChatId, item.getMessage());
+                            localResult = new SendMessage(strChatId, item.getMessage());
                         }
 
-                        return result;
+                        return localResult;
                     }
             ).toList();
+
+            logmessageRepository.deleteAll(lsLog);
+            return  result;
         } else {
             return null;
         }

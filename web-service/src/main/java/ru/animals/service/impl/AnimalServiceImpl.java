@@ -147,9 +147,10 @@ public class AnimalServiceImpl implements AnimalService, AnimalServiceExt {
         return webResultData;
     }
 
+
     @Override
-    public List<WebAnimalResponse> getListAnimals() {
-        var lsAnimal = breedsRepository.getDataForAnimation();
+    public List<WebAnimalResponse> getListAnimals(Long id) {
+        var lsAnimal = breedsRepository.getDataForAnimation(id);
         List<WebAnimalResponse> result = new ArrayList<>();
 
         lsAnimal.forEach(item->

@@ -13,6 +13,16 @@ public class BreedsRepositoryTest {
     @Autowired
     private BreedsRepository breedsRepository;
 
+
+    @Test
+    public void getDataForAnimation() {
+        var res = breedsRepository.getDataForAnimation(1L);
+
+        assertTrue(res.size()>0);
+    }
+
+
+
     @Test
     public void getTypeAnimation() {
         var resulst = breedsRepository.getTypeAnimationFromReport(30);
