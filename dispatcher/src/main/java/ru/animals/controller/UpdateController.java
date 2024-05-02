@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.collbackCommand.DistrCollbackCommandImpl;
+import ru.animals.exceptions.UploadFileException;
 import ru.animals.service.CommonService;
 import ru.animals.service.ServUserBot;
 import ru.animals.service.UpdateProducer;
@@ -17,6 +18,7 @@ import ru.animals.utils.UtilsSendMessage;
 import ru.animals.utilsDEVL.FileAPI;
 import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
+import ru.animals.service.ServParsingStrPhotoNext;
 
 @Log4j
 @Component
@@ -30,7 +32,7 @@ public class UpdateController implements UpdateControllerService {
     private final DistrCollbackCommandImpl commonCollbackService;
     private final ServUserBot servUserBot;
     private final SessionServiceImpl sessionServiceUpdate;
-
+    private final ServParsingStrPhotoNext servParsingStrPhoto;
 
     public void registerBot(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
@@ -169,9 +171,23 @@ public class UpdateController implements UpdateControllerService {
         } else if (enumType == EnumTypeParamCollback.TCL_DST){
             var sendMessge = sessionServiceUpdate.distributionUpdate(update);
             telegramBot.sendAnswerMessage(sendMessge);
+        } else if (enumType == EnumTypeParamCollback.TCL_PHT) {
+            sendPhotoMessage(update);
         } else {
             sendButtonMenu(chartId, textQuery);
         }
+    }
+
+    public void sendPhotoMessage(Update update) throws Exception {
+        long strChatId = update.getCallbackQuery().getMessage().getChatId();
+        var data = update.getCallbackQuery().getData();
+
+        // TODO: только для отладки
+        var temp = "pht-photoanimal-animal-dog-48689";
+
+        var resData = servParsingStrPhoto.getPathPhoto(temp);
+
+        telegramBot.sendPhotoMessage(strChatId, resData);
     }
 
     @Override
@@ -201,6 +217,7 @@ public class UpdateController implements UpdateControllerService {
         sendMessage.setParseMode(ParseMode.MARKDOWN);
         telegramBot.sendAnswerMessage(sendMessage);
     }
+
 
     public TelegramBot getTelegramBot() {
         return telegramBot;

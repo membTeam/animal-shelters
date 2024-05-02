@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.animals.controller.TelegramBot;
-import ru.animals.controller.UpdateController;
 import ru.animals.repository.AdoptionalRepository;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.repository.ReportsRepository;
@@ -22,7 +21,6 @@ import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeUpdate;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;

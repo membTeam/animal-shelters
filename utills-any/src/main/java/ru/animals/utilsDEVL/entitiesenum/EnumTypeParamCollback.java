@@ -1,7 +1,7 @@
 package ru.animals.utilsDEVL.entitiesenum;
 
 public enum EnumTypeParamCollback {
-    TCL_TXT, TCL_BTN, TCL_DBD, TCL_DST, NONE;
+    TCL_TXT, TCL_BTN, TCL_DBD, TCL_DST, TCL_PHT, NONE;
 
     public static EnumTypeParamCollback of(String strEnum) {
         return switch (strEnum.trim().toUpperCase()) {
@@ -9,6 +9,7 @@ public enum EnumTypeParamCollback {
             case "BTN" -> TCL_BTN;
             case "DBD" -> TCL_DBD;
             case "DST" -> TCL_DST;
+            case "PHT" -> TCL_PHT;
             default -> NONE;
         };
     }

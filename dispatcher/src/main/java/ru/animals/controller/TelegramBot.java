@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -41,6 +43,17 @@ public class TelegramBot extends TelegramLongPollingBot{
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void sendPhotoMessage(long chatId, String strPath) throws Exception {
+
+        InputFile photo = new InputFile(new java.io.File(strPath));
+
+        SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setChatId(chatId);
+        sendPhoto.setPhoto(photo);
+
+        execute(sendPhoto);
     }
 
     public File downloadFile(Update update, java.io.File fileDist) throws TelegramApiException {

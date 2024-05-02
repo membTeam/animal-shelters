@@ -3,6 +3,7 @@ package ru.animals.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.animals.entities.ContentReport;
+import ru.animals.entities.commonModel.MetaDataPhoto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,5 +30,7 @@ public interface ReportsRepository extends JpaRepository<ContentReport, Long> {
     @Query("select rep.adoption.userId from ContentReport rep where rep.id = :rep")
     Long getChatId(Long rep);
 
+    @Query("select ct.metaDataPhoto from ContentReport ct where ct.hashmetadata = :metaData")
+    MetaDataPhoto findByHashmetadata(String metaData);
 
 }
