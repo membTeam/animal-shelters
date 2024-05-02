@@ -9,9 +9,8 @@ import ru.animals.repository.CommonReposities;
 import ru.animals.repository.LogmessageRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.service.CommonService;
-import ru.animals.utils.parser.StructForCollbackConfig;
-import ru.animals.utilsDEVL.entitiesenum.EnumTypeConfCommand;
 import ru.animals.utils.UtilsMessage;
+import ru.animals.utils.parser.StructForCollbackConfig;
 
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class CommonServiceImpl implements CommonService {
                         SendMessage localResult;
                         var typeconfigCommand = item.getTypeConfCommand();
 
-                        if ( typeconfigCommand.getIndex() >= 10 ) {
+                        if ( typeconfigCommand.getIndex() > 1 ) {
                             localResult = utilsMessage.generaleSendMessageCongratulation(chartId, typeconfigCommand);
                         } else {
                             localResult = new SendMessage(strChatId, item.getMessage());

@@ -1,7 +1,6 @@
 package ru.animals.session;
 
 import ru.animals.controller.TelegramBot;
-import ru.animals.controller.UpdateControllerService;
 import ru.animals.repository.AdoptionalRepository;
 import ru.animals.repository.BreedsRepository;
 import ru.animals.repository.ReportsRepository;
@@ -17,10 +16,6 @@ public interface SessionService {
 
     TelegramBot getTelegramBot();
 
-    UtilsMessage getUtilsMessage();
-    UtilsSendMessage getUtilsSendMessage();
-
-    int getWebServerPort();
 
     BreedsRepository getBreedsRepository();
 }

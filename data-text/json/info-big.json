@@ -13,6 +13,8 @@
       {"text":"Транспортировка\uD83D\uDE9A","callback_data":"txt-transportationrecommendation"}],
     [{"text":"Техника безопасности","callback_data":"txt-territoryshelterrecommendation"},
       {"text":"Вызов волонтёра\uD83E\uDD1D","callback_data":"dbd-volunteer"}],
+    [{"text":"Карта проезда","callback_data":"pht-photoany-driving-directions.png"},
+      {"text":"Правила знакомства","callback_data":"txt-rules"}],
     [{"text":"Содержание ограниченных питомцев⛔\uD83D\uDC3E","callback_data":"txt-animalspoorhealthrecommendation"}],
-    [{"text":"Начало меню▶\uFE0F","callback_data":"btn-start"}]]},
+    [{"text":"Начальное меню▶\uFE0F","callback_data":"txt-start"}] ]},
   "method":"btn-menu"}

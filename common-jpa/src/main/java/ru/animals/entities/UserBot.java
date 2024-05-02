@@ -20,9 +20,6 @@ import java.util.Collection;
 @Table(name = "user_bot")
 public class UserBot {
 
-    // TODO: изменить идентификатор поля char_id into chat_id
-    //  также сделать это в репозитории boolean isExistsUserBot(Long chartid)
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,9 +44,5 @@ public class UserBot {
 
     @Column(columnDefinition = "varchar(150)")
     private String email;
-
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    Collection<Adoption> listUserBot;
 
 }

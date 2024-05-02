@@ -11,4 +11,7 @@ public interface AnimalsRepository extends JpaRepository<Animals, Long> {
     @Query("select an.metaDataPhoto from animals an where an.hashmetadata = :metaData")
     MetaDataPhoto findByHashmetadataNext(String metaData);
 
+    @Query("select an from animals an where an.hashmetadata = :metaData")
+    Animals findAnimalsByHashmetadataNext(String metaData);
+
 }

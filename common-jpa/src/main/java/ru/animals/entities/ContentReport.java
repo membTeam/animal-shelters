@@ -77,10 +77,4 @@ public class ContentReport {
     @JsonIgnore
     private Adoption adoption;
 
-
-/*    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "volunteer_id", nullable = true)
-    private Volunteers volunteers;*/
-
-
 }

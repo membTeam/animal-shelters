@@ -36,9 +36,6 @@ public class SessionServiceImpl implements SessionService{
     @Value("${image-storage-dir-report}")
     private String imageStorageDirReport;
 
-    @Value("${web-server-port}")
-    int webServerPort;
-
     private final UserBotRepository userBotRepository;
     private final ReportsRepository reportsRepository;
     private final AdoptionalRepository adoptionalRepository;
@@ -155,15 +152,6 @@ public class SessionServiceImpl implements SessionService{
         return adoptionalRepository;
     }
 
-    @Override
-    public UtilsMessage getUtilsMessage() {
-        return utilsMessage;
-    }
-
-    @Override
-    public UtilsSendMessage getUtilsSendMessage() {
-        return utilsSendMessage;
-    }
 
     @Override
     public String getImageStorageDirReport() {
@@ -173,11 +161,6 @@ public class SessionServiceImpl implements SessionService{
     @Override
     public TelegramBot getTelegramBot() {
         return telegramBot;
-    }
-
-    @Override
-    public int getWebServerPort() {
-        return webServerPort;
     }
 
     @Override

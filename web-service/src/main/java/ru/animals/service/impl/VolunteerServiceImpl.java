@@ -127,7 +127,15 @@ public class VolunteerServiceImpl implements VolunteerService {
 
             } else {
                 contentReport.setStatusReport(enumStatusReport);
-                enumTypeConfCommand = EnumTypeConfCommand.TEXT;
+                enumTypeConfCommand = switch (verReport.getEnumWebResponseReport().getIndex()) {
+                    case 1 -> EnumTypeConfCommand.FILE_EXTENSION_TERM14;
+                    case 2 -> EnumTypeConfCommand.FILE_EXTENSION_TERM30;
+                    case 3 -> EnumTypeConfCommand.FILE_RETURN_ANIMAL;
+                    case 4 -> EnumTypeConfCommand.FILE_MODIFICATION;
+                    case 5 -> EnumTypeConfCommand.FILE_REPORTGOOD;
+                    default -> EnumTypeConfCommand.NONE;
+                };
+
                 reportsRepository.save(contentReport);
             }
 
@@ -137,7 +145,7 @@ public class VolunteerServiceImpl implements VolunteerService {
 
             Logmessage logmessage = Logmessage.builder()
                     .dateMessage(LocalDateTime.now())
-                    .chatId(userBot.getId())
+                    .chatId(userBot.getChatId())
                     .message(message)
                     .typeConfCommand(enumTypeConfCommand)
                     .build();

@@ -3,6 +3,7 @@ package ru.animals.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.animals.entities.Animals;
 import ru.animals.entities.commonModel.MetaDataPhoto;
 import ru.animals.repository.AnimalsRepository;
 import ru.animals.repository.ReportsRepository;
@@ -61,12 +62,16 @@ public class ServParsingStrPhotoImpl implements ServParsingStrPhoto, ServParsing
     }
 
     private String getStrPathFromAnimal(String resouce) {
-        MetaDataPhoto metaDataPhoto = animalsRepository.findByHashmetadataNext(resouce);
-        if (metaDataPhoto == null) {
+        Animals animals = animalsRepository.findAnimalsByHashmetadataNext(resouce);
+
+        if (animals == null) {
             throw new UnsupportedOperationException("Нет данных по животным");
         }
 
-        return metaDataPhoto.getFilepath();
+        var nickname = animals.getNickname();
+        var filePath = animals.getMetaDataPhoto().getFilepath();
+
+        return nickname + "##" + filePath;
     }
     
 }

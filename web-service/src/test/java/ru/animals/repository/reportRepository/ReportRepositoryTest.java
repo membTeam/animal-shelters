@@ -23,7 +23,7 @@ public class ReportRepositoryTest {
 
     @Test
     public void getChatId() {
-        var res = reportsRepository.getChatId(18L);
+        var res = reportsRepository.getChatId(20L);
 
         assertTrue(res > 0);
     }

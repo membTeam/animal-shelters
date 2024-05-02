@@ -38,8 +38,8 @@ public class Adoption {
     @Setter
     private EnumAdoptionState adoptionState;
 
-   /* @OneToMany
-    @JoinColumn(name = "adoption_id")
-    private Collection<ContentReport> lsContentReport;*/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", updatable = false, insertable = false, nullable = false)
+    private UserBot userBot;
 
 }

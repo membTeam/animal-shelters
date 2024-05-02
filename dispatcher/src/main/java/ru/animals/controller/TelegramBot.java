@@ -45,11 +45,12 @@ public class TelegramBot extends TelegramLongPollingBot{
         }
     }
 
-    public void sendPhotoMessage(long chatId, String strPath) throws Exception {
+    public void sendPhotoMessage(long chatId, String strPath, String caption) throws Exception {
 
         InputFile photo = new InputFile(new java.io.File(strPath));
 
         SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setCaption(caption);
         sendPhoto.setChatId(chatId);
         sendPhoto.setPhoto(photo);
 

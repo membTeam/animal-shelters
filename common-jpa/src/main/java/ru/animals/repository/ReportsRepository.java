@@ -26,8 +26,7 @@ public interface ReportsRepository extends JpaRepository<ContentReport, Long> {
     @Query(value = "select rep.adoption.dateFinish from ContentReport rep where rep.id = :id")
     LocalDateTime getDateFinishReport(Long id);
 
-    // select rep.adoption.userId from ContentReport rep where rep.id = :rep
-    @Query("select rep.adoption.userId from ContentReport rep where rep.id = :rep")
+    @Query("select rep.adoption.userBot.chatId from ContentReport rep where rep.id = :rep")
     Long getChatId(Long rep);
 
     @Query("select ct.metaDataPhoto from ContentReport ct where ct.hashmetadata = :metaData")

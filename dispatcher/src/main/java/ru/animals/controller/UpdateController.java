@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import java.io.IOException;
+
 import ru.animals.collbackCommand.DistrCollbackCommandImpl;
-import ru.animals.exceptions.UploadFileException;
 import ru.animals.service.CommonService;
 import ru.animals.service.ServUserBot;
 import ru.animals.service.UpdateProducer;
@@ -20,10 +20,11 @@ import ru.animals.utilsDEVL.ValueFromMethod;
 import ru.animals.utilsDEVL.entitiesenum.EnumTypeParamCollback;
 import ru.animals.service.ServParsingStrPhotoNext;
 
+
 @Log4j
 @Component
 @RequiredArgsConstructor
-public class UpdateController implements UpdateControllerService {
+public class UpdateController {
     private TelegramBot telegramBot;
     private final UtilsMessage utilsMessage;
     private final UpdateProducer updateProducer;
@@ -51,7 +52,7 @@ public class UpdateController implements UpdateControllerService {
     }
 
     /**
-     * Менеджер команд в зависимости от типа сообщения
+     * Обработка Update from Telegram bot
      * @param update
      */
     public void distributeMessages(Update update) throws Exception {
@@ -64,15 +65,21 @@ public class UpdateController implements UpdateControllerService {
                 throw new Exception("Internal error");
             }
 
+            /**
+             * Перехватывает сообщения диалога с пользователем
+             */
             if (sessionServiceUpdate.isExistsStateSession(update)) {
                 telegramBot.sendAnswerMessage(sessionServiceUpdate.distributionUpdate(update));
             } else {
 
+                /**
+                 * перехватывает сообщения, поступившие от волонтера при проверке отчета
+                 * после обработки сообщения от волонетера
+                 * продолжится обработка поступившего сообщения от telegram bot
+                 */
                 var messageForUser = commonService.messageForUser(getCharIdFromUpdate(update));
                 if (messageForUser != null) {
                     messageForUser.forEach(item -> telegramBot.sendAnswerMessage(item));
-
-                    return;
                 }
 
                 switch (DevlAPI.typeUpdate(update, false)) {
@@ -155,30 +162,41 @@ public class UpdateController implements UpdateControllerService {
             sendPhotoMessage(update);
             return;
         }
-        var structCollbackCommand = utilsSendMessage.getStructCommandCollback(textQuery);
 
+        if (textQuery.equals("txt-start")) {
+            sendButtonMenuByParse(chartId);
+            return;
+        }
+
+        var structCollbackCommand = utilsSendMessage.getStructCommandCollback(textQuery);
         var enumType = structCollbackCommand.getEnumTypeParameter();
+
         if (enumType == EnumTypeParamCollback.TCL_TXT) {
+            /**
+             * Создание текстового сообщения
+             */
             sendTextMessageFromFile(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getSource());
-
         } else if (enumType == EnumTypeParamCollback.TCL_BTN) {
+            /**
+             * Создание кнопочного меню
+             */
             sendButtonMenu(chartId,
                     utilsSendMessage.getStructureCommand(structCollbackCommand).getCommand());
-
         } else if (enumType == EnumTypeParamCollback.TCL_DBD) {
-            // TODO: исправить идентификатор метода
+            /**
+             * Взаимодействие с БД
+             */
             var sendMessage = commonCollbackService.distributeStrCommand(chartId, structCollbackCommand);
-
             telegramBot.sendAnswerMessage(sendMessage);
-
         } else if (enumType == EnumTypeParamCollback.TCL_DST){
+            /**
+             * процедура сдачи отчета
+             */
             var sendMessge = sessionServiceUpdate.distributionUpdate(update);
             telegramBot.sendAnswerMessage(sendMessge);
-        } else if (enumType == EnumTypeParamCollback.TCL_PHT) {
-            sendPhotoMessage(update);
-        } else {
-            sendButtonMenu(chartId, textQuery);
+        }else {
+            throw new UnsupportedOperationException("Команда не определена");
         }
     }
 
@@ -188,10 +206,13 @@ public class UpdateController implements UpdateControllerService {
 
         var resData = servParsingStrPhoto.getPathPhoto(collbackData);
 
-        telegramBot.sendPhotoMessage(strChatId, resData);
+        var index = resData.indexOf("##");
+        var caption = resData.substring(0, index);
+        var filePath = resData.substring(index + 2);
+
+        telegramBot.sendPhotoMessage(strChatId, filePath, caption);
     }
 
-    @Override
     public void sendButtonMenu(Long charId, String textMess) throws Exception {
         var structureCommand = utilsSendMessage.getStructureCommand(textMess);
 
@@ -201,30 +222,18 @@ public class UpdateController implements UpdateControllerService {
 
     }
 
-    @Override
     public void sendTextMessageFromFile(Long charId,
-                                         String fileSource) throws Exception {
-
+                                         String fileSource) throws IOException {
         ValueFromMethod<String> dataFromFile = FileAPI.readDataFromFile(fileSource);
 
         if (!dataFromFile.RESULT) {
-            throw new Exception("Контент не найден");
+            throw new IOException("Контент не найден");
         }
 
         var txtMessage = dataFromFile.getValue();
-
         var sendMessage = utilsMessage.generateSendMessageWithText(charId, txtMessage);
 
         sendMessage.setParseMode(ParseMode.MARKDOWN);
-        telegramBot.sendAnswerMessage(sendMessage);
-    }
-
-
-    public TelegramBot getTelegramBot() {
-        return telegramBot;
-    }
-
-    public void setView(SendMessage sendMessage) {
         telegramBot.sendAnswerMessage(sendMessage);
     }
 
