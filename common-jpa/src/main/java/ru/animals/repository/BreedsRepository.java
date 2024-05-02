@@ -25,4 +25,7 @@ public interface BreedsRepository extends JpaRepository<Breeds, Long> {
     @Query(value = "select shortname, breed, nikname, url from fun_list_animals2(:id);", nativeQuery = true)
     List<List<String>> getDataForAnimation(Long id);
 
+    @Query(value = "select short_name, breed, nikname, filepath from fun_list_photo_animals(:id)", nativeQuery = true)
+    List<List<String>> getPhotoForAnimation(Long id);
+
 }
