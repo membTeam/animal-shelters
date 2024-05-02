@@ -17,6 +17,10 @@ import ru.animals.utilsDEVL.ValueFromMethod;
 import java.lang.reflect.Constructor;
 
 
+/**
+ * Базовый класс обработки collbackId кнопочных меню
+ * Класс обработки сообщения определяется через рефлексию
+ */
 @Service
 @Log4j
 @RequiredArgsConstructor
@@ -27,6 +31,11 @@ public class DistrCollbackCommandImpl implements DistrCollbackCommand{
     private final AnimalsRepository animalsRepository;
     private final BreedsRepository breedsRepository;
 
+    /**
+     * Поиск класса обработчика collback
+     * @param strClass
+     * @return
+     */
     @Override
     public ValueFromMethod<BaseObject> preparationClass(String strClass) {
 

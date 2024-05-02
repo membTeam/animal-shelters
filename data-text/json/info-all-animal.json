@@ -1,6 +1,6 @@
 {"chat_id":"charid",
-  "text":"Получить список питомцев",
+  "text":"Получить список животных",
   "reply_markup":{"inline_keyboard":[
-    [{"text":"Кошки\uD83D\uDC31","callback_data":"dbd-infoallanimalfreecat"},
-      {"text":"Собаки\uD83D\uDC36","callback_data":"dbd-infoallanimalfreedog"}]]},
+    [{"text":"Кошки\uD83D\uDC31","callback_data":"dbd-allanimalfreecat"},
+      {"text":"Собаки\uD83D\uDC36","callback_data":"dbd-allanimalfree"}]]},
   "method":"btn-menu"}
