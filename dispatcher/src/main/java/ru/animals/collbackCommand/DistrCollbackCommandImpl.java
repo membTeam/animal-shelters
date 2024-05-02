@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.animals.collbackCommand.impl.BaseObject;
 import ru.animals.repository.AnimalsRepository;
+import ru.animals.repository.BreedsRepository;
 import ru.animals.repository.UserBotRepository;
 import ru.animals.repository.VolunteerRepository;
 import ru.animals.telegramComp.TelgramComp;
@@ -24,7 +25,7 @@ public class DistrCollbackCommandImpl implements DistrCollbackCommand{
     private final VolunteerRepository volunteerRepository;
     private final UserBotRepository userBotRepository;
     private final AnimalsRepository animalsRepository;
-
+    private final BreedsRepository breedsRepository;
 
     @Override
     public ValueFromMethod<BaseObject> preparationClass(String strClass) {
@@ -60,6 +61,11 @@ public class DistrCollbackCommandImpl implements DistrCollbackCommand{
     @Override
     public AnimalsRepository getAnimalsRepository() {
         return animalsRepository;
+    }
+
+    @Override
+    public BreedsRepository getBreedsRepository() {
+        return breedsRepository;
     }
 
     @Override

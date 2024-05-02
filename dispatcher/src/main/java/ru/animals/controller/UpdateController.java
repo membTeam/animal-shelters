@@ -151,6 +151,10 @@ public class UpdateController implements UpdateControllerService {
         var textQuery = update.getCallbackQuery().getData();
         var chartId = getCharIdFromUpdate(update);
 
+        if (textQuery.substring(0, 3).equals("pht")) {
+            sendPhotoMessage(update);
+            return;
+        }
         var structCollbackCommand = utilsSendMessage.getStructCommandCollback(textQuery);
 
         var enumType = structCollbackCommand.getEnumTypeParameter();
@@ -180,12 +184,9 @@ public class UpdateController implements UpdateControllerService {
 
     public void sendPhotoMessage(Update update) throws Exception {
         long strChatId = update.getCallbackQuery().getMessage().getChatId();
-        var data = update.getCallbackQuery().getData();
+        var collbackData = update.getCallbackQuery().getData();
 
-        // TODO: только для отладки
-        var temp = "pht-photoanimal-animal-dog-48689";
-
-        var resData = servParsingStrPhoto.getPathPhoto(temp);
+        var resData = servParsingStrPhoto.getPathPhoto(collbackData);
 
         telegramBot.sendPhotoMessage(strChatId, resData);
     }

@@ -72,6 +72,7 @@ public class CreateBottomOnRunTimeTest {
 
         assertEquals("1000", message.getChatId());
 
+        assertEquals(lsPhotoAnimation.size(), rowsInline.size());
     }
 
 }
